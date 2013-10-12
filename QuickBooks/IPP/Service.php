@@ -508,7 +508,7 @@ abstract class QuickBooks_IPP_Service
 	/**
 	 * Update an object within IDS (QuickBooks)
 	 *
-	 * @param object $Context
+	 * @param QuickBooks_IPP_Context $Context
 	 * @param string $realmID
 	 * @param string $resource
 	 * @param object $Object
@@ -628,7 +628,7 @@ abstract class QuickBooks_IPP_Service
 		
 		if (count($return))
 		{
-			return $return[0];
+			return $return;
 		}
 		
 		return null;

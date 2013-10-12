@@ -15,7 +15,10 @@
  
 class QuickBooks_IPP_Context
 {
-	protected $_IPP;
+    /**
+     * @var QuickBooks_IPP
+     */
+    protected $_IPP;
 	
 	protected $_ticket;
 	
@@ -28,8 +31,11 @@ class QuickBooks_IPP_Context
 		$this->_ticket = $ticket;
 		$this->_token = $token;
 	}
-	
-	public function IPP()
+
+    /***
+     * @return QuickBooks_IPP
+     */
+    public function IPP()
 	{
 		return $this->_IPP;
 	}

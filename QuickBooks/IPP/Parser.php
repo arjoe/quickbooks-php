@@ -258,7 +258,7 @@ class QuickBooks_IPP_Parser
 
 	protected function _parseIDS_v3($xml, $optype, $flavor, $version, &$xml_errnum, &$xml_errmsg, &$err_code, &$err_desc, &$err_db)
 	{
-		// Parse it 
+		// Parse it
 		$Parser = new QuickBooks_XML_Parser($xml);
 		
 		// Initial to success
@@ -277,20 +277,26 @@ class QuickBooks_IPP_Parser
 			{
 				case QuickBooks_IPP_IDS::OPTYPE_ADD:	// Parse an ADD type response
 					return QuickBooks_XML::extractTagContents('Id', $xml);
-				case QuickBooks_IPP_IDS::OPTYPE_QUERY: 
+
+                case QuickBooks_IPP_IDS::OPTYPE_FINDBYID:
+                case QuickBooks_IPP_IDS::OPTYPE_MOD:
+                    $List = $Root->getChildAt('IntuitResponse');
+
+                    $children = $List->children();
+                    if (count($children) > 1) {
+                        throw new Exception("More than 1 child returned from a mod operation");
+                    }
+
+                    return $this->parseObject($children[0]);
+
+                case QuickBooks_IPP_IDS::OPTYPE_QUERY:
+                    $List = $Root->getChildAt('IntuitResponse QueryResponse');
 
 					$list = array();
 
-					$List = $Root->getChildAt('IntuitResponse QueryResponse');
 					foreach ($List->children() as $Child)
 					{
-						$class = 'QuickBooks_IPP_Object_' . $Child->name();
-						$Object = new $class();
-						
-						foreach ($Child->children() as $Data)
-						{
-							$this->_push($Data, $Object);
-						}
+                        $Object = $this->parseObject($Child);
 						
 						$list[] = $Object;
 					}
@@ -335,14 +341,8 @@ class QuickBooks_IPP_Parser
 					
 					foreach ($List->children() as $Child)
 					{
-						$class = 'QuickBooks_IPP_Object_' . $Child->name();
-						$Object = new $class();
-						
-						foreach ($Child->children() as $Data)
-						{
-							$this->_push($Data, $Object);
-						}
-						
+                        $Object = $this->parseObject($Child);
+
 						$method = 'add' . $Child->name();
 						$Report->$method($Object);
 					}
@@ -374,17 +374,17 @@ class QuickBooks_IPP_Parser
 					$list = array();
 					foreach ($List->children() as $Child)
 					{
-						$class = 'QuickBooks_IPP_Object_' . $Child->name();
-						$Object = new $class();
-						
-						foreach ($Child->children() as $Data)
-						{
-							$this->_push($Data, $Object);
-						}
-						
+                        $Object = $this->parseObject($Child);
+
 						$list[] = $Object;
 					}
-					return $list;
+
+                    if ($optype == QuickBooks_IPP_IDS::OPTYPE_FINDBYID) {
+                        // find by id operations should return only the object of interest.
+					    return $list[0];
+                    } else {
+                        return $list;
+                    }
 					
 					break;
 				case QuickBooks_IPP_IDS::OPTYPE_ADD:	// Parse an ADD type response
@@ -508,4 +508,23 @@ class QuickBooks_IPP_Parser
 			}*/		
 		}
 	}
+
+    /**
+     * Create an QuickBooks_IPP_Object_* object from an XML element.
+     *
+     * @param  string   $objectXml  The XML element from which to create an object.
+     *
+     * @return mixed    An instance of the corresponding QuickBooks_IPP_Object
+     */
+    protected function parseObject($objectXml)
+    {
+        $class  = 'QuickBooks_IPP_Object_' . $objectXml->name();
+        $Object = new $class();
+
+        foreach ($objectXml->children() as $Data) {
+            $this->_push($Data, $Object);
+        }
+
+        return $Object;
+    }
 }

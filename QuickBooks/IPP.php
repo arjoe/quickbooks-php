@@ -990,26 +990,34 @@ class QuickBooks_IPP
 		$xml = null;
 		$query = null;
 
-		if ($optype == QuickBooks_IPP_IDS::OPTYPE_ADD or $optype == QuickBooks_IPP_IDS::OPTYPE_MOD)
-		{
-			$post = true;
-			$url = $this->baseURL() . '/company/' . $realm . '/' . strtolower($resource);
-			$xml = $xml_or_query;
+        switch ($optype) {
+            case QuickBooks_IPP_IDS::OPTYPE_MOD:
+            case QuickBooks_IPP_IDS::OPTYPE_ADD:
+                $post = true;
+                $url = $this->baseURL() . '/company/' . $realm . '/' . strtolower($resource);
+                $xml = $xml_or_query;
 
-            if ($optype == QuickBooks_IPP_IDS::OPTYPE_MOD) {
+            case QuickBooks_IPP_IDS::OPTYPE_MOD:
                 $url .= '?operation=update';
-            }
-		}
-		else if ($optype == QuickBooks_IPP_IDS::OPTYPE_QUERY)
-		{
-			$post = false;
-			$url = $this->baseURL() . '/company/' . $realm . '/query?query=' . $xml_or_query;
-		}
+                break;
+
+            case QuickBooks_IPP_IDS::OPTYPE_QUERY:
+                $post = false;
+                $url = $this->baseURL() . '/company/' . $realm . '/query?query=' . $xml_or_query;
+                break;
+
+            case QuickBooks_IPP_IDS::OPTYPE_FINDBYID:
+                $post = false;
+                $url = $this->baseURL() . '/company/' . $realm . '/' . strtolower($resource) . '/' . $xml_or_query;
+                break;
+
+            default:
+                $this->_setError(-1, 'Unsupported operation type');
+                return false;
+        }
+
 
 		$response = $this->_request($Context, QuickBooks_IPP::REQUEST_IDS, $url, $optype, $xml, $post);
-
-		//print('URL is [' . $url . ']');
-		//die('RESPONSE IS [' . $response . ']');
 
 		// Check for generic IPP errors and HTTP errors
 		if ($this->_hasErrors($response))
@@ -1034,7 +1042,7 @@ class QuickBooks_IPP
 		$err_code = null;
 		$err_desc = null;
 		$err_db = null;
-		
+
 		// Try to parse the responses into QuickBooks_IPP_Object_* classes
 		$parsed = $Parser->parseIDS($data, $optype, $this->flavor(), QuickBooks_IPP_IDS::VERSION_3, $xml_errnum, $xml_errmsg, $err_code, $err_desc, $err_db);
 		
