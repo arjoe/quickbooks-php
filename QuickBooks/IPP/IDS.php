@@ -216,6 +216,10 @@ class QuickBooks_IPP_IDS
 	
 	static public function buildIDType($domain, $ID)
 	{
-		return '{' . $domain . '-' . $ID . '}';
+        if (empty($domain)) {
+            return $ID;
+        } else {
+		    return '{' . $domain . '-' . $ID . '}';
+        }
 	}
 }
