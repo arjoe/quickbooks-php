@@ -579,13 +579,18 @@ abstract class QuickBooks_IPP_Service
 		
 		return $return;		
 	}
-	
-	/**
-	 * Find a record by ID number 
-	 * 
-	 * 
-	 */
-	protected function _findById($Context, $realmID, $resource, $IDType, $xml_or_IDType = '', $query = null)
+
+    /**
+     * @param QuickBooks_IPP_Context  $Context
+     * @param string                  $realmID
+     * @param string                  $resource
+     * @param string|integer          $IDType
+     * @param string                  $xml_or_IDType
+     * @param null|string             $query
+     *
+     * @return null
+     */
+    protected function _findById($Context, $realmID, $resource, $IDType, $xml_or_IDType = '', $query = null)
 	{
 		$IPP = $Context->IPP();
 		
@@ -634,7 +639,14 @@ abstract class QuickBooks_IPP_Service
 		return null;
 	}
 
-	protected function _query($Context, $realmID, $query)
+    /**
+     * @param QuickBooks_IPP_Context    $Context
+     * @param                           $realmID
+     * @param string                    $query
+     *
+     * @return bool|\Array
+     */
+    protected function _query($Context, $realmID, $query)
 	{
 		$IPP = $Context->IPP();
 	

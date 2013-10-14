@@ -205,19 +205,37 @@ class QuickBooks_IPP
 	protected $_authkey;
 	
 	protected $_debug;
-	
-	protected $_last_request;
-	protected $_last_response;
-	protected $_last_debug;
+
+    /**
+     * @var string
+     */
+    protected $_last_request;
+
+    /**
+     * @var string
+     */
+    protected $_last_response;
+
+    /**
+     * @var array
+     */
+    protected $_last_debug;
 	
 	protected $_masking;
 	
 	protected $_driver;
 	
 	protected $_certificate;
-	
-	protected $_errcode;
-	protected $_errtext;
+
+    /**
+     * @var int
+     */
+    protected $_errcode;
+
+    /**
+     * @var string
+     */
+    protected $_errtext;
 	protected $_errdetail;
 	
 	/**
@@ -237,8 +255,16 @@ class QuickBooks_IPP
 	 * @var string
 	 */
 	protected $_ids_version;
-	
-	public function __construct($dsn = null, $encryption_key = null, $config = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
+
+    /**
+     * Initializes a new instance of the QuickBooks_IPP class
+     *
+     * @param string    $dsn                The DSN of the database where IPP information is stored.
+     * @param string    $encryption_key     Encryption key to use when encrypting oauth information which is stored.
+     * @param array     $config
+     * @param int       $log_level          Level of logging (see QUICKBOOKS_LOG_* constants).
+     */
+    public function __construct($dsn = null, $encryption_key = null, $config = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
 	{
 		// Use a test gateway?
 		$this->_test = false;
@@ -302,7 +328,7 @@ class QuickBooks_IPP
 	 * @param string $username
 	 * @param string $password
 	 * @param string $token
-	 * @return boolean
+	 * @return boolean|QuickBooks_IPP_Context
 	 */
 	public function authenticate($username, $password, $token)
 	{
@@ -356,12 +382,16 @@ class QuickBooks_IPP
 		return false;
 	}
 	
-	/**
-	 * Create a Context object (used for session management) for a given ticket and token 
-	 * 
-	 * 
-	 */
-	public function context($ticket = null, $token = null, $check_if_valid = true)
+    /**
+     * Create a Context object (used for session management) for a given ticket and token
+     *
+     * @param string    $ticket             Session ticket
+     * @param string    $token              Session token
+     * @param bool      $check_if_valid     Whether validity of the context should be checked.
+     *
+     * @return null|QuickBooks_IPP_Context  The context if successful, null otherwise.
+     */
+    public function context($ticket = null, $token = null, $check_if_valid = true)
 	{
 		$Context = null;
 		
@@ -380,8 +410,6 @@ class QuickBooks_IPP
 			
 			$Context = new QuickBooks_IPP_Context($this, $ticket, $token);
 			
-			//print('check if valid [' . $check_if_valid . ']');
-			
 			if ($check_if_valid)
 			{
 				// Now, let's check to make sure the context is valid
@@ -396,16 +424,11 @@ class QuickBooks_IPP
 			}
 		}
 		
-		//print_r($Context);
-			
 		return $Context;
 	}
 	
 	/**
-	 * 
-	 * 
-	 * @deprecated 
-	 *
+	 * @deprecated
 	 */
 	public function cookies($glob_them_together = false)
 	{
@@ -422,44 +445,68 @@ class QuickBooks_IPP
 		
 		return $this->_cookies;
 	}
-	
-	public function username()
+
+    /**
+     * @return string   The username
+     * @deprecated
+     */
+    public function username()
 	{
 		return $this->_username;
 	}
-	
-	public function password()
+
+    /**
+     * Gets the username associated with this instance.
+     *
+     * @return string   The username
+     */
+    public function getUsername() {
+        return $this->_username;
+    }
+
+    /**
+     * @return string
+     * @deprecated
+     */
+    public function password()
 	{
 		return $this->_password;
 	}
-	
-	/*
-	public function ticket($ticket = null)
-	{
-		if ($ticket)
-		{
-			$this->_ticket = $ticket;
-		}
 
-		return $this->_ticket;
-	}
-	
-	public function token($token = null)
-	{
-		if ($token)
-		{
-			$this->_token = $token;
-		}
+    /**
+     * Gets the password associated with this instance.
+     *
+     * @return string
+     */
+    public function getPassword() {
+        return $this->_password;
+    }
 
-		return $this->_token;
-	}
-	*/
-	
-	/**
-	 *
-	 *
-	 */
-	public function flavor($flavor = null)
+    /**
+     * Gets the ticket associated with this instance.
+     *
+     * @return string
+     */
+    public function getTicket() {
+        return $this->_ticket;
+    }
+
+    /**
+     * Gets the token associated with this instance.
+     *
+     * @return string
+     */
+    public function getToken() {
+        return $this->_token;
+    }
+
+    /**
+     * @param null $flavor
+     *
+     * @return string
+     * @deprecated
+     */
+    public function flavor($flavor = null)
 	{
 		if ($flavor)
 		{
@@ -474,7 +521,35 @@ class QuickBooks_IPP
 		return $this->_flavor;
 	}
 
-	public function baseURL($baseURL = null)
+    /**
+     * Gets the QuickBooks flavor associated with this connection.
+     *
+     * @return string   string indicated the flavor
+     * @see QuickBooks_IPP_IDS::FLAVOR_DESKTOP
+     * @see QuickBooks_IPP_IDS::FLAVOR_ONLINE
+     */
+    public function getFlavor() {
+        return $this->_flavor;
+    }
+
+    /**
+     * Sets the QuickBooks flavor associated with this connection.
+     *
+     * @param string $flavor
+     * @see QuickBooks_IPP_IDS::FLAVOR_DESKTOP
+     * @see QuickBooks_IPP_IDS::FLAVOR_ONLINE
+     */
+    public function setFlavor($flavor) {
+        $this->_flavor = $flavor;
+    }
+
+    /**
+     * @param string $baseURL
+     *
+     * @return string
+     * @deprecated
+     */
+    public function baseURL($baseURL = null)
 	{
 		if ($baseURL)
 		{
@@ -483,6 +558,15 @@ class QuickBooks_IPP
 		
 		return $this->_baseurl;
 	}
+
+    /**
+     * Sets the base URL for this connection
+     *
+     * @param string $baseURL   The new base URL for this connection
+     */
+    public function setBaseUrl($baseURL) {
+        $this->_baseurl = $baseURL;
+    }
 	
 	/**
 	 * Set the authorization mode for HTTP requests (Federated, or OAuth)
@@ -504,12 +588,22 @@ class QuickBooks_IPP
 		
 		return $this->_authmode;
 	}
+
+    /**
+     * Gets the realm identifier
+     *
+     * @return string
+     */
+    public function getRealmId() {
+        return $this->_authcred['qb_realm'];
+    }
 	
 	/**
 	 * Get or set the DBID of the attached federated app
 	 * 
 	 * @param string $dbid
 	 * @return string
+     * @deprecated
 	 */
 	public function dbid($dbid = null)
 	{
@@ -521,12 +615,34 @@ class QuickBooks_IPP
 		return $this->_dbid;
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	protected function _IPP($Context, $url, $action, $xml, $post = true)
+    /**
+     * Gets the DBID of the attached federated app.
+     *
+     * @return string
+     */
+    public function getDbId() {
+        return $this->_dbid;
+    }
+
+    /**
+     * Sets the DBID for the attached federated app.
+     *
+     * @param string $dbId  The new DBID
+     */
+    public function setDbId($dbId) {
+        $this->_dbid = $dbId;
+    }
+
+    /**
+     * @param QuickBooks_IPP_Context     $Context
+     * @param string                     $url
+     * @param string                     $action
+     * @param string                     $xml
+     * @param bool                       $post
+     *
+     * @return array|bool|QuickBooks_IPP_Object
+     */
+    protected function _IPP($Context, $url, $action, $xml, $post = true)
 	{
 		// Ick, special case here...
 		$type = QuickBooks_IPP::REQUEST_IPP;
@@ -570,14 +686,6 @@ class QuickBooks_IPP
 		// Try to parse the response from IPP
 		$parsed = $Parser->parseIPP($data, $action, $xml_errnum, $xml_errmsg, $err_code, $err_desc, $err_db);
 		
-		/*
-		print('parsed out: [');
-		print_r($parsed);
-		print(']');
-		*/
-		
-		//$this->_setLastDebug(__CLASS__, array( 'ipp_parser_duration' => microtime(true) - $start ));
-		
 		if ($xml_errnum != QuickBooks_XML::ERROR_OK)
 		{
 			// Error parsing the returned XML?
@@ -595,8 +703,14 @@ class QuickBooks_IPP
 
 		return $parsed;
 	}
-	
-	public function getBaseURL($Context, $realmID)
+
+    /**
+     * @param QuickBooks_IPP_Context $Context
+     * @param string $realmID
+     *
+     * @return array|bool|QuickBooks_IPP_User|string
+     */
+    public function getBaseURL($Context, $realmID)
 	{
 		$url = 'https://qbo.intuit.com/qbo1/rest/user/v2/' . $realmID;
 		$action = QuickBooks_IPP::API_GETBASEURL;
@@ -945,6 +1059,7 @@ class QuickBooks_IPP
 	 * 
 	 * @param string $version		One of QuickBooks_IPP_IDS::VERSION_1, QuickBooks_IPP_IDS::VERSION_2, QuickBooks_IPP_IDS::VERSION_LATEST
 	 * @return string				The IDS version currently being used
+     * @deprecated
 	 */
 	public function version($version = null)
 	{
@@ -955,6 +1070,28 @@ class QuickBooks_IPP
 		
 		return $this->_ids_version;
 	}
+
+    /**
+     * Gets the current IDS version
+     *
+     * @return string   the current IDS version
+     * @see QuickBooks_IPP_IDS::VERSION_2
+     * @see QuickBooks_IPP_IDS::VERSION_3
+     */
+    public function getVersion() {
+        return $this->_ids_version;
+    }
+
+    /**
+     * Sets the current IDS version
+     *
+     * @param string $newVersion    The new value for the IDS version
+     * @see QuickBooks_IPP_IDS::VERSION_2
+     * @see QuickBooks_IPP_IDS::VERSION_3
+     */
+    public function setVersion($newVersion) {
+        $this->_ids_version = $newVersion;
+    }
 	
 	/**
 	 * Make an IDS request (Intuit Data Services) to the remote server
@@ -981,7 +1118,19 @@ class QuickBooks_IPP
 		}
 	}
 
-	protected function _IDS_v3($Context, $realm, $resource, $optype, $xml_or_query, $ID)
+    /**
+     * Make an Intuit Data Services v3 request to the remote server.
+     *
+     * @param QuickBooks_IPP_Context    $Context        The context (token and ticket) to use.
+     * @param integer                   $realm          The realm to operate on
+     * @param string                    $resource       The name of the resource to operate on
+     * @param string                    $optype         The operation to be performed
+     * @param string                    $xml_or_query   Raw XML or the query to execute (based on operation type)
+     * @param                           $ID             unused?
+     *
+     * @return array|bool|mixed|QuickBooks_IPP_Object_Report|string
+     */
+    protected function _IDS_v3($Context, $realm, $resource, $optype, $xml_or_query, $ID)
 	{
 		// All v3 URLs have the same baseURL
 		$this->baseURL(QuickBooks_IPP_IDS::URL_V3);
@@ -1067,7 +1216,19 @@ class QuickBooks_IPP
 		return $parsed;		
 	}
 
-	protected function _IDS_v2($Context, $realmID, $resource, $optype, $xml, $ID)
+    /**
+     * Make an Intuit Data Services v3 request to the remote server.
+     *
+     * @param QuickBooks_IPP_Context    $Context        The context (token and ticket) to use.
+     * @param integer                   $realm          The realm to operate on
+     * @param string                    $resource       The name of the resource to operate on
+     * @param string                    $optype         The operation to be performed
+     * @param string                    $xml_or_query   Raw XML or the query to execute (based on operation type)
+     * @param                           $ID             unused?
+     *
+     * @return array|bool|mixed|QuickBooks_IPP_Object_Report|string
+     */
+    protected function _IDS_v2($Context, $realmID, $resource, $optype, $xml, $ID)
 	{
 		if (substr($resource, 0, 6) == 'Report')
 		{
@@ -1171,11 +1332,8 @@ class QuickBooks_IPP
 			$url = $this->_baseurl . '/' . $resource . '/' . $this->_ids_version . '/' . $realmID;
 		}
 		
-		//print('hitting URL [' . $url . ']');
-		//print($xml);
 		$response = $this->_request($Context, QuickBooks_IPP::REQUEST_IDS, $url, $optype, $xml, $post);
-		//print($response);
-		
+
 		// Check for generic IPP errors and HTTP errors
 		if ($this->_hasErrors($response))
 		{
@@ -1224,14 +1382,15 @@ class QuickBooks_IPP
 		// Return the parsed response
 		return $parsed;		
 	}
-	
-	/**
-	 * 
-	 * 
-	 * @param string $response
-	 * @return string
-	 */
-	protected function _stripHTTPHeaders($response)
+
+    /**
+     * Removes HTTP headers from a response string.
+     *
+     * @param string      $response     The HTTP response from which to remove headers
+     *
+     * @return string   The response string with headers removed.
+     */
+    protected function _stripHTTPHeaders($response)
 	{
 		$pos = strpos($response, "\r\n\r\n");
 		
@@ -1396,8 +1555,6 @@ class QuickBooks_IPP
 		$headers = array(
 			);
 			
-		//print('[' . $this->_flavor . '], ACTION [' . $action . ']');
-		
 		if ($Context->IPP()->version() == QuickBooks_IPP_IDS::VERSION_3)
 		{
 			if ($action == QuickBooks_IPP_IDS::OPTYPE_ADD or $action == QuickBooks_IPP_IDS::OPTYPE_MOD)
@@ -1444,23 +1601,6 @@ class QuickBooks_IPP
 			if ($this->_authcred['oauth_access_token'] and 
 				$this->_authcred['oauth_access_token_secret'])
 			{
-				/*
-				//// **** TEST STUFF **** ////
-				$url = 'https://api.twitter.com/1/statuses/update.json?include_entities=true';
-
-				$this->_authcred['oauth_consumer_key'] = 'xvz1evFS4wEEPTGEFPHBog';
-				$this->_authcred['oauth_consumer_secret'] = 'kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw';
-
-				$this->_authcred['oauth_access_token'] = '370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb';
-				$this->_authcred['oauth_access_token_secret'] = 'LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE';
-
-				$data = http_build_query(array('status' => 'Hello Ladies + Gentlemen, a signed OAuth request!'));
-				$post = true;
-				*/
-
-				//print('URL [' . $url . ']' . "\n");
-				//print('what is POST [' . $post . ']' . "\n");
-
 				// Sign the request
 				$OAuth = new QuickBooks_IPP_OAuth($this->_authcred['oauth_consumer_key'], $this->_authcred['oauth_consumer_secret']);
 				
@@ -1469,8 +1609,6 @@ class QuickBooks_IPP
 				{
 					$OAuth->signature($this->_authsign, $this->_authkey);
 				}
-				
-				//print('signing with method and key ' . $this->_authsign . ', ' . $this->_authkey);
 				
 				if ($post)
 				{
@@ -1495,27 +1633,13 @@ class QuickBooks_IPP
 					parse_str($data, $signdata);
 				}
 				
-				/*
-				print('signing [');
-				print($action . "\n");
-				print($url . "\n");
-				print_r($this->_authcred);
-				print('[[' . $signdata . ']]');
-				print(' all done ]');
-				*/
-				
 				$signed = $OAuth->sign($action, $url, $this->_authcred['oauth_access_token'], $this->_authcred['oauth_access_token_secret'], $signdata);
 
-				//print_r($signed);
-				
-				// Always use the header, regardless of POST or GET 
+				// Always use the header, regardless of POST or GET
 				$headers['Authorization'] = $signed[3];
 
 				if ($post)
 				{
-					// Add the OAuth headers
-					//$headers['Authorization'] = $signed[3];
-					
 					// Remove any whitespace padding before checking
 					$data = trim($data);
 					
@@ -1541,13 +1665,7 @@ class QuickBooks_IPP
 			
 			$headers['Authorization'] = 'INTUITAUTH intuit-app-token="' . $Context->token() . '", intuit-token="' . $Context->ticket() . '"';
 			$headers['Cookie'] = $this->cookies(true);
-		}	
-		
-		//print_r($headers);
-		//exit;
-		
-		//$url = str_replace("SELECT * FROM customer", "SELECT+*+FROM+customer", $url);
-		//print('NEW URL [' . $url . ']' . "\n\n");
+		}
 
 		// Our HTTP requestor
 		$HTTP = new QuickBooks_HTTP($url);
@@ -1581,24 +1699,10 @@ class QuickBooks_IPP
 		{
 			$return = $HTTP->GET();
 		}
-		
+
 		$this->_setLastRequestResponse($HTTP->lastRequest(), $HTTP->lastResponse());
 		$this->_setLastDebug(__CLASS__, array( 'http_request_response_duration' => $HTTP->lastDuration() ));
-		//$this->_last_request = $HTTP->lastRequest();
-		//$this->_last_response = $HTTP->lastResponse();
-		
-		//print($HTTP->getLog());
-		
-		/*
-		print("\n\n\n\n");
-		print($this->_last_request);
-		print("\n\n\n\n");
-		print($this->_last_response);
-		print("\n\n\n\n");
-		exit;
-		*/
-		
-		// 
+
 		$this->_log($HTTP->getLog(), QUICKBOOKS_LOG_DEBUG);
 		
 		$errnum = $HTTP->errorNumber();
@@ -1620,23 +1724,48 @@ class QuickBooks_IPP
 	 * Get the last raw XML response that was received
 	 * 
 	 * @return string
+     * @deprecated
 	 */
 	public function lastResponse()
 	{
 		return $this->_last_response;
 	}
+
+    /**
+     * Gets the last raw XML response that was received.
+     *
+     * @return string
+     */
+    public function getLastResponse() {
+        return $this->_last_response;
+    }
 	
 	/**
 	 * Get the last raw XML request that was sent
 	 *
 	 * @return string
+     * @deprecated
 	 */
 	public function lastRequest()
 	{
 		return $this->_last_request;
 	}
-	
-	public function lastDebug()
+
+    /**
+     * Gets the last raw XML request that was sent.
+     *
+     * @return string   the last request
+     */
+    public function getLastRequest() {
+        return $this->_last_request;
+    }
+
+
+    /**
+     * @return string
+     * @deprecated
+     */
+    public function lastDebug()
 	{
 		return $this->_last_debug;
 	}
