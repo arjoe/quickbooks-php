@@ -288,25 +288,33 @@ abstract class QuickBooks_IPP_Service
 		}
 		else if ($flavor == QuickBooks_IPP_IDS::FLAVOR_ONLINE)
 		{
-		    if (!$xml)
-			{
-				if (is_array($query) and count($query) > 0)
-				{
-					$xml = http_build_query(array_merge(array(
-						'PageNum' => (int) $page, 
-						'ResultsPerPage' => (int) $size, 
-						), (array) $query));
-				}
-				else 
-				{
-					$xml = http_build_query(array_merge(array(
-						'PageNum' => (int) $page, 
-						'ResultsPerPage' => (int) $size, 
-						)));
-					
-					$xml .= $query;
-				}
-			}
+            switch ($IPP->getVersion()) {
+                case QuickBooks_IPP_IDS::VERSION_2:
+                    if (!$xml)
+                    {
+                        if (is_array($query) and count($query) > 0)
+                        {
+                            $xml = http_build_query(array_merge(array(
+                                'PageNum' => (int) $page,
+                                'ResultsPerPage' => (int) $size,
+                                ), (array) $query));
+                        }
+                        else
+                        {
+                            $xml = http_build_query(array_merge(array(
+                                'PageNum' => (int) $page,
+                                'ResultsPerPage' => (int) $size,
+                                )));
+
+                            $xml .= $query;
+                        }
+                    }
+                    break;
+
+                case QuickBooks_IPP_IDS::VERSION_3:
+                    $xml = "SELECT * FROM $resource STARTPOSITION $page MAXRESULTS $size";
+                    break;
+            }
 		}
 		
 		$return = $IPP->IDS($Context, $realmID, $resource, QuickBooks_IPP_IDS::OPTYPE_QUERY, $xml);
@@ -352,19 +360,24 @@ abstract class QuickBooks_IPP_Service
 		}
 		else
 		{
-			$xml = http_build_query(array( 'Filter' => 'Name :EQUALS: ' . $name ));
+            if ($IPP->getVersion() == QuickBooks_IPP_IDS::VERSION_3) {
+                $name = str_replace("'", "\\'", $name);
+                $xml = "SELECT * FROM $resource WHERE DisplayName = '$name'";
+            } else {
+			    $xml = http_build_query(array( 'Filter' => 'Name :EQUALS: ' . $name ));
+            }
 		}
 		
 		$return = $IPP->IDS($Context, $realmID, $resource, QuickBooks_IPP_IDS::OPTYPE_QUERY, $xml);
 		$this->_setLastRequestResponse($Context->lastRequest(), $Context->lastResponse());
 		$this->_setLastDebug($Context->lastDebug());
 		
-		if (count($return))
+		if (is_array($return) && count($return) > 0)
 		{
 			return $return[0];
 		}
 		
-		return null;
+		return false;
 	}
 	
 	/** 
