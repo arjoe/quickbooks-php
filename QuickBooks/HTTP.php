@@ -472,6 +472,7 @@ class QuickBooks_HTTP
 			false !== strpos($qs, ' '))
 		{
 			$url = str_replace($qs, str_replace(' ', '+', $qs), $url);
+            $url = str_replace($qs, str_replace('=', '%3D', $qs), $url);
 		}
 
 		//print(' [[[ ' . parse_url($url, PHP_URL_QUERY) . '  /  ' . $url . ' ]]] ');

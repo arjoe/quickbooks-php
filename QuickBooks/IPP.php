@@ -1003,7 +1003,7 @@ class QuickBooks_IPP
 
             case QuickBooks_IPP_IDS::OPTYPE_QUERY:
                 $post = false;
-                $url = $this->baseURL() . '/company/' . $realm . '/query?query=' . $xml_or_query;
+                $url = $this->baseURL() . '/company/' . $realm . '/query?query=' . urlencode($xml_or_query);
                 break;
 
             case QuickBooks_IPP_IDS::OPTYPE_FINDBYID:

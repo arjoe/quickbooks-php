@@ -295,25 +295,33 @@ abstract class QuickBooks_IPP_Service
 		}
 		else if ($flavor == QuickBooks_IPP_IDS::FLAVOR_ONLINE)
 		{
-		    if (!$xml)
-			{
-				if (is_array($query) and count($query) > 0)
-				{
-					$xml = http_build_query(array_merge(array(
-						'PageNum' => (int) $page, 
-						'ResultsPerPage' => (int) $size, 
-						), (array) $query));
-				}
-				else 
-				{
-					$xml = http_build_query(array_merge(array(
-						'PageNum' => (int) $page, 
-						'ResultsPerPage' => (int) $size, 
-						)));
-					
-					$xml .= $query;
-				}
-			}
+            switch ($IPP->getVersion()) {
+                case QuickBooks_IPP_IDS::VERSION_2:
+                    if (!$xml)
+                    {
+                        if (is_array($query) and count($query) > 0)
+                        {
+                            $xml = http_build_query(array_merge(array(
+                                'PageNum' => (int) $page,
+                                'ResultsPerPage' => (int) $size,
+                                ), (array) $query));
+                        }
+                        else
+                        {
+                            $xml = http_build_query(array_merge(array(
+                                'PageNum' => (int) $page,
+                                'ResultsPerPage' => (int) $size,
+                                )));
+
+                            $xml .= $query;
+                        }
+                    }
+                    break;
+
+                case QuickBooks_IPP_IDS::VERSION_3:
+                    $xml = "SELECT * FROM $resource STARTPOSITION $page MAXRESULTS $size";
+                    break;
+            }
 		}
 		
 		$return = $IPP->IDS($Context, $realmID, $resource, QuickBooks_IPP_IDS::OPTYPE_QUERY, $xml);
