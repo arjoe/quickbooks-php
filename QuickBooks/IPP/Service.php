@@ -21,6 +21,12 @@
  */
 abstract class QuickBooks_IPP_Service
 {
+
+    /**
+     * @var QuickBooks_IPP_Context
+     */
+    protected $_context;
+
 	/**
 	 * The last raw XML request
 	 * @var string
@@ -259,25 +265,12 @@ abstract class QuickBooks_IPP_Service
 		$IPP = $Context->IPP();
 		$flavor = $IPP->flavor();
 		
-		//print('flavor [' . $flavor . ']');
-		//exit;
-		
 		if ($flavor == QuickBooks_IPP_IDS::FLAVOR_DESKTOP)
 		{
 			if (!$xml)
 			{
 				$options_string = '';
-				//$options_string = ' ErroredObjectsOnly="true" ';
-				
-				/*if (!empty($options['ActiveOnly']))
-				{
-					$options_string = 'ActiveOnly="false" ';
-				}
-				else if (!empty($options['DeletedObjects']))
-				{
-					$options_string = 'DeletedObjects="true" ';
-				}*/
-				
+
 				$xml = '';
 				$xml .= '<?xml version="1.0" encoding="UTF-8"?>' . QUICKBOOKS_CRLF;
 				$xml .= '<' . $resource . 'Query ' . $options_string . 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.intuit.com/sb/cdm/' . $IPP->version() . '">' . QUICKBOOKS_CRLF;

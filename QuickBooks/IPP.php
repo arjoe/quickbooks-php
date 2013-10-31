@@ -1165,7 +1165,6 @@ class QuickBooks_IPP
                 return false;
         }
 
-
 		$response = $this->_request($Context, QuickBooks_IPP::REQUEST_IDS, $url, $optype, $xml, $post);
 
 		// Check for generic IPP errors and HTTP errors
