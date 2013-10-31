@@ -41,6 +41,20 @@ class QuickBooks_IPP_Service_Invoice extends QuickBooks_IPP_Service
 	{
 		return parent::_add($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_INVOICE, $Object);
 	}
+
+    /**
+     * Delete an invoice
+     *
+     * @param \QuickBooks_IPP_Context $Context
+     * @param string $realmID
+     * @param string $IDType
+     *
+     * @return null
+     */
+    public function delete($Context, $realmID, $IDType)
+    {
+        return parent::_delete($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_INVOICE, $IDType);
+    }
 	
 	public function update($Context, $realmID, $IDType, $Object)
 	{

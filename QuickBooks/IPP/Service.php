@@ -367,19 +367,24 @@ abstract class QuickBooks_IPP_Service
 		}
 		else
 		{
-			$xml = http_build_query(array( 'Filter' => 'Name :EQUALS: ' . $name ));
+            if ($IPP->getVersion() == QuickBooks_IPP_IDS::VERSION_3) {
+                $name = str_replace("'", "\\'", $name);
+                $xml = "SELECT * FROM $resource WHERE DisplayName = '$name'";
+            } else {
+			    $xml = http_build_query(array( 'Filter' => 'Name :EQUALS: ' . $name ));
+            }
 		}
 		
 		$return = $IPP->IDS($Context, $realmID, $resource, QuickBooks_IPP_IDS::OPTYPE_QUERY, $xml);
 		$this->_setLastRequestResponse($Context->lastRequest(), $Context->lastResponse());
 		$this->_setLastDebug($Context->lastDebug());
 		
-		if (count($return))
+		if (is_array($return) && count($return) > 0)
 		{
 			return $return[0];
 		}
 		
-		return null;
+		return false;
 	}
 	
 	/** 
