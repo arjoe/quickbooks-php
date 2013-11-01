@@ -9,11 +9,11 @@ require_once '../QuickBooks.php';
 // 
 $username = 'support@consolibyte.com';
 $password = '$up3rW0rmy42';
-$token = 'tex3r7hwifx6cci3zk43ibmnd';
-$realmID = 173642438;
+$token    = 'tex3r7hwifx6cci3zk43ibmnd';
+$realmID  = 173642438;
 
 // 
-$IPP = new QuickBooks_IPP();
+$IPP     = new QuickBooks_IPP();
 $Context = $IPP->authenticate($username, $password, $token);
 $IPP->application($Context, 'be9mh7qd5');
 
@@ -87,7 +87,6 @@ print($Service->lastResponse());
 //exit;
 
 
-
 // Create a new Service for IDS access
 $Service = new QuickBooks_IPP_Service_Invoice();
 
@@ -96,9 +95,8 @@ $list = $Service->findAll($Context, $realmID);
 //print_r($list);
 //exit;
 
-foreach ($list as $key => $Invoice)
-{
-	print($key . ': Invoice #' . $Invoice->getHeader()->getDocNumber() . ', balance: $' . $Invoice->getHeader()->getBalance() . "\n");
+foreach ($list as $key => $Invoice) {
+    print($key . ': Invoice #' . $Invoice->getHeader()->getDocNumber() . ', balance: $' . $Invoice->getHeader()->getBalance() . "\n");
 }
 
 //print_r($list[11]);

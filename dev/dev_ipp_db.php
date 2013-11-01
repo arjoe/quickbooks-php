@@ -8,11 +8,11 @@ require_once '../QuickBooks.php';
 // 
 $username = 'keith@consolibyte.com';
 $password = 'password42';
-$token = 'tex3r7hwifx6cci3zk43ibmnd';
-$realmID = 173642438;
+$token    = 'tex3r7hwifx6cci3zk43ibmnd';
+$realmID  = 173642438;
 
 // 
-$IPP = new QuickBooks_IPP();
+$IPP     = new QuickBooks_IPP();
 $Context = $IPP->authenticate($username, $password, $token);
 $IPP->application('be9mh7qd5');
 
@@ -25,11 +25,13 @@ $IPP->application('be9mh7qd5');
 $value = 'testvalue' . mt_rand();
 
 $return = $IPP->setDBVar($Context, 'testvar', $value);
-print('set db var to "' . $value . '": '); var_dump($return);
+print('set db var to "' . $value . '": ');
+var_dump($return);
 
 
 $return = $IPP->getDBVar($Context, 'testvar');
-print('get db var: '); var_dump($return);
+print('get db var: ');
+var_dump($return);
 
 print('ERROR: ' . $IPP->errorCode() . ': ' . $IPP->errorText());
 

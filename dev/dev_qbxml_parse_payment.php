@@ -2,7 +2,7 @@
 
 require_once '../QuickBooks.php';
 
-$qbxml='<ReceivePaymentRet>
+$qbxml = '<ReceivePaymentRet>
     <TxnID>4ECE-1360116101</TxnID>
     <TimeCreated>2013-02-05T18:01:41-08:00</TimeCreated>
     <TimeModified>2013-02-05T18:01:41-08:00</TimeModified>
@@ -68,8 +68,7 @@ $Object = QuickBooks_QBXML_Object::fromQBXML($qbxml, QUICKBOOKS_QUERY_RECEIVEPAY
 print_r($Object);
 
 $list = $Object->listAppliedToTxns();
-foreach ($list as $AppliedToTxn)
-{
-	print_r($AppliedToTxn);
+foreach ($list as $AppliedToTxn) {
+    print_r($AppliedToTxn);
 }
 

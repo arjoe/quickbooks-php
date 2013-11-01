@@ -9,21 +9,20 @@ require_once '../QuickBooks.php';
 // 
 $username = 'keith@consolibyte.com';
 $password = 'password42';
-$token = 'tex3r7hwifx6cci3zk43ibmnd';
-$realmID = 173642438;
+$token    = 'tex3r7hwifx6cci3zk43ibmnd';
+$realmID  = 173642438;
 
 // 
-$IPP = new QuickBooks_IPP();
+$IPP     = new QuickBooks_IPP();
 $Context = $IPP->authenticate($username, $password, $token);
 $IPP->application($Context, 'be9mh7qd5');
 
 $IPP->useIDSParser(false);
 
 $CustomerService = new QuickBooks_IPP_Service_Customer();
-$CheckService = new QuickBooks_IPP_Service_Check();
-$InvoiceService = new QuickBooks_IPP_Service_Invoice();
+$CheckService    = new QuickBooks_IPP_Service_Check();
+$InvoiceService  = new QuickBooks_IPP_Service_Invoice();
 $EstimateService = new QuickBooks_IPP_Service_Estimate();
-
 
 
 // 4791075
@@ -47,7 +46,6 @@ print($response);
 exit;
 
 
-
 /*
 $xml = '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <CustomerQuery xmlns="http://www.intuit.com/sb/cdm/v2">
@@ -68,7 +66,6 @@ exit;
 */
 
 
-
 $xml = '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <CheckQuery ErroredObjectsOnly="true" xmlns="http://www.intuit.com/sb/cdm/v2">
 </CheckQuery>';
@@ -79,7 +76,6 @@ print("\n\n\n\n\n");
 print($CheckService->lastResponse($Context));
 
 exit;
-
 
 
 /*
@@ -98,8 +94,6 @@ exit;
 */
 
 
-
-
 $xml = '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <EstimateQuery ErroredObjectsOnly="true" xmlns="http://www.intuit.com/sb/cdm/v2">
 </EstimateQuery>';
@@ -110,9 +104,6 @@ print("\n\n");
 print($response);
 
 exit;
-
-
-
 
 
 $xml = '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
@@ -131,7 +122,6 @@ $xml = '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <CustomerQuery xmlns="http://www.intuit.com/sb/cdm/v2">
 	<SynchronizedFilter>NotSynchronized</SynchronizedFilter>
 </CustomerQuery>';
-
 
 
 $response = $CustomerService->rawQuery($Context, $realmID, $xml);
@@ -153,9 +143,6 @@ print("\n\n");
 print($response);
 
 //exit;
-
-
-
 
 
 exit;

@@ -2,13 +2,13 @@
 
 /**
  * Example of connecting PHP to the QuickBooks Merchant Service
- * 
- * * IMPORTANT * 
- * In order to use this example, you'll need to go through the Intuit 
- * application registration process first! This is documented here: 
- * 	http://wiki.consolibyte.com/wiki/doku.php/quickbooks_qbms_integration
- * 
- * @package QuickBooks
+ *
+ * * IMPORTANT *
+ * In order to use this example, you'll need to go through the Intuit
+ * application registration process first! This is documented here:
+ *    http://wiki.consolibyte.com/wiki/doku.php/quickbooks_qbms_integration
+ *
+ * @package    QuickBooks
  * @subpackage Documentation
  */
 
@@ -36,10 +36,10 @@ $connection_ticket = 'TGT-157-p3PyZPoH3DtieLSh4ykp6Q';
 
 // Create an instance of the MerchantService object 
 $MS = new QuickBooks_MerchantService(
-	$dsn, 
-	$path_to_private_key_and_certificate, 
-	$application_login,
-	$connection_ticket);
+    $dsn,
+    $path_to_private_key_and_certificate,
+    $application_login,
+    $connection_ticket);
 
 // If you're using a Intuit QBMS development account, you must set this to true! 
 $MS->useTestEnvironment(true);
@@ -54,30 +54,27 @@ $info = QuickBooks_MerchantService_CheckingAccount::INFO_PERSONAL;
 $type = QuickBooks_MerchantService_CheckingAccount::TYPE_CHECKING;
 
 $first_name = 'Keith';
-$last_name = 'Palmer';
+$last_name  = 'Palmer';
 
 $phone = '+1 (860) 634-1602';
 
 $Check = new QuickBooks_MerchantService_CheckingAccount(
-	$routing, 
-	$account, 
-	$info, 
-	$type, 
-	$first_name, 
-	$last_name, 
-	$phone);
+    $routing,
+    $account,
+    $info,
+    $type,
+    $first_name,
+    $last_name,
+    $phone);
 
 // We're going to transfer $295 out of their checking account
 $amount = 295.0;
 
-if ($Transaction = $MS->debitCheck($Check, $amount, QuickBooks_MerchantService::MODE_INTERNET))
-{
-	
-	print_r($Transaction);
-}
-else
-{
-	print('An error occured during refund: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
+if ($Transaction = $MS->debitCheck($Check, $amount, QuickBooks_MerchantService::MODE_INTERNET)) {
+
+    print_r($Transaction);
+} else {
+    print('An error occured during refund: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
 }
 
 

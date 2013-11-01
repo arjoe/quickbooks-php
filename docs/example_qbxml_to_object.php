@@ -2,8 +2,8 @@
 
 /**
  * Examples of converting qbXML to QuickBooks_Object_* classes, and vice-versa
- * 
- * @package QuickBooks
+ *
+ * @package    QuickBooks
  * @subpackage Documentation
  */
 
@@ -17,7 +17,7 @@ ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . '/Users/keith
 ini_set('display_errors', 1);
 error_reporting(E_ALL | E_STRICT);
 
-/**  
+/**
  * Require the QuickBooks framework code
  */
 require_once '../QuickBooks.php';

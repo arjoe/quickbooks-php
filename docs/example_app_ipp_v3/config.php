@@ -2,10 +2,10 @@
 
 /**
  * Intuit Partner Platform configuration variables
- * 
- * See the scripts that use these variables for more details. 
- * 
- * @package QuickBooks
+ *
+ * See the scripts that use these variables for more details.
+ *
+ * @package    QuickBooks
  * @subpackage Documentation
  */
 
@@ -27,7 +27,7 @@ $token = '83e26868b5134b49beb97d8bd2a3e57755ca';
 // 
 // The OAuth request/access tokens will be encrypted and stored for you by the 
 //	PHP DevKit IntuitAnywhere classes automatically. 
-$oauth_consumer_key = 'qyprdlGJ4gWv4sMW0syilH2o4KirQe';
+$oauth_consumer_key    = 'qyprdlGJ4gWv4sMW0syilH2o4KirQe';
 $oauth_consumer_secret = '49ou99QiG47KhvY6AaMPSnHhXXNMAJxLv7QXNm4L';
 
 // This is the URL of your OAuth auth handler page
@@ -42,7 +42,7 @@ $quickbooks_menu_url = 'http://quickbooks.v3.com:8888/quickbooks-php/docs/exampl
 // This is a database connection string that will be used to store the OAuth credentials 
 // $dsn = 'pgsql://username:password@hostname/database';
 // $dsn = 'mysql://username:password@hostname/database';
-$dsn = 'mysqli://root:root@localhost/example_app_ipp_v3';		
+$dsn = 'mysqli://root:root@localhost/example_app_ipp_v3';
 
 // You should set this to an encryption key specific to your app
 $encryption_key = 'bcde1234';
@@ -54,10 +54,9 @@ $the_username = 'DO_NOT_CHANGE_ME';
 $the_tenant = 12345;
 
 // Initialize the database tables for storing OAuth information
-if (!QuickBooks_Utilities::initialized($dsn))
-{
-	// Initialize creates the neccessary database schema for queueing up requests and logging
-	QuickBooks_Utilities::initialize($dsn);
+if (!QuickBooks_Utilities::initialized($dsn)) {
+    // Initialize creates the neccessary database schema for queueing up requests and logging
+    QuickBooks_Utilities::initialize($dsn);
 }
 
 // Instantiate our Intuit Anywhere auth handler 
@@ -72,14 +71,12 @@ if (!QuickBooks_Utilities::initialized($dsn))
 $IntuitAnywhere = new QuickBooks_IPP_IntuitAnywhere($dsn, $encryption_key, $oauth_consumer_key, $oauth_consumer_secret, $quickbooks_oauth_url, $quickbooks_success_url);
 
 // Are they connected to QuickBooks right now? 
-if ($IntuitAnywhere->check($the_username, $the_tenant) and 
-	$IntuitAnywhere->test($the_username, $the_tenant))
-{
-	// Yes, they are 
-	$quickbooks_is_connected = true;
-}
-else
-{
-	// No, they are not
-	$quickbooks_is_connected = false;
+if ($IntuitAnywhere->check($the_username, $the_tenant) and
+    $IntuitAnywhere->test($the_username, $the_tenant)
+) {
+    // Yes, they are
+    $quickbooks_is_connected = true;
+} else {
+    // No, they are not
+    $quickbooks_is_connected = false;
 }

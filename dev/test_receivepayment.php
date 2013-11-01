@@ -10,7 +10,6 @@ $ReceivePayment->setTotalAmount(65);
 print($ReceivePayment->asQBXML(QUICKBOOKS_ADD_RECEIVEPAYMENT));
 
 
-
 $ReceivePayment2 = new QuickBooks_Object_ReceivePayment();
 $ReceivePayment2->setTotalAmount('35.00');
 

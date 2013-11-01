@@ -2,8 +2,7 @@
 
 class QuickBooks_User
 {
-	public function __construct()
-	{
-		
-	}
+    public function __construct()
+    {
+    }
 }

@@ -2,13 +2,13 @@
 
 /**
  * Example of connecting PHP to the QuickBooks Merchant Service
- * 
- * * IMPORTANT * 
- * In order to use this example, you'll need to go through the Intuit 
- * application registration process first! This is documented here: 
- * 	http://wiki.consolibyte.com/wiki/doku.php/quickbooks_qbms_integration
- * 
- * @package QuickBooks
+ *
+ * * IMPORTANT *
+ * In order to use this example, you'll need to go through the Intuit
+ * application registration process first! This is documented here:
+ *    http://wiki.consolibyte.com/wiki/doku.php/quickbooks_qbms_integration
+ *
+ * @package    QuickBooks
  * @subpackage Documentation
  */
 
@@ -76,10 +76,10 @@ $connection_ticket = 'TGT-157-p3PyZPoH3DtieLSh4ykp6Q';
 
 // Create an instance of the MerchantService object 
 $MS = new QuickBooks_MerchantService(
-	$dsn, 
-	$path_to_private_key_and_certificate, 
-	$application_login,
-	$connection_ticket);
+    $dsn,
+    $path_to_private_key_and_certificate,
+    $application_login,
+    $connection_ticket);
 
 // If you're using a Intuit QBMS development account, you must set this to true! 
 $MS->useTestEnvironment(true);
@@ -126,34 +126,34 @@ The most common methods are described below:
 
 /**
  * There are a number of test credit card numbers you can use while testing
- * 
- * Master Card 			5105105105105100
- * Master Card 			5555555555554444
- * VISA 				4222222222222
- * VISA 				4111111111111111
- * VISA 				4012888888881881
- * American Express 	378282246310005
- * American Express		371449635398431
- * Amex Corporate 		378734493671000
- * Diners Club 			38520000023237
- * Diners Club 			30569309025904
- * Discover 			6011111111111117
- * Discover 			6011000990139424
+ *
+ * Master Card            5105105105105100
+ * Master Card            5555555555554444
+ * VISA                4222222222222
+ * VISA                4111111111111111
+ * VISA                4012888888881881
+ * American Express    378282246310005
+ * American Express        371449635398431
+ * Amex Corporate        378734493671000
+ * Diners Club            38520000023237
+ * Diners Club            30569309025904
+ * Discover            6011111111111117
+ * Discover            6011000990139424
  */
 
 // Now, let's create a credit card object, and authorize an amount agains the card
-$name = 'Keith Palmer';
-$number = '5105105105105100';
-$expyear = date('Y');
-$expmonth = date('m');
-$address = '56 Cowles Road';
+$name       = 'Keith Palmer';
+$number     = '5105105105105100';
+$expyear    = date('Y');
+$expmonth   = date('m');
+$address    = '56 Cowles Road';
 $postalcode = '06279';
-$cvv = null;
+$cvv        = null;
 
 /**
- * There are also some test configurations you can use to simulate certain 
- * errors occuring. You pass these test configuration constants in as the $name 
- * parameter to the credit card to trigger various errors/warnings. 
+ * There are also some test configurations you can use to simulate certain
+ * errors occuring. You pass these test configuration constants in as the $name
+ * parameter to the credit card to trigger various errors/warnings.
  */
 // $name = QuickBooks_MerchantService::TEST_AVSZIPCVVFAIL;		// Simulate a sucessful transaction that failed all AVS and CVV checks, but was still processed (i.e. your gateway is set up to accept everything)
 // $name = QuickBooks_MerchantService::TEST_COMMUNICATIONERROR;	// Simulate a general communication error
@@ -164,110 +164,96 @@ $Card = new QuickBooks_MerchantService_CreditCard($name, $number, $expyear, $exp
 // We're going to authorize $295.00
 $amount = 295.0;
 
-if ($Transaction = $MS->authorize($Card, $amount))
-{
-	print('Card authorized!' . "\n");
-	print_r($Transaction);	
-	
-	// 	Every time the MerchantService class returns a $Transaction object to you, 
-	// 	you should store the returned $Transaction. You'll need the returned 
-	// 	$Transaction object (or at the very least the data contained therein) in 
-	// 	order to push these transactions to QuickBooks, to actually capture the 
-	// 	funds, to issue a refund, or to issue a void. 
-	// 	
-	// 	There are several convienence methods to convert the $Transaction object to 
-	// 	more storage-friendly formats if you would prefer to use these: 
-	
-	// Get the transaction as a string which can later be turned back into a transaction object
-	$str = $Transaction->serialize(); 
-	print('Serialized transaction: ' . $str . "\n\n");
-	
-	// Now convert it back to a transaction object
-	$Transaction = QuickBooks_MerchantService_Transaction::unserialize($str);
-	
-	// ... maybe you'd rather convert it to an array? 
-	$arr = $Transaction->toArray();
-	print('Array transaction: '); 
-	print_r($arr);
-	print("\n\n");
-	
-	// ... and back again?
-	$Transaction = QuickBooks_MerchantService_Transaction::fromArray($arr);
-	
-	// ... or an XML document?
-	$xml = $Transaction->toXML();
-	print('XML transaction: ' . $xml . "\n\n");
-	
-	// ... and back again? 
-	$Transaction = QuickBooks_MerchantService_Transaction::fromXML($xml);
-	
-	// How about XML that can be used in a qbXML SalesReceiptAdd request?
-	$qbxml = $Transaction->toQBXML();
-	print('qbXML transaction info: ' . $qbxml . "\n\n");
-	
-	// Now that that card has been authorized, let's actually capture the funds. 
-	// 
-	// You can just pass in the transaction if you want to capture for the same 
-	// amount as the authorization. Alternatively, you can pass in a different 
-	// amount *less than* the authorization amount to only capture a portion of 
-	// the authorization. 
-	// 	
-	// If you want to capture more than the authorization was for, use charge(). 
-	
-	// Only capture $50.00
-	// $amount = 50.0;
-	
-	if ($Transaction = $MS->capture($Transaction, $amount))
-	{
-		print('Card captured!' . "\n");
-		print_r($Transaction);	
-		
-		// Let's print that qbXML bit again because it'll have more data now
-		$qbxml = $Transaction->toQBXML();
-		print('qbXML transaction info: ' . $qbxml . "\n\n");		
-	}
-	else
-	{
-		print('An error occured during capture: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
-	}
-}
-else
-{
-	print('An error occured during authorization: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
+if ($Transaction = $MS->authorize($Card, $amount)) {
+    print('Card authorized!' . "\n");
+    print_r($Transaction);
+
+    // 	Every time the MerchantService class returns a $Transaction object to you,
+    // 	you should store the returned $Transaction. You'll need the returned
+    // 	$Transaction object (or at the very least the data contained therein) in
+    // 	order to push these transactions to QuickBooks, to actually capture the
+    // 	funds, to issue a refund, or to issue a void.
+    //
+    // 	There are several convienence methods to convert the $Transaction object to
+    // 	more storage-friendly formats if you would prefer to use these:
+
+    // Get the transaction as a string which can later be turned back into a transaction object
+    $str = $Transaction->serialize();
+    print('Serialized transaction: ' . $str . "\n\n");
+
+    // Now convert it back to a transaction object
+    $Transaction = QuickBooks_MerchantService_Transaction::unserialize($str);
+
+    // ... maybe you'd rather convert it to an array?
+    $arr = $Transaction->toArray();
+    print('Array transaction: ');
+    print_r($arr);
+    print("\n\n");
+
+    // ... and back again?
+    $Transaction = QuickBooks_MerchantService_Transaction::fromArray($arr);
+
+    // ... or an XML document?
+    $xml = $Transaction->toXML();
+    print('XML transaction: ' . $xml . "\n\n");
+
+    // ... and back again?
+    $Transaction = QuickBooks_MerchantService_Transaction::fromXML($xml);
+
+    // How about XML that can be used in a qbXML SalesReceiptAdd request?
+    $qbxml = $Transaction->toQBXML();
+    print('qbXML transaction info: ' . $qbxml . "\n\n");
+
+    // Now that that card has been authorized, let's actually capture the funds.
+    //
+    // You can just pass in the transaction if you want to capture for the same
+    // amount as the authorization. Alternatively, you can pass in a different
+    // amount *less than* the authorization amount to only capture a portion of
+    // the authorization.
+    //
+    // If you want to capture more than the authorization was for, use charge().
+
+    // Only capture $50.00
+    // $amount = 50.0;
+
+    if ($Transaction = $MS->capture($Transaction, $amount)) {
+        print('Card captured!' . "\n");
+        print_r($Transaction);
+
+        // Let's print that qbXML bit again because it'll have more data now
+        $qbxml = $Transaction->toQBXML();
+        print('qbXML transaction info: ' . $qbxml . "\n\n");
+    } else {
+        print('An error occured during capture: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
+    }
+} else {
+    print('An error occured during authorization: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
 }
 
 exit;
 
 
-
-// If you didn't want to do a two-part authorize + capture, you can just do a 
+// If you didn't want to do a two-part authorize + capture, you can just do a
 //	single call to ->charge() to charge the credit card right away. 
-if ($Transaction = $MS->charge($Card, $amount))
-{
-	print('Card charged!' . "\n");
-	print_r($Transaction);
-	
-	print('Transaction array: ' . "\n");
-	print_r($Transaction->toArray());
-	
-	print("\n");
-}
-else
-{
-	print('An error occured during charge: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
+if ($Transaction = $MS->charge($Card, $amount)) {
+    print('Card charged!' . "\n");
+    print_r($Transaction);
+
+    print('Transaction array: ' . "\n");
+    print_r($Transaction->toArray());
+
+    print("\n");
+} else {
+    print('An error occured during charge: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
 }
 
 
-
-// We can issue refunds too... 
-if ($Transaction = $MS->refund($Card, $amount))
-{
-	print('Card refunded $' . $amount . ' dollars!' . "\n");
-	print_r($Transaction);
-}
-else
-{
-	print('An error occured during refund: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
+// We can issue refunds too...
+if ($Transaction = $MS->refund($Card, $amount)) {
+    print('Card refunded $' . $amount . ' dollars!' . "\n");
+    print_r($Transaction);
+} else {
+    print('An error occured during refund: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
 }
 
 /*

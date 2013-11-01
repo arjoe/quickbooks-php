@@ -12,11 +12,11 @@ require_once '../QuickBooks.php';
 // 
 $username = '';
 $password = '';
-$token = '';
-$realmID = 182938192;
+$token    = '';
+$realmID  = 182938192;
 
 // 
-$IPP = new QuickBooks_IPP();
+$IPP     = new QuickBooks_IPP();
 $Context = $IPP->authenticate($username, $password, $token);
 
 $IPP->application($Context, 'bfrccpnge');

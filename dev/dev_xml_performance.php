@@ -12,7 +12,7 @@ ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . '/Users/kpalm
 require_once 'QuickBooks.php';
 
 $start = microtime(true);
-	
+
 $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <foxydata>
 	<transactions>
@@ -371,10 +371,10 @@ $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 	</transactions>
 </foxydata>';
 
-$use_parser = null;			// Auto-detect the best choice
+$use_parser = null; // Auto-detect the best choice
 //$use_parser = QuickBooks_XML::PARSER_BUILTIN;		// Use the built in XML parser
 //$use_parser = QuickBooks_XML::PARSER_SIMPLEXML;		// Use the PHP simpleXML extension
-	
+
 // Create the new object
 $Parser = new QuickBooks_XML_Parser($xml, $use_parser);
 
@@ -385,21 +385,18 @@ print("\n");
 // Parse the XML document
 $errnum = 0;
 $errmsg = '';
-if ($Parser->validate($errnum, $errmsg))
-{
-	// Parse it into a document
-	$Doc = $Parser->parse($errnum, $errmsg);
-		
-	// Get the root node from the document
-	$Root = $Doc->getRoot();
-	
-	$fp = fopen('dev_xml_performance.' . $Parser->backend() . '.txt', 'w+');
-	fwrite($fp, print_r($Root, true));
-	fclose($fp);
-}
-else
-{
-	print('XML validation failed: [' . $errnum . ': ' . $errmsg . ']');
+if ($Parser->validate($errnum, $errmsg)) {
+    // Parse it into a document
+    $Doc = $Parser->parse($errnum, $errmsg);
+
+    // Get the root node from the document
+    $Root = $Doc->getRoot();
+
+    $fp = fopen('dev_xml_performance.' . $Parser->backend() . '.txt', 'w+');
+    fwrite($fp, print_r($Root, true));
+    fclose($fp);
+} else {
+    print('XML validation failed: [' . $errnum . ': ' . $errmsg . ']');
 }
 
 

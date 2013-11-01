@@ -7,7 +7,7 @@
 -- Server version: 5.0.67
 -- PHP Version: 5.2.9
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 
 --
 -- Database: 'quickbooks_import'
@@ -20,23 +20,23 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_customer (
-  ListID varchar(40) NOT NULL,
-  TimeCreated datetime NOT NULL,
-  TimeModified datetime NOT NULL,
-  `Name` varchar(50) NOT NULL,
-  FullName varchar(255) NOT NULL,
-  FirstName varchar(40) NOT NULL,
-  MiddleName varchar(10) NOT NULL,
-  LastName varchar(40) NOT NULL,
-  Contact varchar(50) NOT NULL,
-  ShipAddress_Addr1 varchar(50) NOT NULL,
-  ShipAddress_Addr2 varchar(50) NOT NULL,
-  ShipAddress_City varchar(50) NOT NULL,
-  ShipAddress_State varchar(25) NOT NULL,
-  ShipAddress_Province varchar(25) NOT NULL,
-  ShipAddress_PostalCode varchar(16) NOT NULL,
-  PRIMARY KEY  (ListID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  ListID                 VARCHAR(40)  NOT NULL,
+  TimeCreated            datetime     NOT NULL,
+  TimeModified           datetime     NOT NULL,
+  `NAME ` VARCHAR(50) NOT NULL,
+  FullName               VARCHAR(255) NOT NULL,
+  FirstName              VARCHAR(40)  NOT NULL,
+  MiddleName             VARCHAR(10)  NOT NULL,
+  LastName               VARCHAR(40)  NOT NULL,
+  Contact                VARCHAR(50)  NOT NULL,
+  ShipAddress_Addr1      VARCHAR(50)  NOT NULL,
+  ShipAddress_Addr2      VARCHAR(50)  NOT NULL,
+  ShipAddress_City       VARCHAR(50)  NOT NULL,
+  ShipAddress_State      VARCHAR(25)  NOT NULL,
+  ShipAddress_Province   VARCHAR(25)  NOT NULL,
+  ShipAddress_PostalCode VARCHAR(16)  NOT NULL,
+  PRIMARY KEY (ListID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 -- --------------------------------------------------------
 
 --
@@ -44,21 +44,21 @@ CREATE TABLE IF NOT EXISTS qb_example_customer (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_estimate (
-  TxnID varchar(40) NOT NULL,
-  TimeCreated datetime NOT NULL,
-  TimeModified datetime NOT NULL,
-  RefNumber varchar(16) NOT NULL,
-  Customer_ListID varchar(40) NOT NULL,
-  Customer_FullName varchar(255) NOT NULL,
-  ShipAddress_Addr1 varchar(50) NOT NULL,
-  ShipAddress_Addr2 varchar(50) NOT NULL,
-  ShipAddress_City varchar(50) NOT NULL,
-  ShipAddress_State varchar(25) NOT NULL,
-  ShipAddress_Province varchar(25) NOT NULL,
-  ShipAddress_PostalCode varchar(16) NOT NULL,
-  BalanceRemaining float NOT NULL,
-  PRIMARY KEY  (TxnID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  TxnID                  VARCHAR(40)  NOT NULL,
+  TimeCreated            datetime     NOT NULL,
+  TimeModified           datetime     NOT NULL,
+  RefNumber              VARCHAR(16)  NOT NULL,
+  Customer_ListID        VARCHAR(40)  NOT NULL,
+  Customer_FullName      VARCHAR(255) NOT NULL,
+  ShipAddress_Addr1      VARCHAR(50)  NOT NULL,
+  ShipAddress_Addr2      VARCHAR(50)  NOT NULL,
+  ShipAddress_City       VARCHAR(50)  NOT NULL,
+  ShipAddress_State      VARCHAR(25)  NOT NULL,
+  ShipAddress_Province   VARCHAR(25)  NOT NULL,
+  ShipAddress_PostalCode VARCHAR(16)  NOT NULL,
+  BalanceRemaining       FLOAT        NOT NULL,
+  PRIMARY KEY (TxnID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -67,15 +67,15 @@ CREATE TABLE IF NOT EXISTS qb_example_estimate (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_estimate_lineitem (
-  TxnID varchar(40) NOT NULL,
-  TxnLineID varchar(40) NOT NULL,
-  Item_ListID varchar(40) NOT NULL,
-  Item_FullName varchar(255) NOT NULL,
-  Descrip text NOT NULL,
-  Quantity int(10) unsigned NOT NULL,
-  Rate float NOT NULL,
-  PRIMARY KEY  (TxnID,TxnLineID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  TxnID         VARCHAR(40)  NOT NULL,
+  TxnLineID     VARCHAR(40)  NOT NULL,
+  Item_ListID   VARCHAR(40)  NOT NULL,
+  Item_FullName VARCHAR(255) NOT NULL,
+  Descrip       TEXT         NOT NULL,
+  Quantity      INT (10) unsigned NOT NULL,
+  Rate          FLOAT        NOT NULL,
+  PRIMARY KEY (TxnID, TxnLineID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -84,21 +84,21 @@ CREATE TABLE IF NOT EXISTS qb_example_estimate_lineitem (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_invoice (
-  TxnID varchar(40) NOT NULL,
-  TimeCreated datetime NOT NULL,
-  TimeModified datetime NOT NULL,
-  RefNumber varchar(16) NOT NULL,
-  Customer_ListID varchar(40) NOT NULL,
-  Customer_FullName varchar(255) NOT NULL,
-  ShipAddress_Addr1 varchar(50) NOT NULL,
-  ShipAddress_Addr2 varchar(50) NOT NULL,
-  ShipAddress_City varchar(50) NOT NULL,
-  ShipAddress_State varchar(25) NOT NULL,
-  ShipAddress_Province varchar(25) NOT NULL,
-  ShipAddress_PostalCode varchar(16) NOT NULL,
-  BalanceRemaining float NOT NULL,
-  PRIMARY KEY  (TxnID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  TxnID                  VARCHAR(40)  NOT NULL,
+  TimeCreated            datetime     NOT NULL,
+  TimeModified           datetime     NOT NULL,
+  RefNumber              VARCHAR(16)  NOT NULL,
+  Customer_ListID        VARCHAR(40)  NOT NULL,
+  Customer_FullName      VARCHAR(255) NOT NULL,
+  ShipAddress_Addr1      VARCHAR(50)  NOT NULL,
+  ShipAddress_Addr2      VARCHAR(50)  NOT NULL,
+  ShipAddress_City       VARCHAR(50)  NOT NULL,
+  ShipAddress_State      VARCHAR(25)  NOT NULL,
+  ShipAddress_Province   VARCHAR(25)  NOT NULL,
+  ShipAddress_PostalCode VARCHAR(16)  NOT NULL,
+  BalanceRemaining       FLOAT        NOT NULL,
+  PRIMARY KEY (TxnID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -107,15 +107,15 @@ CREATE TABLE IF NOT EXISTS qb_example_invoice (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_invoice_lineitem (
-  TxnID varchar(40) NOT NULL,
-  TxnLineID varchar(40) NOT NULL,
-  Item_ListID varchar(40) NOT NULL,
-  Item_FullName varchar(255) NOT NULL,
-  Descrip text NOT NULL,
-  Quantity int(10) unsigned NOT NULL,
-  Rate float NOT NULL,
-  PRIMARY KEY  (TxnID,TxnLineID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  TxnID         VARCHAR(40)  NOT NULL,
+  TxnLineID     VARCHAR(40)  NOT NULL,
+  Item_ListID   VARCHAR(40)  NOT NULL,
+  Item_FullName VARCHAR(255) NOT NULL,
+  Descrip       TEXT         NOT NULL,
+  Quantity      INT (10) unsigned NOT NULL,
+  Rate          FLOAT        NOT NULL,
+  PRIMARY KEY (TxnID, TxnLineID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -125,32 +125,32 @@ CREATE TABLE IF NOT EXISTS qb_example_invoice_lineitem (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_item (
-  ListID varchar(40) NOT NULL,
-  TimeCreated datetime NOT NULL,
-  TimeModified datetime NOT NULL,
-  `Name` varchar(50) NOT NULL,
-  FullName varchar(255) NOT NULL,
-  `Type` varchar(40) NOT NULL,
-  Parent_ListID varchar(40) NOT NULL,
-  Parent_FullName varchar(255) NOT NULL,
-  ManufacturerPartNumber varchar(40) NOT NULL,
-  SalesTaxCode_ListID varchar(40) NOT NULL,
-  SalesTaxCode_FullName varchar(255) NOT NULL,
-  BuildPoint varchar(40) NOT NULL,
-  ReorderPoint varchar(40) NOT NULL,
-  QuantityOnHand int(10) unsigned NOT NULL,
-  AverageCost float NOT NULL,
-  QuantityOnOrder int(10) unsigned NOT NULL,
-  QuantityOnSalesOrder int(10) unsigned NOT NULL,
-  TaxRate varchar(40) NOT NULL,
-  SalesPrice float NOT NULL,
-  SalesDesc text NOT NULL,
-  PurchaseCost float NOT NULL,
-  PurchaseDesc text NOT NULL,
-  PrefVendor_ListID varchar(40) NOT NULL,
-  PrefVendor_FullName varchar(255) NOT NULL,
-  PRIMARY KEY  (ListID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  ListID                 VARCHAR(40)  NOT NULL,
+  TimeCreated            datetime     NOT NULL,
+  TimeModified           datetime     NOT NULL,
+  `NAME ` VARCHAR(50) NOT NULL,
+  FullName               VARCHAR(255) NOT NULL,
+  `TYPE ` VARCHAR(40) NOT NULL,
+  Parent_ListID          VARCHAR(40)  NOT NULL,
+  Parent_FullName        VARCHAR(255) NOT NULL,
+  ManufacturerPartNumber VARCHAR(40)  NOT NULL,
+  SalesTaxCode_ListID    VARCHAR(40)  NOT NULL,
+  SalesTaxCode_FullName  VARCHAR(255) NOT NULL,
+  BuildPoint             VARCHAR(40)  NOT NULL,
+  ReorderPoint           VARCHAR(40)  NOT NULL,
+  QuantityOnHand         INT (10) unsigned NOT NULL,
+  AverageCost            FLOAT        NOT NULL,
+  QuantityOnOrder        INT (10) unsigned NOT NULL,
+  QuantityOnSalesOrder   INT (10) unsigned NOT NULL,
+  TaxRate                VARCHAR(40)  NOT NULL,
+  SalesPrice             FLOAT        NOT NULL,
+  SalesDesc              TEXT         NOT NULL,
+  PurchaseCost           FLOAT        NOT NULL,
+  PurchaseDesc           TEXT         NOT NULL,
+  PrefVendor_ListID      VARCHAR(40)  NOT NULL,
+  PrefVendor_FullName    VARCHAR(255) NOT NULL,
+  PRIMARY KEY (ListID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -159,21 +159,21 @@ CREATE TABLE IF NOT EXISTS qb_example_item (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_salesorder (
-  TxnID varchar(40) NOT NULL,
-  TimeCreated datetime NOT NULL,
-  TimeModified datetime NOT NULL,
-  RefNumber varchar(16) NOT NULL,
-  Customer_ListID varchar(40) NOT NULL,
-  Customer_FullName varchar(255) NOT NULL,
-  ShipAddress_Addr1 varchar(50) NOT NULL,
-  ShipAddress_Addr2 varchar(50) NOT NULL,
-  ShipAddress_City varchar(50) NOT NULL,
-  ShipAddress_State varchar(25) NOT NULL,
-  ShipAddress_Province varchar(25) NOT NULL,
-  ShipAddress_PostalCode varchar(16) NOT NULL,
-  BalanceRemaining float NOT NULL,
-  PRIMARY KEY  (TxnID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  TxnID                  VARCHAR(40)  NOT NULL,
+  TimeCreated            datetime     NOT NULL,
+  TimeModified           datetime     NOT NULL,
+  RefNumber              VARCHAR(16)  NOT NULL,
+  Customer_ListID        VARCHAR(40)  NOT NULL,
+  Customer_FullName      VARCHAR(255) NOT NULL,
+  ShipAddress_Addr1      VARCHAR(50)  NOT NULL,
+  ShipAddress_Addr2      VARCHAR(50)  NOT NULL,
+  ShipAddress_City       VARCHAR(50)  NOT NULL,
+  ShipAddress_State      VARCHAR(25)  NOT NULL,
+  ShipAddress_Province   VARCHAR(25)  NOT NULL,
+  ShipAddress_PostalCode VARCHAR(16)  NOT NULL,
+  BalanceRemaining       FLOAT        NOT NULL,
+  PRIMARY KEY (TxnID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;
 
 -- --------------------------------------------------------
 
@@ -182,12 +182,12 @@ CREATE TABLE IF NOT EXISTS qb_example_salesorder (
 --
 
 CREATE TABLE IF NOT EXISTS qb_example_salesorder_lineitem (
-  TxnID varchar(40) NOT NULL,
-  TxnLineID varchar(40) NOT NULL,
-  Item_ListID varchar(40) NOT NULL,
-  Item_FullName varchar(255) NOT NULL,
-  Descrip text NOT NULL,
-  Quantity int(10) unsigned NOT NULL,
-  Rate float NOT NULL,
-  PRIMARY KEY  (TxnID,TxnLineID)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  TxnID         VARCHAR(40)  NOT NULL,
+  TxnLineID     VARCHAR(40)  NOT NULL,
+  Item_ListID   VARCHAR(40)  NOT NULL,
+  Item_FullName VARCHAR(255) NOT NULL,
+  Descrip       TEXT         NOT NULL,
+  Quantity      INT (10) unsigned NOT NULL,
+  Rate          FLOAT        NOT NULL,
+  PRIMARY KEY (TxnID, TxnLineID)
+) ENGINE = MyISAM DEFAULT CHARSET = latin1;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 $xml = '<?xml version="1.0" ?>
 <QBXML>
@@ -111,169 +111,155 @@ $Testme->_processReport($xml);
 
 class Testme
 {
-	public function _processReport($xml)
-	{
-		$col_defs = array();
-		
-		// First, find the column definitions
-		$tmp = $xml;
-		$find = 'ColDesc';
-		while ($inner = Testme::_reportNextXML($tmp, $find))
-		{
-			//print('---------' . "\n");
-			//print($inner);
-			//print("\n" . '-----------' . "\n");
-			
-			$colID = Testme::_reportExtractColID($inner);
-			$type = Testme::_reportExtractColType($inner);
-			
-			$col_defs[$colID] = $type;
-			
-			//print('  colID [' . $colID . ']');
-			//print('  type [' . $type . ']' . "\n");
-			
-			//print("\n\n\n\n");
-		}
-		
-		//print_r($col_defs);
-		
-		$items = array();
-		
-		// Now, find the actual data
-		$tmp = $xml;
-		$find = 'DataRow';
-		while ($inner = Testme::_reportNextXML($tmp, $find))
-		{
-			//print('---------' . "\n");
-			//print($inner);
-			//print("\n" . '-----------' . "\n");
-			
-			$item = array(
-				'FullName' => null, 
-				'Blank' => null, 					// 
-				'ItemDesc' => null, 				// 
-				'ItemVendor' => null, 				// Pref Vendor
-				'ReorderPoint' => null, 			// Reorder Pt
-				'QuantityOnHand' => null, 			// On Hand
-				'SuggestedReorder' => null, 		// Order
-				'QuantityOnOrder' => null, 			// On PO
-				'EarliestReceiptDate' => null, 		// Next Deliv
-				'SalesPerWeek' => null, 			// Sales/Week
-				);
-			
-			$find2 = 'RowData';
-			if ($tag = Testme::_reportNextTag($inner, $find2))
-			{
-				$value = Testme::_reportExtractColValue($tag);
-				
-				$item['FullName'] = $value;
-			}
-				
-			$find3 = 'ColData';
-			while ($tag = Testme::_reportNextTag($inner, $find3))
-			{
-				$colID = Testme::_reportExtractColID($tag);
-				$value = Testme::_reportExtractColValue($tag);
-				
-				//print('[' . $tag . ']' . "\n");
-				//print('	colID: [' . $colID . ']' . "\n");
-				//print('	value: [' . $value . ']' . "\n");
-				
-				//print("\n");
-				
-				if (array_key_exists($colID, $col_defs))
-				{
-					$item[$col_defs[$colID]] = $value;
-				}
-			}
-			
-			$items[] = $item;
-			
-			//print("\n\n\n\n\n");
-		}
-		
-		print_r($items);
-		
-		// UPDATE item SET QuantityOnHand = x WHERE FullName = y, resync = NOW() AND qbsql_resync_datetime = qbsql_modify_timestamp
-		// if (!affected_rows)
-		// 	UPDATE item SET QuantityOnHand = x WHERE FullName = y 		// this was a modified item, so it needs to stay modified
-	}
-	
-	static protected function _reportExtractColID($xml)
-	{
-		$find = 'colID="';
-		if (false !== ($sta = strpos($xml, $find)))
-		{
-			$end = strpos($xml, '"', $sta + strlen($find));
-			
-			return substr($xml, $sta + strlen($find), $end - $sta - strlen($find));
-		}
-		
-		return null;
-	}
-	
-	static protected function _reportExtractColType($xml)
-	{
-		$find = '<ColType>';
-		if (false !== ($sta = strpos($xml, $find)))
-		{
-			$end = strpos($xml, '</ColType>', $sta + strlen($find));
-			
-			return substr($xml, $sta + strlen($find), $end - $sta - strlen($find));
-		}
-		
-		return null;
-	}
-	
-	static protected function _reportExtractColValue($xml)
-	{
-		$find = 'value="';
-		if (false !== ($sta = strpos($xml, $find)))
-		{
-			$end = strpos($xml, '"', $sta + strlen($find));
-			
-			return substr($xml, $sta + strlen($find), $end - $sta - strlen($find));
-		}
-		
-		return null;
-	}
-	
-	static protected function _reportNextTag(&$xml, $find)
-	{
-		if (false !== ($sta = strpos($xml, $find)))
-		{
-			$end = strpos($xml, ' />', $sta);
-			/*if (false === $end)
-			{
-				$end = strpos($xml, '</' . $find);
-			}*/
-			
-			if (false !== $end)
-			{
-				$data = substr($xml, $sta - 1, $end - $sta + 4);
-				
-				$xml = substr($xml, $end + 2);
-				
-				return $data;
-			}
-		}
-		
-		return false;
-	}
-	
-	static protected function _reportNextXML(&$xml, $find)
-	{
-		if (false !== ($sta = strpos($xml, $find)))
-		{
-			$end = strpos($xml, '/' . $find);
-			
-			$data = substr($xml, $sta - 1, $end - $sta + strlen($find) + 3);
-			
-			$xml = substr($xml, $end + strlen($find));
-			
-			return $data;
-		}
-		
-		return false;
-	}
+    public function _processReport($xml)
+    {
+        $col_defs = array();
+
+        // First, find the column definitions
+        $tmp  = $xml;
+        $find = 'ColDesc';
+        while ($inner = Testme::_reportNextXML($tmp, $find)) {
+            //print('---------' . "\n");
+            //print($inner);
+            //print("\n" . '-----------' . "\n");
+
+            $colID = Testme::_reportExtractColID($inner);
+            $type  = Testme::_reportExtractColType($inner);
+
+            $col_defs[$colID] = $type;
+            //print('  colID [' . $colID . ']');
+            //print('  type [' . $type . ']' . "\n");
+
+            //print("\n\n\n\n");
+        }
+
+        //print_r($col_defs);
+
+        $items = array();
+
+        // Now, find the actual data
+        $tmp  = $xml;
+        $find = 'DataRow';
+        while ($inner = Testme::_reportNextXML($tmp, $find)) {
+            //print('---------' . "\n");
+            //print($inner);
+            //print("\n" . '-----------' . "\n");
+
+            $item = array(
+                'FullName'            => null,
+                'Blank'               => null, //
+                'ItemDesc'            => null, //
+                'ItemVendor'          => null, // Pref Vendor
+                'ReorderPoint'        => null, // Reorder Pt
+                'QuantityOnHand'      => null, // On Hand
+                'SuggestedReorder'    => null, // Order
+                'QuantityOnOrder'     => null, // On PO
+                'EarliestReceiptDate' => null, // Next Deliv
+                'SalesPerWeek'        => null, // Sales/Week
+            );
+
+            $find2 = 'RowData';
+            if ($tag = Testme::_reportNextTag($inner, $find2)) {
+                $value = Testme::_reportExtractColValue($tag);
+
+                $item['FullName'] = $value;
+            }
+
+            $find3 = 'ColData';
+            while ($tag = Testme::_reportNextTag($inner, $find3)) {
+                $colID = Testme::_reportExtractColID($tag);
+                $value = Testme::_reportExtractColValue($tag);
+
+                //print('[' . $tag . ']' . "\n");
+                //print('	colID: [' . $colID . ']' . "\n");
+                //print('	value: [' . $value . ']' . "\n");
+
+                //print("\n");
+
+                if (array_key_exists($colID, $col_defs)) {
+                    $item[$col_defs[$colID]] = $value;
+                }
+            }
+
+            $items[] = $item;
+            //print("\n\n\n\n\n");
+        }
+
+        print_r($items);
+        // UPDATE item SET QuantityOnHand = x WHERE FullName = y, resync = NOW() AND qbsql_resync_datetime = qbsql_modify_timestamp
+        // if (!affected_rows)
+        // 	UPDATE item SET QuantityOnHand = x WHERE FullName = y 		// this was a modified item, so it needs to stay modified
+    }
+
+    static protected function _reportExtractColID($xml)
+    {
+        $find = 'colID="';
+        if (false !== ($sta = strpos($xml, $find))) {
+            $end = strpos($xml, '"', $sta + strlen($find));
+
+            return substr($xml, $sta + strlen($find), $end - $sta - strlen($find));
+        }
+
+        return null;
+    }
+
+    static protected function _reportExtractColType($xml)
+    {
+        $find = '<ColType>';
+        if (false !== ($sta = strpos($xml, $find))) {
+            $end = strpos($xml, '</ColType>', $sta + strlen($find));
+
+            return substr($xml, $sta + strlen($find), $end - $sta - strlen($find));
+        }
+
+        return null;
+    }
+
+    static protected function _reportExtractColValue($xml)
+    {
+        $find = 'value="';
+        if (false !== ($sta = strpos($xml, $find))) {
+            $end = strpos($xml, '"', $sta + strlen($find));
+
+            return substr($xml, $sta + strlen($find), $end - $sta - strlen($find));
+        }
+
+        return null;
+    }
+
+    static protected function _reportNextTag(&$xml, $find)
+    {
+        if (false !== ($sta = strpos($xml, $find))) {
+            $end = strpos($xml, ' />', $sta);
+            /*if (false === $end)
+            {
+                $end = strpos($xml, '</' . $find);
+            }*/
+
+            if (false !== $end) {
+                $data = substr($xml, $sta - 1, $end - $sta + 4);
+
+                $xml = substr($xml, $end + 2);
+
+                return $data;
+            }
+        }
+
+        return false;
+    }
+
+    static protected function _reportNextXML(&$xml, $find)
+    {
+        if (false !== ($sta = strpos($xml, $find))) {
+            $end = strpos($xml, '/' . $find);
+
+            $data = substr($xml, $sta - 1, $end - $sta + strlen($find) + 3);
+
+            $xml = substr($xml, $end + strlen($find));
+
+            return $data;
+        }
+
+        return false;
+    }
 }

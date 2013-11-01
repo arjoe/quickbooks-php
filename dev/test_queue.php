@@ -5,13 +5,12 @@ error_reporting(E_ALL | E_STRICT);
 
 require_once '../QuickBooks.php';
 
-$dsn = 'mysqli://root:root@localhost/quickbooks_server';
+$dsn   = 'mysqli://root:root@localhost/quickbooks_server';
 $Queue = new QuickBooks_Queue($dsn);
 
 $Queue->user('quickbooks');
-for ($i = 1; $i <= 3; $i++)
-{
-	$Queue->enqueue(QUICKBOOKS_ADD_CUSTOMER, $i);
+for ($i = 1; $i <= 3; $i++) {
+    $Queue->enqueue(QUICKBOOKS_ADD_CUSTOMER, $i);
 }
 
 print('Current queue size for user: ' . $Queue->user() . ': ' . $Queue->size() . "\n");

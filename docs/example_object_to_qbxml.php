@@ -2,14 +2,14 @@
 
 /**
  * Example of building qbXML requests using the QuickBooks_QBXML_Object_* classes
- * 
- * 
- * 
- * @author Keith Palmer <keith@consolibyte.com>
  *
- * @package QuickBooks
+ *
+ *
+ * @author     Keith Palmer <keith@consolibyte.com>
+ *
+ * @package    QuickBooks
  * @subpackage Documentation
- */ 
+ */
 
 // 
 header('Content-Type: text/plain');
@@ -133,7 +133,7 @@ print($qbxml);
 		</InvoiceLineAdd>
 	</InvoiceAdd>
 </InvoiceAddRq>
-*/ 
+*/
 
 //
 //print_r($Invoice->asList(QUICKBOOKS_ADD_CUSTOMER));

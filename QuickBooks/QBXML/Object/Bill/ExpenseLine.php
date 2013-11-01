@@ -1,14 +1,14 @@
-<?php 
+<?php
 
 /**
- * Check ExpenseLine class for QuickBooks 
- * 
- * @author Keith Palmer Jr. <keith@ConsoliBYTE.com>
- * @license LICENSE.txt
- * 
- * @package QuickBooks
+ * Check ExpenseLine class for QuickBooks
+ *
+ * @author     Keith Palmer Jr. <keith@ConsoliBYTE.com>
+ * @license    LICENSE.txt
+ *
+ * @package    QuickBooks
  * @subpackage Object
- */ 
+ */
 
 /**
  * QuickBooks object base class
@@ -16,263 +16,275 @@
 QuickBooks_Loader::load('/QuickBooks/QBXML/Object.php');
 
 /**
- * 
+ *
  */
 class QuickBooks_QBXML_Object_Bill_ExpenseLine extends QuickBooks_QBXML_Object
 {
-	/**
-	 * Create a new QuickBooks_Object_Check_ExpenseLine object
-	 * 
-	 * @param array $arr
-	 */
-	public function __construct($arr = array())
-	{
-		parent::__construct($arr);
-	}
+    /**
+     * Create a new QuickBooks_Object_Check_ExpenseLine object
+     *
+     * @param array $arr
+     */
+    public function __construct($arr = array())
+    {
+        parent::__construct($arr);
+    }
 
-	// Path: AccountRef ListID, datatype: 
-	
-	/**
-	 * Set the AccountRef ListID for the Check
-	 * 
-	 * @param string $ListID		The ListID of the record to reference
-	 * @return boolean
-	 */
-	public function setAccountListID($ListID)
-	{
-		return $this->set('AccountRef ListID', $ListID);
-	}
+    // Path: AccountRef ListID, datatype:
 
-	/**
-	 * Get the AccountRef ListID for the Check
-	 * 
-	 * @return string
-	 */
-	public function getAccountListID()
-	{
-		return $this->get('AccountRef ListID');
-	}
+    /**
+     * Set the AccountRef ListID for the Check
+     *
+     * @param string $ListID The ListID of the record to reference
+     *
+     * @return boolean
+     */
+    public function setAccountListID($ListID)
+    {
+        return $this->set('AccountRef ListID', $ListID);
+    }
 
-	/**
-	 * Set the primary key for the related record within your own application for the Check
-	 * 
-	 * @param mixed $value			The primary key within your own application
-	 * @return string
-	 */
-	public function setAccountApplicationID($value)
-	{
-		return $this->set('AccountRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_ACCOUNT, QUICKBOOKS_LISTID, $value));
-	}
+    /**
+     * Get the AccountRef ListID for the Check
+     *
+     * @return string
+     */
+    public function getAccountListID()
+    {
+        return $this->get('AccountRef ListID');
+    }
 
-	// Path: AccountRef FullName, datatype: 
-	
-	/**
-	 * Set the AccountRef FullName for the Check
-	 * 
-	 * @param string $FullName		The FullName of the record to reference
-	 * @return boolean
-	 */
-	public function setAccountFullName($FullName)
-	{
-		return $this->set('AccountRef FullName', $FullName);
-	}
+    /**
+     * Set the primary key for the related record within your own application for the Check
+     *
+     * @param mixed $value The primary key within your own application
+     *
+     * @return string
+     */
+    public function setAccountApplicationID($value)
+    {
+        return $this->set('AccountRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_ACCOUNT, QUICKBOOKS_LISTID, $value));
+    }
 
-	/**
-	 * Get the AccountRef FullName for the Check
-	 * 
-	 * @return string
-	 */
-	public function getAccountFullName()
-	{
-		return $this->get('AccountRef FullName');
-	}
+    // Path: AccountRef FullName, datatype:
 
-	// Path: Amount, datatype: 
-	
-	/**
-	 * Set the Amount for the Check
-	 * 
-	 * @param string $value
-	 * @return boolean
-	 */
-	public function setAmount($value)
-	{
-		return $this->set('Amount', $value);
-	}
+    /**
+     * Set the AccountRef FullName for the Check
+     *
+     * @param string $FullName The FullName of the record to reference
+     *
+     * @return boolean
+     */
+    public function setAccountFullName($FullName)
+    {
+        return $this->set('AccountRef FullName', $FullName);
+    }
 
-	/**
-	 * Get the Amount for the Check
-	 * 
-	 * @return string
-	 */
-	public function getAmount()
-	{
-		return $this->get('Amount');
-	}
+    /**
+     * Get the AccountRef FullName for the Check
+     *
+     * @return string
+     */
+    public function getAccountFullName()
+    {
+        return $this->get('AccountRef FullName');
+    }
 
-	// Path: Memo, datatype: STRTYPE
-	
-	/**
-	 * Set the Memo for the Check
-	 * 
-	 * @param string $value
-	 * @return boolean
-	 */
-	public function setMemo($value)
-	{
-		return $this->set('Memo', $value);
-	}
+    // Path: Amount, datatype:
 
-	/**
-	 * Get the Memo for the Check
-	 * 
-	 * @return string
-	 */
-	public function getMemo()
-	{
-		return $this->get('Memo');
-	}
+    /**
+     * Set the Amount for the Check
+     *
+     * @param string $value
+     *
+     * @return boolean
+     */
+    public function setAmount($value)
+    {
+        return $this->set('Amount', $value);
+    }
 
-	// Path: CustomerRef ListID, datatype: 
-	
-	/**
-	 * Set the CustomerRef ListID for the Check
-	 * 
-	 * @param string $ListID		The ListID of the record to reference
-	 * @return boolean
-	 */
-	public function setCustomerListID($ListID)
-	{
-		return $this->set('CustomerRef ListID', $ListID);
-	}
+    /**
+     * Get the Amount for the Check
+     *
+     * @return string
+     */
+    public function getAmount()
+    {
+        return $this->get('Amount');
+    }
 
-	/**
-	 * Get the CustomerRef ListID for the Check
-	 * 
-	 * @return string
-	 */
-	public function getCustomerListID()
-	{
-		return $this->get('CustomerRef ListID');
-	}
+    // Path: Memo, datatype: STRTYPE
 
-	/**
-	 * Set the primary key for the related record within your own application for the Check
-	 * 
-	 * @param mixed $value			The primary key within your own application
-	 * @return string
-	 */
-	public function setCustomerApplicationID($value)
-	{
-		return $this->set('CustomerRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_CUSTOMER, QUICKBOOKS_LISTID, $value));
-	}
+    /**
+     * Set the Memo for the Check
+     *
+     * @param string $value
+     *
+     * @return boolean
+     */
+    public function setMemo($value)
+    {
+        return $this->set('Memo', $value);
+    }
 
-	// Path: CustomerRef FullName, datatype: 
-	
-	/**
-	 * Set the CustomerRef FullName for the Check
-	 * 
-	 * @param string $FullName		The FullName of the record to reference
-	 * @return boolean
-	 */
-	public function setCustomerFullName($FullName)
-	{
-		return $this->set('CustomerRef FullName', $FullName);
-	}
+    /**
+     * Get the Memo for the Check
+     *
+     * @return string
+     */
+    public function getMemo()
+    {
+        return $this->get('Memo');
+    }
 
-	/**
-	 * Get the CustomerRef FullName for the Check
-	 * 
-	 * @return string
-	 */
-	public function getCustomerFullName()
-	{
-		return $this->get('CustomerRef FullName');
-	}
+    // Path: CustomerRef ListID, datatype:
 
-	// Path: ClassRef ListID, datatype: 
-	
-	/**
-	 * Set the ClassRef ListID for the Check
-	 * 
-	 * @param string $ListID		The ListID of the record to reference
-	 * @return boolean
-	 */
-	public function setClassListID($ListID)
-	{
-		return $this->set('ClassRef ListID', $ListID);
-	}
+    /**
+     * Set the CustomerRef ListID for the Check
+     *
+     * @param string $ListID The ListID of the record to reference
+     *
+     * @return boolean
+     */
+    public function setCustomerListID($ListID)
+    {
+        return $this->set('CustomerRef ListID', $ListID);
+    }
 
-	/**
-	 * Get the ClassRef ListID for the Check
-	 * 
-	 * @return string
-	 */
-	public function getClassListID()
-	{
-		return $this->get('ClassRef ListID');
-	}
+    /**
+     * Get the CustomerRef ListID for the Check
+     *
+     * @return string
+     */
+    public function getCustomerListID()
+    {
+        return $this->get('CustomerRef ListID');
+    }
 
-	/**
-	 * Set the primary key for the related record within your own application for the Check
-	 * 
-	 * @param mixed $value			The primary key within your own application
-	 * @return string
-	 */
-	public function setClassApplicationID($value)
-	{
-		return $this->set('ClassRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_CLASS, QUICKBOOKS_LISTID, $value));
-	}
+    /**
+     * Set the primary key for the related record within your own application for the Check
+     *
+     * @param mixed $value The primary key within your own application
+     *
+     * @return string
+     */
+    public function setCustomerApplicationID($value)
+    {
+        return $this->set('CustomerRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_CUSTOMER, QUICKBOOKS_LISTID, $value));
+    }
 
-	// Path: ClassRef FullName, datatype: 
-	
-	/**
-	 * Set the ClassRef FullName for the Check
-	 * 
-	 * @param string $FullName		The FullName of the record to reference
-	 * @return boolean
-	 */
-	public function setClassName($FullName)
-	{
-		return $this->set('ClassRef FullName', $FullName);
-	}
+    // Path: CustomerRef FullName, datatype:
 
-	/**
-	 * Get the ClassRef FullName for the Check
-	 * 
-	 * @return string
-	 */
-	public function getClassName()
-	{
-		return $this->get('ClassRef FullName');
-	}
+    /**
+     * Set the CustomerRef FullName for the Check
+     *
+     * @param string $FullName The FullName of the record to reference
+     *
+     * @return boolean
+     */
+    public function setCustomerFullName($FullName)
+    {
+        return $this->set('CustomerRef FullName', $FullName);
+    }
 
-	// Path: BillableStatus, datatype: 
-	
-	/**
-	 * Set the BillableStatus for the Check
-	 * 
-	 * @param string $value
-	 * @return boolean
-	 */
-	public function setBillableStatus($value)
-	{
-		return $this->set('BillableStatus', $value);
-	}
+    /**
+     * Get the CustomerRef FullName for the Check
+     *
+     * @return string
+     */
+    public function getCustomerFullName()
+    {
+        return $this->get('CustomerRef FullName');
+    }
 
-	/**
-	 * Get the BillableStatus for the Check
-	 * 
-	 * @return string
-	 */
-	public function getBillableStatus()
-	{
-		return $this->get('BillableStatus');
-	}
+    // Path: ClassRef ListID, datatype:
 
-	public function object()
-	{
-		return 'ExpenseLine';
-	}
+    /**
+     * Set the ClassRef ListID for the Check
+     *
+     * @param string $ListID The ListID of the record to reference
+     *
+     * @return boolean
+     */
+    public function setClassListID($ListID)
+    {
+        return $this->set('ClassRef ListID', $ListID);
+    }
+
+    /**
+     * Get the ClassRef ListID for the Check
+     *
+     * @return string
+     */
+    public function getClassListID()
+    {
+        return $this->get('ClassRef ListID');
+    }
+
+    /**
+     * Set the primary key for the related record within your own application for the Check
+     *
+     * @param mixed $value The primary key within your own application
+     *
+     * @return string
+     */
+    public function setClassApplicationID($value)
+    {
+        return $this->set('ClassRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_CLASS, QUICKBOOKS_LISTID, $value));
+    }
+
+    // Path: ClassRef FullName, datatype:
+
+    /**
+     * Set the ClassRef FullName for the Check
+     *
+     * @param string $FullName The FullName of the record to reference
+     *
+     * @return boolean
+     */
+    public function setClassName($FullName)
+    {
+        return $this->set('ClassRef FullName', $FullName);
+    }
+
+    /**
+     * Get the ClassRef FullName for the Check
+     *
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->get('ClassRef FullName');
+    }
+
+    // Path: BillableStatus, datatype:
+
+    /**
+     * Set the BillableStatus for the Check
+     *
+     * @param string $value
+     *
+     * @return boolean
+     */
+    public function setBillableStatus($value)
+    {
+        return $this->set('BillableStatus', $value);
+    }
+
+    /**
+     * Get the BillableStatus for the Check
+     *
+     * @return string
+     */
+    public function getBillableStatus()
+    {
+        return $this->get('BillableStatus');
+    }
+
+    public function object()
+    {
+        return 'ExpenseLine';
+    }
 }
 

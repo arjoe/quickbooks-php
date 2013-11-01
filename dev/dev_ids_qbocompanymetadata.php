@@ -11,9 +11,9 @@ $response = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><CompanyMeta
 
 $xml_errnum = null;
 $xml_errmsg = null;
-$err_code = null;
-$err_desc = null;
-$err_db = null;
+$err_code   = null;
+$err_desc   = null;
+$err_db     = null;
 
 $parsed = $Parser->parseIDS($response, QuickBooks_IPP_IDS::OPTYPE_FINDBYID, $xml_errnum, $xml_errmsg, $err_code, $err_desc, $err_db);
 

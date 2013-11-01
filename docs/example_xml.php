@@ -2,15 +2,15 @@
 
 /**
  * Example XML parsing
- * 
- * I've decided to include a simple XML parser as I've had some 
- * requests/concerns from people who don't have PHP XML support built in or 
- * just didn't care for the PHP simplexml or DOM extensions. In any case, this 
- * might make it easier for some people to parse the result qbXML responses. 
- * 
- * @author Keith Palmer <keith@consolibyte.com>
- * 
- * @package QuickBooks
+ *
+ * I've decided to include a simple XML parser as I've had some
+ * requests/concerns from people who don't have PHP XML support built in or
+ * just didn't care for the PHP simplexml or DOM extensions. In any case, this
+ * might make it easier for some people to parse the result qbXML responses.
+ *
+ * @author     Keith Palmer <keith@consolibyte.com>
+ *
+ * @package    QuickBooks
  * @subpackage Documentation
  */
 
@@ -36,11 +36,11 @@ $xml = '
 			<AnotherTag>Keith</AnotherTag>
 		</NestedTag>
 	</Tag1>';
-	
-$use_parser = null;			// Auto-detect the best choice
+
+$use_parser = null; // Auto-detect the best choice
 //$use_parser = QuickBooks_XML::PARSER_BUILTIN;		// Use the built in XML parser
 //$use_parser = QuickBooks_XML::PARSER_SIMPLEXML;		// Use the PHP simpleXML extension
-	
+
 // Create the new object
 $Parser = new QuickBooks_XML_Parser($xml, $use_parser);
 
@@ -50,27 +50,24 @@ print("\n");
 // Parse the XML document
 $errnum = 0;
 $errmsg = '';
-if ($Parser->validate($errnum, $errmsg))
-{
-	// Parse it into a document
-	$Doc = $Parser->parse($errnum, $errmsg);
-		
-	// Get the root node from the document
-	$Root = $Doc->getRoot();
-	
-	// Now fetch some stuff from the parsed document
-	print('Hello there ' . $Root->getChildDataAt('Tag1 NestedTag AnotherTag') . "\n");
-	
-	print_r($Root->getChildAttributesAt('Tag1 NestedTag'));
-	print("\n");
-	print('Root tag name is: ' . $Root->name() . "\n");
+if ($Parser->validate($errnum, $errmsg)) {
+    // Parse it into a document
+    $Doc = $Parser->parse($errnum, $errmsg);
 
-	$NestedTag = $Root->getChildAt('Tag1 NestedTag');
-	print_r($NestedTag);
-}
-else
-{
-	print('XML validation failed: [' . $errnum . ': ' . $errmsg . ']');
+    // Get the root node from the document
+    $Root = $Doc->getRoot();
+
+    // Now fetch some stuff from the parsed document
+    print('Hello there ' . $Root->getChildDataAt('Tag1 NestedTag AnotherTag') . "\n");
+
+    print_r($Root->getChildAttributesAt('Tag1 NestedTag'));
+    print("\n");
+    print('Root tag name is: ' . $Root->name() . "\n");
+
+    $NestedTag = $Root->getChildAt('Tag1 NestedTag');
+    print_r($NestedTag);
+} else {
+    print('XML validation failed: [' . $errnum . ': ' . $errmsg . ']');
 }
 
 $xml2 = '
@@ -100,23 +97,19 @@ $Parser->load($xml2);
 
 $errnum = 0;
 $errmsg = '';
-if ($Parser->validate($errnum, $errmsg))
-{
-	$Doc = $Parser->parse($errnum, $errmsg);
-	$Root = $Doc->getRoot();
-	
-	$List = $Root->getChildAt('Animals');
-	
-	foreach ($List->children() as $Animal)
-	{
-		$name = $Animal->getChildDataAt('Animal Name');
-		$note = $Animal->getChildDataAt('Animal Note');
-		print("\t" . $name . ' (' . $note . ')' . "\n");
-	}	
-}
-else
-{
-	print('XML validation failed: [' . $errnum . ': ' . $errmsg . ']');
+if ($Parser->validate($errnum, $errmsg)) {
+    $Doc  = $Parser->parse($errnum, $errmsg);
+    $Root = $Doc->getRoot();
+
+    $List = $Root->getChildAt('Animals');
+
+    foreach ($List->children() as $Animal) {
+        $name = $Animal->getChildDataAt('Animal Name');
+        $note = $Animal->getChildDataAt('Animal Note');
+        print("\t" . $name . ' (' . $note . ')' . "\n");
+    }
+} else {
+    print('XML validation failed: [' . $errnum . ': ' . $errmsg . ']');
 }
 
 $value = 'Keith & Shannon went to Kurt\'s store!';
@@ -146,13 +139,10 @@ $xml_cdata = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>
 $errnum = 0;
 $errmsg = '';
 $Parser = new QuickBooks_XML_Parser($xml_cdata);
-if ($Doc = $Parser->parse($errnum, $errmsg))
-{
-	print($Doc->asXML());
-}
-else
-{
-	print('Error: ' . $errnum . ': ' . $errmsg);
+if ($Doc = $Parser->parse($errnum, $errmsg)) {
+    print($Doc->asXML());
+} else {
+    print('Error: ' . $errnum . ': ' . $errmsg);
 }
 
 print("\n");
