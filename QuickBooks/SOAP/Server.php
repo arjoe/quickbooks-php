@@ -76,7 +76,6 @@ class QuickBooks_SOAP_Server
 	public function handle($raw_http_input)
 	{
 		// Determine the method, call the correct handler function 
-		
 		$builtin = QuickBooks_XML::PARSER_BUILTIN;		// The SimpleXML parser has a difference namespace behavior, so force this to use the builtin parser
 		$Parser = new QuickBooks_XML_Parser($raw_http_input, $builtin);
 		
@@ -84,8 +83,6 @@ class QuickBooks_SOAP_Server
 		$errmsg = '';
 		if ($Doc = $Parser->parse($errnum, $errmsg))
 		{
-			//print('parsing...');
-			
 			$Root = $Doc->getRoot();
 			
 			$Body = $Root->getChildAt('SOAP-ENV:Envelope SOAP-ENV:Body');
@@ -109,12 +106,9 @@ class QuickBooks_SOAP_Server
 					$namespace = '';
 					$member = $this->_namespace($Child->name(), $namespace);
 					
-					//$Request->$member = html_entity_decode($Child->data(), ENT_QUOTES);
 					$Request->$member = $Child->data();
 				}
 			}
-			
-			//print('method is: ' . $method . "\n");
 			
 			$Response = null;
 			if (method_exists($this->_class, $method))
@@ -170,9 +164,6 @@ class QuickBooks_SOAP_Server
 		return $full_tag;
 	}
 	
-	/**
-	 * 
-	 */
 	protected function _serialize($vars)
 	{
 		$soap = '';
@@ -202,17 +193,11 @@ class QuickBooks_SOAP_Server
 		return $soap;
 	}
 	
-	/** 
-	 * 
-	 */
 	public function setClass($class, $dsn_or_conn, $map, $onerror, $hooks, $log_level, $raw_http_input, $handler_options, $driver_options, $callback_options)
 	{
 		$this->_class = new $class($dsn_or_conn, $map, $onerror, $hooks, $log_level, $raw_http_input, $handler_options, $driver_options, $callback_options);
 	}
 	
-	/**
-	 * 
-	 */
 	public function getFunctions()
 	{
 		return get_class_methods($this->_class);

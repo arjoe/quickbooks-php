@@ -13,31 +13,55 @@
  * @subpackage Loader
  */
 
-//  
-if (!defined('QUICKBOOKS_LOADER_REQUIREONCE'))
-{
-	define('QUICKBOOKS_LOADER_REQUIREONCE', true);
-}
-
-if (!defined('QUICKBOOKS_LOADER_AUTOLOADER'))
-{
-	define('QUICKBOOKS_LOADER_AUTOLOADER', true);
-}
-
 /**
- * 
+ * Class QuickBooks_Loader
+ *
+ * Provides methods for loading QuickBooks library files and classes.
  */
 class QuickBooks_Loader
 {
-	/**
-	 * 
-	 */
-	static public function load($file, $autoload = true)
+    /**
+     * Indicates whether auto loading should be used.
+     * @var bool
+     */
+    static private $autoLoadEnabled = true;
+
+    /**
+     * Returns the value of the auto load enabled flag
+     *
+     * @return bool true if auto loading is enabled
+     */
+    static public function isAutoLoadEnabled() {
+        return self::$autoLoadEnabled;
+    }
+
+    /**
+     * Changes the value of the auto load enabled flag.
+     *
+     * @param bool  $autoLoadEnabled    The new value of the auto load flag
+     *
+     * @return bool the previous value of auto load enabled flag
+     */
+    static public function setAutoLoadEnabled($autoLoadEnabled) {
+        $previousValue = self::isAutoLoadEnabled();
+
+        self::$autoLoadEnabled = $autoLoadEnabled;
+
+        return $previousValue;
+    }
+
+    /**
+     * Loads the requested file.
+     *
+     * @param string    $file       path of the file to be loaded
+     * @param bool      $autoload   if true, then file is being autoloaded.
+     *
+     * @return bool always true.
+     */
+    static public function load($file, $autoload = true)
 	{
-		//print('loading file [' . $file . ']' . "\n");
-		
-		if ($autoload and 
-			QuickBooks_Loader::_autoload())
+		if ($autoload and
+			self::registerAutoloader())
 		{
 			return true;
 		}
@@ -51,24 +75,19 @@ class QuickBooks_Loader
 		
 		$loaded[$file] = true;
 		
-		if (QUICKBOOKS_LOADER_REQUIREONCE)
-		{
-			require_once QUICKBOOKS_BASEDIR . $file;
-		}
-		else
-		{
-			require QUICKBOOKS_BASEDIR . $file;
-		}
-		
+    	require_once(QUICKBOOKS_BASEDIR . $file);
+
 		return true;
 	}
-	
-	/**
-	 * 
-	 */
-	static protected function _autoload()
+
+    /**
+     * Registers the auto load function for the QuickBooks library.
+     *
+     * @return bool true if successful, false otherwise
+     */
+    static protected function registerAutoloader()
 	{
-		if (!QUICKBOOKS_LOADER_AUTOLOADER)
+		if (self::$autoLoadEnabled)
 		{
 			return false;
 		}
@@ -92,11 +111,13 @@ class QuickBooks_Loader
 		
 		return $auto;
 	}
-	
-	/**
-	 * 
-	 */
-	static public function __autoload($name)
+
+    /**
+     * The autoload handler for the QuickBooks library
+     *
+     * @param string $name  The file to be loaded.
+     */
+    static public function __autoload($name)
 	{
 		if (substr($name, 0, 10) == 'QuickBooks')
 		{
@@ -111,7 +132,16 @@ class QuickBooks_Loader
 	 * @param string $dir
 	 * @return boolean
 	 */
-	static public function import($dir, $autoload = true)
+
+    /**
+     * Load all files in the specified directory.
+     *
+     * @param string    $dir
+     * @param bool      $autoload
+     *
+     * @return bool     true is successful, false otherwise.
+     */
+    static public function import($dir, $autoload = true)
 	{
 		$dh = opendir(QUICKBOOKS_BASEDIR . $dir);
 		if ($dh)
@@ -123,11 +153,11 @@ class QuickBooks_Loader
 					!is_dir(QUICKBOOKS_BASEDIR . $dir . DIRECTORY_SEPARATOR . $file))
 				{
 					QuickBooks_Loader::load($dir . DIRECTORY_SEPARATOR . $file, $autoload);
-					//require_once $dir . '/' . $file;
 				}
 			}
-			
-			return closedir($dh); 
+
+            closedir($dh);
+			return true;
 		}
 		
 		return false;

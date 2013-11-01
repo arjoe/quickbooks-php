@@ -14,11 +14,6 @@
  * @subpackage IPP
  */
 
-/**
- * 
- * 
- *
- */
 abstract class QuickBooks_IPP_Service
 {
 
@@ -45,9 +40,6 @@ abstract class QuickBooks_IPP_Service
 	 */
 	protected $_last_debug;
 	
-	/**
-	 * 
-	 */
 	protected $_flavor;
 	
 	/**
@@ -68,11 +60,7 @@ abstract class QuickBooks_IPP_Service
 	 */
 	protected $_errdetail;
 	
-	/**
-	 * 
-	 * 
-	 */
-	public function __construct()
+	public function __construct($context = null)
 	{
 		$this->_errcode = QuickBooks_IPP::ERROR_OK;
 		
@@ -81,6 +69,7 @@ abstract class QuickBooks_IPP_Service
 		$this->_last_debug = array();
 		
 		$this->_flavor = null;		// auto-detect
+        $this->_context = $context;
 	}
 	
 	public function useIDSParser($Context, $true_or_false)
@@ -94,12 +83,10 @@ abstract class QuickBooks_IPP_Service
 	{
 		$IPP = $Context->IPP();	
 
-		switch ($IPP->version())		
-		{
-			case QuickBooks_IPP_IDS::VERSION_2:
-				return $this->_syncStatus_v2($Context, $realmID, $resource, $IDType);
-				break;
-			return false;
+		if ($IPP->version() == QuickBooks_IPP_IDS::VERSION_2) {
+            return $this->_syncStatus_v2($Context, $realmID, $resource, $IDType);
+        } else {
+            return false;
 		}
 	}
 
@@ -113,11 +100,8 @@ abstract class QuickBooks_IPP_Service
 	<SyncStatusParam>
 		<IdSet>';
 
-		//foreach ($arr as $IDType)
-		//{
-			$parse = QuickBooks_IPP_IDS::parseIDType($IDType);
-			$xml .= '<Id idDomain="' . $parse['domain'] . '">' . $parse['ID'] . '</Id>' . QUICKBOOKS_CRLF;
-		//}
+        $parse = QuickBooks_IPP_IDS::parseIDType($IDType);
+        $xml .= '<Id idDomain="' . $parse['domain'] . '">' . $parse['ID'] . '</Id>' . QUICKBOOKS_CRLF;
 
 		$xml .= '
 		<IdSet>
@@ -179,24 +163,14 @@ abstract class QuickBooks_IPP_Service
 		return null;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	protected function _guessResource($xml, $optype)
 	{
 		$tmp = explode('_', get_class($this));
 		return end($tmp);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public function rawQuery($Context, $realmID, $xml, $resource = null)
 	{
-		$IPP = $Context->IPP();
-		
 		if (!$resource)
 		{
 			$resource = $this->_guessResource($xml, QuickBooks_IPP_IDS::OPTYPE_QUERY);
@@ -247,7 +221,6 @@ abstract class QuickBooks_IPP_Service
 	{
 		
 	}
-	
 	
 	/**
 	 * 
@@ -338,9 +311,10 @@ abstract class QuickBooks_IPP_Service
 	 * Get an IDS object by Name (i.e. get a customer by the QuickBooks Name field)
 	 * 
 	 * @param QuickBooks_IPP_Context $Context
-	 * @param integer $realmID
-	 * @param string $resource
-	 * @param string $xml
+	 * @param integer                $realmID
+	 * @param string                 $resource
+     * @param string                 $name
+	 * @param string                 $xml
 	 * @return QuickBooks_IPP_Object
 	 */
 	protected function _findByName($Context, $realmID, $resource, $name, $xml = '')
@@ -391,8 +365,16 @@ abstract class QuickBooks_IPP_Service
 	 */
 	protected function _add($Context, $realmID, $resource, $Object)
 	{
-		$IPP = $Context->IPP();
-		
+        if ($Context == null) {
+            $Context = $this->_context;
+        }
+
+        $IPP = $Context->IPP();
+
+        if ($realmID == null) {
+            $realmID = $IPP->getRealmId();
+        }
+
 		switch ($IPP->version())
 		{
 			case QuickBooks_IPP_IDS::VERSION_2:
@@ -440,12 +422,6 @@ abstract class QuickBooks_IPP_Service
 	{
 		$IPP = $Context->IPP();
 	
-		// 
-		
-		//$Object->unsetAddress();
-		//$Object->unsetPhone();
-		//$Object->unsetDBAName();
-		
 		$unsets = array(
 			'Id', 
 			'SyncToken', 
@@ -518,6 +494,8 @@ abstract class QuickBooks_IPP_Service
 	 * @param string $realmID
 	 * @param string $resource
 	 * @param object $Object
+     * @param $ID
+     *
 	 * @return boolean
 	 */
 	protected function _update($Context, $realmID, $resource, $Object, $ID)
@@ -526,9 +504,7 @@ abstract class QuickBooks_IPP_Service
 		
 		// Remove crap that we don't want to send to QuickBooks
 		$unsets = array(
-		//	'Id', 
-		//	'SyncToken', 
-			'MetaData', 
+			'MetaData',
 			'ExternalKey', 
 			'Synchronized',
 			'CustomField',  
@@ -555,7 +531,6 @@ abstract class QuickBooks_IPP_Service
 			$xml .= '	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' . QUICKBOOKS_CRLF;
 			$xml .= '	RequestId="' . md5(mt_rand() . microtime()) . '" ' . QUICKBOOKS_CRLF;
 			$xml .= '	xsi:schemaLocation="http://www.intuit.com/sb/cdm/' . $IPP->version() . ' ./RestDataFilter.xsd ">' . QUICKBOOKS_CRLF;
-			//$xml .= '	<OfferingId>ipp</OfferingId>' . QUICKBOOKS_CRLF;
 			$xml .= '	<ExternalRealmId>' . $realmID . '</ExternalRealmId>' . QUICKBOOKS_CRLF;
 			$xml .= '' . $Object->asXML(1, null, QuickBooks_IPP_IDS::OPTYPE_MOD, $IPP->flavor(), $IPP->version());
 			$xml .= '</Mod>';
@@ -811,8 +786,10 @@ abstract class QuickBooks_IPP_Service
 	/**
 	 * Set an error message
 	 * 
-	 * @param integer $errnum	The error number/code
-	 * @param string $errmsg	The text error message
+	 * @param integer   $errcode	The error number/code
+	 * @param string    $errtext	The text error message
+     * @param string    $errdetail
+     *
 	 * @return void
 	 */
 	protected function _setError($errcode, $errtext = '', $errdetail = '')

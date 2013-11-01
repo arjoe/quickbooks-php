@@ -15,26 +15,8 @@
  * @subpackage IPP
  */
 
-/*
-function federator_callback($ticket, $target_url, $auth_id)
-{
-	
-	
-	return TRUE;		// return TRUE to let the Federator instance redirect to $target_url
-	return FALSE;		// return FALSE to handle whatever happens next yourself
-}
-
-if you don't provide a callback function, a default callback will be used 
-which stores the data in the database defined by $dsn, and then forwards 
-the user on to the target URL.
-
-*/
-
 if (!defined('QUICKBOOKS_IPP_FEDERATOR_MAX_SAML_LENGTH'))
 {
-	/**
-	 * 
-	 */
 	define('QUICKBOOKS_IPP_FEDERATOR_MAX_SAML_LENGTH', 8200);
 }
 
@@ -48,17 +30,9 @@ if (!defined('QUICKBOOKS_IPP_FEDERATOR_TEST_KEY'))
 	define('QUICKBOOKS_IPP_FEDERATOR_TEST_KEY', '-----BEGIN RSA PRIVATE KEY-----' . "\n" . 'MIICXgIBAAKBgQDJ44e+mLkoqSeEwy81RajedaZ6UbGsS1LTVFyZp+0S6JTISmoT' . "\n" . 'ZpkuiDsvMxWrYnGQmA/SHUySx41KQWsMd13JjGOVQp569xlu1O/q7/5cPGiUkCb/' . "\n" . 'j+OdBI5KWgsGo6G5KMHEL8FcXNKWsZaldKLObyx5mUeFXYJZIxSIgThGcQIDAQAB' . "\n" . 'AoGBAJnao+BEUxcBkfRDKv7WD1M5JZ2iFFzRKlWSvN78clcul/Prgds3HRWxDCl0' . "\n" . 'LNdnNlSTDbt6SJizKqGkKQhfD0DmzPRC6JW2hXFIbr4xBIHQ4g4sH/v7AphxFk0R' . "\n" . '7zyjfa/kVd7EJgnf1mZubqYm3wu7iEPvUVsZ3p4/3DnshdKBAkEA7IuaQULUnhXt' . "\n" . 'h74xgLLRA6baWRquQtACBPqtENjwqEhSek196/0MXLmRhmTeGGjx3yD6MSSuEtLq' . "\n" . '9jAZwYzaTQJBANp+Pmt03YFY6+MHnkpAvqgRaCFoDBvV9LNP4c484LN+svuuCTJQ' . "\n" . 'kBqBD6Q3yHrprn/zOZNpRtoyfBWMGMFkprUCQG9z6496TLHbxRpjW/G2z1K4KEM5' . "\n" . 'lgf2+CyebDL29JVl1i64Gm+5wDxkVxQKrLa1o9ktMZU8IiTOalTrHweaNTUCQQCx' . "\n" . 'pXVQ3yr98PORmm8bxjp94fE9QCCgPTyA0lEw4xR7PGd/9Eer7g7MTeUOywAo13i2' . "\n" . 'tWY5sZ4W6Hc0+bxi+VgFAkEAk2GLtkjfpdE87HZ1wOUF6Hy2BRiY/ENDPo4oC+00' . "\n" . '07OqlunePjrq/GvJDha6EKkrsdPdBVaPiArLpPZ14HKVkQ==' . "\n" . '-----END RSA PRIVATE KEY-----');
 }
 
-// 
 QuickBooks_Loader::load('/QuickBooks/XML/Parser.php');
-
-// 
 QuickBooks_Loader::load('/QuickBooks/Callbacks.php');
 
-/**
- * 
- * 
- *
- */
 class QuickBooks_IPP_Federator
 {
 	/**
@@ -296,13 +270,20 @@ class QuickBooks_IPP_Federator
 			
 		return false;
 	}
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	public function refreshOAuth($provider, $token, $pem_key, $encryption_key, $app_username, $app_tenant)
+
+    /**
+     * @param $provider
+     * @param $token
+     * @param $pem_key
+     * @param $encryption_key
+     * @param $app_username
+     * @param $app_tenant
+     *
+     * @return bool
+     *
+     * @todo Remove print statements
+     */
+    public function refreshOAuth($provider, $token, $pem_key, $encryption_key, $app_username, $app_tenant)
 	{
 		if (!$this->_driver)
 		{
@@ -319,7 +300,6 @@ class QuickBooks_IPP_Federator
 			if (time() - strtotime($arr['access_datetime']) < QuickBooks_IPP_Federator::TIMEOUT_OAUTH)
 			{
 				// Use the existing tokens
-				
 				print('USING EXISTING TOKEN' . "\n\n");
 				
 				return true;
@@ -327,10 +307,6 @@ class QuickBooks_IPP_Federator
 			else
 			{
 				// Otherwise, fetch a new OAuth token
-				
-				//print('we need to fetch a new token,e xpired!');
-				//print_r($arr);
-				
 				print('REFRESHING TOKEN!' . "\n\n");
 				
 				$connected = $this->connectOAuth($provider, $token, $pem_key, $encryption_key, $app_username, $app_tenant, 
@@ -355,11 +331,15 @@ class QuickBooks_IPP_Federator
 	 * 
 	 * @param string $provider					Your federated provider id (Intuit should have given you this)
 	 * @param string $token						Your application token
-	 * @param string $key						The full path to your .pem file (e.g. /path/to/file.pem)
-	 * @param string $user						The username or user ID of the authenticating user
-	 * @param string $tenant					The tenant ID of the authenticating user
+	 * @param string $pem_key					The full path to your .pem file (e.g. /path/to/file.pem)
+     * @param string $encryption_key
+	 * @param string $app_username				The username or user ID of the authenticating user
+	 * @param string $app_tenant				The tenant ID of the authenticating user
 	 * @param string $auth_id_pseudonym			The Auth ID Pseudonym extracted from the SAML message
 	 * @param string $realm_id_pseudonym		The Realm ID Pseudonym extracted from the SAML message
+     * @param string $realm
+     * @param string $flavor
+     *
 	 * @return boolean
 	 */
 	public function connectOAuth($provider, $token, $pem_key, $encryption_key, $app_username, $app_tenant, $auth_id_pseudonym, $realm_id_pseudonym, $realm, $flavor)
@@ -488,11 +468,8 @@ class QuickBooks_IPP_Federator
 		$this->_log('Incoming SAML request: ' . substr($SAML, 0, 128) . '...');
 		$this->_log($SAML, QUICKBOOKS_LOG_DEBUG);
 		
-		//print("\n\n" . $SAML . "\n\n");
-		// 
 		$private_key = openssl_get_privatekey($private_key_data);
-		//$public_key = openssl_get_publickey($__publicKey);
-		
+
 		$use_backend = QuickBooks_XML_Parser::BACKEND_BUILTIN;
 		$Parser = new QuickBooks_XML_Parser($SAML, $use_backend);
 		if ($Doc = $Parser->parse($errnum, $errmsg))
@@ -507,21 +484,6 @@ class QuickBooks_IPP_Federator
 				$this->_setError(QuickBooks_IPP_Federator::ERROR_INTERNAL, 'Could not extract Auth ID from SAML response.');
 				return false;
 			}
-			
-			/*
-			$AttributeStatement = $Root->getChildAt('samlp:Response saml:Assertion saml:AttributeStatement');
-			
-			foreach ($AttributeStatement->children() as $Node)
-			{
-				if ($Node->name() == 'saml:Attribute')
-				{
-					$Attribute = $Node;
-					
-					print_r($Attribute);
-				}
-			}
-			exit;
-			*/
 			
 			$encrypted_key = $Root->getChildDataAt('samlp:Response saml:Assertion saml:AttributeStatement saml:EncryptedAttribute xenc:EncryptedData ds:KeyInfo xenc:EncryptedKey xenc:CipherData xenc:CipherValue');
 			$this->_log('Encrypted key: [' . $encrypted_key . ']');
@@ -568,22 +530,12 @@ class QuickBooks_IPP_Federator
 			
 			$this->_log('Target URL: [' . $target_url . ']');
 			$this->_log('Realm ID Pseudonym: [' . $realm_id_pseudonym . ']');
-			//exit;
-			
+
 			if (!$target_url)
 			{
 				$this->_setError(QuickBooks_IPP_Federator::ERROR_INTERNAL, 'Could not extract target URL from SAML response.');
 				return false;
 			}
-			
-			/*
-			// Get the signatureValue
-			$node = $xml->xpath('/samlp:Response/saml:Assertion/ds:Signature/ds:SignatureValue');
-			$signatureValue = $node[0];
-			
-			# Get the signed node
-			$signInfo = $xml->xpath('/samlp:Response/saml:Assertion/ds:Signature/ds:SignedInfo');
-			*/
 			
 			// The key and ticket are base64 encoded, decode them
 			$decoded_key = base64_decode($encrypted_key);
@@ -604,11 +556,6 @@ class QuickBooks_IPP_Federator
 			// @todo Swap out for QuickBooks_Encrypt implementation 
 			// Get the key size for decryption
 			$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-			
-			// $decoded_ticket is stored as: 
-			//	16-byte IV  
-			//		CONCAT WITH 
-			// 	XX-byte actual encrypted ticket in XML format 
 			
 			// Get the IV
 			$iv = substr($decoded_ticket, 0, $iv_size);
@@ -712,8 +659,6 @@ class QuickBooks_IPP_Federator
 			$cookie_secure = (boolean) $this->_config['cookie_secure'];
 			$cookie_httponly = (boolean) $this->_config['cookie_httponly'];
 			
-			//print('setting cookie: ' . print_r($this->_config, true));
-			
 			if (QuickBooks_IPP_Federator::setCookie($ticket, $cookie_expire, $cookie_path, $cookie_domain, $cookie_secure, $cookie_httponly))
 			{
 				$redirect = true;
@@ -741,10 +686,6 @@ class QuickBooks_IPP_Federator
 		return true;
 	}
 	
-	/**
-	 * 
-	 *
-	 */
 	static public function setCookie($value, $expire = 0, $path = '/', $domain = '', $secure = null, $httponly = true)
 	{
 		if (is_null($secure))
@@ -752,19 +693,12 @@ class QuickBooks_IPP_Federator
 			$secure = (boolean) isset($_SERVER['HTTPS']);
 		}
 		
-		//$secure = true;		// This is required per IPP security guidelines
-		//$httponly = true;
-		
 		// P3P header to make Internet Exploder set cookies in iFrames
 		header('P3P:CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');
 
 		return setcookie(QuickBooks_IPP::COOKIE, $value, $expire, $path, $domain, $secure, $httponly);
 	}
 	
-	/**
-	 * 
-	 *
-	 */
 	static public function getCookie()
 	{
 		if (isset($_COOKIE[QuickBooks_IPP::COOKIE]))
@@ -791,10 +725,6 @@ class QuickBooks_IPP_Federator
 			$output = array();
 			$return_var = null;
 			exec($command, $output, $return_var);
-			
-			//print("\n\n\n\n-----------------\n");
-			//print_r(implode(PHP_EOL, $output));
-			//print("\n---------------------\n\n\n\n");
 			
 			$this->_log('The segfault_openssl_private_decrypt work-around returned [' . $return_var . ']');
 			

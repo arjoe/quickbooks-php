@@ -185,8 +185,8 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 	/**
 	 * Create a new MySQL back-end driver
 	 * 
-	 * @param string $dsn		A DSN-style connection string (i.e.: "mysql://your-mysql-username:your-mysql-password@your-mysql-host:port/your-mysql-database")
-	 * @param array $config		Configuration options for the driver (not currently supported)
+	 * @param string $dsn_or_conn		A DSN-style connection string (i.e.: "mysql://your-mysql-username:your-mysql-password@your-mysql-host:port/your-mysql-database")
+	 * @param array  $config		    Configuration options for the driver (not currently supported)
 	 */
 	public function __construct($dsn_or_conn, $config)
 	{
@@ -234,15 +234,12 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 	protected function _initialized()
 	{
 		$required = array(
-			//$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_IDENTTABLE) => false, 
-			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) => false, 
+			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) => false,
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_LOGTABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) => false, 
-			//$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_NOTIFYTABLE) => false, 
-			//$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONNECTIONTABLE) => false, 
 			);
 		
 		$errnum = 0;
@@ -344,8 +341,6 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 		
 		if ($this->_schema)
 		{
-			//print('SETTING HERE: [' . $this->_schema . ']');
-			
 			$errnum = 0;
 			$errmsg = null;
 			$this->_query("SET search_path TO " . $this->_escape($this->_schema) . ', public', $errnum, $errmsg);
@@ -355,16 +350,8 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 			// Default to using the 'public' schema
 			$this->_schema = 'public';
 		}
-		
-		//$errnum = 0;
-		//$errmsg = null;
-		//print_r($this->_fetch($this->_query("SHOW search_path", $errnum, $errmsg)));
-		//die('SCHEMA IS: ' . $this->_schema);
 	}
 	
-	/**
-	 * 
-	 */
 	protected function _fields($table)
 	{
 		$list = array();
@@ -391,7 +378,9 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 	/**
 	 * Fetch an array from a database result set
 	 * 
-	 * @param resource $res
+	 * @param resource  $res
+     * @param bool      $print
+     *
 	 * @return array
 	 */
 	protected function _fetch($res, $print = false)
@@ -437,22 +426,18 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 			reset($arr);
 		}
 		
-		/*
-		if ($print)
-		{
-			print('{{');
-			print_r($arr);
-			die('}} OUTPUT STOP');
-		}
-		*/
-		
 		return $arr;
 	}
 	
 	/**
 	 * Query the database
 	 * 
-	 * @param string $sql
+	 * @param string    $sql
+     * @param integer   $errnum
+     * @param string    $errmsg
+     * @param integer   $offset
+     * @param integer   $limit
+     *
 	 * @return resource
 	 */
 	protected function _query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null)
@@ -460,7 +445,6 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 		if (strtoupper(substr(trim($sql), 0, 6)) != 'UPDATE')
 		{
 			// PostgreSQL does not support LIMIT for UPDATE queries
-			
 			if ($limit)
 			{
 				if ($offset)
@@ -478,9 +462,8 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 			}		
 		}
 		
-		// 
 		$boolean_fixes = array(
-			'qbsql_to_skip != 1' => 		' qbsql_to_skip <> TRUE ', 
+			'qbsql_to_skip != 1' => 		' qbsql_to_skip <> TRUE ',
 			'qbsql_to_delete != 1' => 		' qbsql_to_delete <> TRUE ', 
 			'qbsql_to_delete = 1' => 		' qbsql_to_delete = TRUE ', 
 			'qbsql_flag_deleted != 1' => 	' qbsql_flag_deleted <> TRUE ', 
@@ -507,20 +490,7 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 		
 		return $res;
 	}
-	
-	/**
-	 * Issue a query to the SQL server
-	 * 
-	 * @param string $sql
-	 * @param integer $errnum
-	 * @param string $errmsg
-	 * @return resource
-	 */
-	/*public function query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null)
-	{
-		return $this->_query($sql, $errnum, $errmsg, $offset, $limit);
-	}*/
-	
+
 	/**
 	 * Tell the number of rows the last run query affected
 	 * 
@@ -825,36 +795,9 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
 				{
 					$sql .= ' NOT NULL ';
 				}
-				
 
-			/*case QUICKBOOKS_DRIVER_SQL_BOOLEAN:
-				$sql = $name . ' tinyint(1) ';
-				
-				if (isset($def[2]))
-				{
-					if (strtolower($def[2]) == 'null')
-					{
-						$sql .= ' DEFAULT NULL ';
-					}
-					else if ($def[2])
-					{
-						$sql .= ' DEFAULT 1 ';
-					}
-					else
-					{
-						$sql .= ' DEFAULT 0 ';
-					}
-				}
-				
-				return $sql;*/				
             case QUICKBOOKS_DRIVER_SQL_VARCHAR:
 				$sql = '"' . $name . '" VARCHAR';
-				
-				/*if ($name == 'ListID')
-				{
-					print('LIST ID:');
-					print_r($def);
-				}*/
 				
 				if (!empty($def[1]))
 				{
@@ -985,8 +928,10 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
     /**
 	 * Insert a new record into an SQL table
 	 * 
-	 * @param string $table
-	 * @param object $object
+	 * @param string    $table
+	 * @param object    $object
+     * @param bool      $discov_and_resync
+     *
 	 * @return boolean
 	 */
 	public function insert($table, $object, $discov_and_resync = true)

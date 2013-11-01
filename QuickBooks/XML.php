@@ -90,14 +90,8 @@ class QuickBooks_XML
 	 */
 	const ERROR_CONTENT = 6;
 	
-	/**
-	 * 
-	 */
 	const PARSER_BUILTIN = 'builtin';
 	
-	/**
-	 * 
-	 */
 	const PARSER_SIMPLEXML = 'simplexml';
 	
 	/**
@@ -114,6 +108,8 @@ class QuickBooks_XML
 	 * 		), 
 	 * 	);
 	 * </code>
+     *
+     * @var string
 	 */
 	const ARRAY_NOATTRIBUTES = 'no-attrs';
 	
@@ -127,7 +123,8 @@ class QuickBooks_XML
 	 * 		), 
 	 * 	);
 	 * </code>
-	 * 
+	 *
+     * @var string
 	 */
 	const ARRAY_EXPANDATTRIBUTES = 'child-attrs';
 	
@@ -151,6 +148,8 @@ class QuickBooks_XML
 	 * 	), 	
 	 * );
 	 * </code>
+     *
+     * @var string
 	 */
 	const ARRAY_BRANCHED = 'branched';
 	
@@ -161,7 +160,8 @@ class QuickBooks_XML
 	 * 	'Person Name' => 'Keith', 
 	 * 	);
 	 * </code>
-	 * 
+	 *
+     * @var string
 	 */
 	const ARRAY_PATHS = 'paths';
 	
@@ -235,16 +235,6 @@ class QuickBooks_XML
 	// @todo Documentation
 	static public function extractTagAttribute($attribute, $tag_w_attrs, $which = 0)
 	{
-		/*
-		if (false !== ($start = strpos($tag_w_attrs, $attribute . '="')) and 
-			false !== ($end = strpos($tag_w_attrs,  '"', $start + strlen($attribute) + 2)))
-		{
-			return substr($tag_w_attrs, $start + strlen($attribute) + 2, $end - $start - strlen($attribute) - 2);
-		}
-		
-		return null;
-		*/
-		
 		$attr = $attribute;
 		$data = $tag_w_attrs;
 		
@@ -257,9 +247,6 @@ class QuickBooks_XML
 		if (false !== ($spos = strpos($data, $attr . '="')) and 
 			false !== ($epos = strpos($data, '"', $spos + strlen($attr) + 2)))
 		{
-			//print('start: ' . $spos . "\n");
-			//print('end: ' . $epos . "\n");
-			
 			return substr($data, $spos + strlen($attr) + 2, $epos - $spos - strlen($attr) - 2);
 		}
 		
@@ -271,28 +258,17 @@ class QuickBooks_XML
 	 * 
 	 * @todo Holy confusing code Batman!
 	 * 
-	 * @param string $tag_w_attributes
-	 * @param string $tag
-	 * @param array $attributes
-	 * @return void
+	 * @param string $tag_w_attrs
+     * @param bool $return_tag_first
+	 * @return array
 	 */
 	static public function extractTagAttributes($tag_w_attrs, $return_tag_first = false)
 	{
-		$tag = '';
-		$attributes = array();
-		
 		$tag_w_attrs = trim($tag_w_attrs);
 		
-		/*if (substr($tag_w_attrs, -1, 1) == '/')		// condensed empty tag
-		{
-			$tag = trim($tag_w_attrs, '/ ');
-			$attributes = array();
-		}
-		else*/ 
 		if (false !== strpos($tag_w_attrs, ' '))
 		{
 			$tmp = explode(' ', $tag_w_attrs);
-			//$tag = trim(array_shift($tmp), " \n\r\t<>");
 			$tag = trim(array_shift($tmp));
 			
 			$attributes = array();
@@ -315,14 +291,6 @@ class QuickBooks_XML
 					$in_value = false;
 					$expect_value = true;
 				}
-				/*
-				else if ($attrs{$i} == '"' and $expect_value)
-				{
-					$in_value = true;
-					$expect_value = false;
-				}
-				*/
-				/*else if ($attrs{$i} == '"' and $in_value)*/
 				else if (($attrs{$i} == '"' or $attrs{$i} == '\'') and $expect_value)
 				{
 					$in_value = true;
@@ -352,18 +320,6 @@ class QuickBooks_XML
 					$value .= $attrs{$i};
 				}
 			}
-			
-			/*
-			foreach ($tmp as $attribute)
-			{
-				if (false !== ($pos = strpos($attribute, '=')))
-				{
-					$key = trim(substr($attribute, 0, $pos));
-					$value = trim(substr($attribute, $pos + 1), '"');
-					
-					$attributes[$key] = $value;
-				}
-			}*/
 		}
 		else
 		{
@@ -385,8 +341,9 @@ class QuickBooks_XML
 	 *
 	 * @todo Investigate QuickBooks qbXML encoding and implement solution
 	 * 
-	 * @param string $str				The string to encode
-	 * @param boolean $for_qbxml		
+	 * @param string  $str				The string to encode
+	 * @param boolean $for_qbxml
+     * @param bool    $double_encode
 	 * @return string
 	 */
 	static public function encode($str, $for_qbxml = true, $double_encode = true)
@@ -395,8 +352,7 @@ class QuickBooks_XML
 			'&' => '&amp;', 
 			'<' => '&lt;', 
 			'>' => '&gt;', 
-			//'\'' => '&apos;', 
-			'"' => '&quot;', 
+			'"' => '&quot;',
 			);
 		
 		$str = str_replace(array_keys($transform), array_values($transform), $str);

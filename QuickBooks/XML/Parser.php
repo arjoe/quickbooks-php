@@ -76,9 +76,6 @@ QuickBooks_Loader::import('/QuickBooks/XML/Backend');
  */
 class QuickBooks_XML_Parser
 {
-	/**
-	 * 
-	 */
 	protected $_xml;
 	 
 	/**
@@ -87,20 +84,15 @@ class QuickBooks_XML_Parser
 	 */
 	protected $_backend;
 	
-	/**
-	 * 
-	 */
 	const BACKEND_SIMPLEXML = 'simplexml';
 	
-	/**
-	 * 
-	 */
 	const BACKEND_BUILTIN = 'builtin';
 	
 	/**
 	 * Create a new QuickBooks_XML parser object
 	 * 
 	 * @param string $xml_or_file
+     * @param bool   $use_backend
 	 */
 	public function __construct($xml_or_file = null, $use_backend = null)
 	{
@@ -138,7 +130,6 @@ class QuickBooks_XML_Parser
 			get_resource_type($mixed) == 'stream')
 		{
 			$buffer = '';
-			$tmp = '';
 			while ($tmp = fread($mixed, 8192))
 			{
 				$buffer .= $tmp;
@@ -185,9 +176,6 @@ class QuickBooks_XML_Parser
 		return $this->_backend->validate($errnum, $errmsg);
 	}
 	
-	/**
-	 * 
-	 */
 	public function beautify(&$errnum, &$errmsg, $compress_empty_elements = true)
 	{
 		$errnum = 0;

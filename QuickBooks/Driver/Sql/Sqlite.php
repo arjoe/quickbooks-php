@@ -25,24 +25,19 @@
  */
 
 /**
- * Base QuickBooks constants
- */
-require_once 'QuickBooks.php';
-
-/**
  * QuickBooks driver base class
  */
-require_once 'QuickBooks/Driver.php';
+QuickBooks_Loader::load('/QuickBooks/Driver.php');
 
 /**
  * QuickBooks driver SQL base class
  */
-require_once 'QuickBooks/Driver/Sql.php';
+QuickBooks_Loader::load('/QuickBooks/Driver/Sql.php', false);
 
 /**
  * QuickBooks utilities class
  */
-require_once 'QuickBooks/Utilities.php';
+QuickBooks_Loader::load('/QuickBooks/Utilities.php');
 
 if (!defined('QUICKBOOKS_DRIVER_SQL_SQLITE_SALT'))
 {
@@ -186,8 +181,8 @@ class QuickBooks_Driver_Sql_Sqlite extends QuickBooks_Driver_Sql
 	/**
 	 * Create a new SQLite back-end driver
 	 * 
-	 * @param string $dsn		A DSN-style connection string (sqlite:/full/path/to/database.sqlite)
-	 * @param array $config		Configuration options for the driver (not currently supported)
+	 * @param string    $dsn_or_conn		A DSN-style connection string (sqlite:/full/path/to/database.sqlite)
+	 * @param array     $config		        Configuration options for the driver (not currently supported)
 	 */
 	public function __construct($dsn_or_conn, $config)
 	{
@@ -340,7 +335,12 @@ class QuickBooks_Driver_Sql_Sqlite extends QuickBooks_Driver_Sql
 	/**
 	 * Query the database
 	 * 
-	 * @param string $sql
+	 * @param string    $sql
+     * @param integer   $errnum
+     * @param string    $errmsg
+     * @param integer   $offset
+     * @param integer   $limit
+     *
 	 * @return resource
 	 */
 	protected function _query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null)
@@ -386,7 +386,7 @@ class QuickBooks_Driver_Sql_Sqlite extends QuickBooks_Driver_Sql
 	}
 
     /**
-     * Returns a list of fieldnames for the specified table in the database
+     * Returns a list of field names for the specified table in the database
      *
      * @param string $table    The name of the table whose fields are to be retrieved
      *
@@ -408,19 +408,6 @@ class QuickBooks_Driver_Sql_Sqlite extends QuickBooks_Driver_Sql
 		
 		return $list;
 	}
-	
-	/**
-	 * Issue a query to the SQL server
-	 * 
-	 * @param string $sql
-	 * @param integer $errnum
-	 * @param string $errmsg
-	 * @return resource
-	 */
-	/*public function query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null)
-	{
-		return $this->_query($sql, $errnum, $errmsg, $offset, $limit);
-	}*/
 	
 	/**
 	 * Returns the number of rows affected by the most recent query.
@@ -639,36 +626,6 @@ class QuickBooks_Driver_Sql_Sqlite extends QuickBooks_Driver_Sql
 		{
 			$primary = current($primary);
 		}
-		
-		/*
-		if (is_array($primary))
-		{
-			//ALTER TABLE  `quickbooks_ident` ADD PRIMARY KEY (  `qb_action` ,  `unique_id` )
-			$arr_sql[] = 'ALTER TABLE ' . $name . ' ADD PRIMARY KEY ( ' . implode(', ', $primary) . ' ) ';
-		}
-		else if ($primary)
-		{
-			$arr_sql[] = 'ALTER TABLE ' . $name . ' ADD PRIMARY KEY(' . $primary . '); ';
-			
-			if ($arr[$primary][0] == QUICKBOOKS_DRIVER_SQL_SERIAL)
-			{
-				// add the auto-increment
-				$arr_sql[] = 'ALTER TABLE ' . $name . ' CHANGE ' . $primary . ' ' . $primary . ' INT(10) UNSIGNED NOT NULL AUTO_INCREMENT;';
-			}
-		}
-		
-		foreach ($keys as $key)
-		{
-			if (is_array($key))		// compound key
-			{
-				$arr_sql[] = 'ALTER TABLE ' . $name . ' ADD INDEX(' . implode(', ', $key) . ');';
-			}
-			else
-			{
-				$arr_sql[] = 'ALTER TABLE ' . $name . ' ADD INDEX(' . $key . ');';
-			}
-		}
-		*/
 		
 		return $arr_sql;
 	}

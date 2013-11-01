@@ -21,15 +21,6 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_WebConnector_Request_ServerVersion extends QuickBooks_WebConnector_Request
 {
-	public function __construct()
-	{
-		
-	}
 }

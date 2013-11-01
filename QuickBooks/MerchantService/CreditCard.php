@@ -16,11 +16,7 @@
  * @subpackage MerchantService 
  */
 
-/**
- * 
- * 
- */
-class QuickBooks_MerchantService_CreditCard 
+class QuickBooks_MerchantService_CreditCard
 {
 	protected $_name;
 	protected $_number;
@@ -35,11 +31,15 @@ class QuickBooks_MerchantService_CreditCard
 	protected $_restaurant;
 	
 	/**
-	 * Create a new credit card object
+	 * Initializes a new instance of the {@link QuickBooks_MerchantService_CreditCard} class.
 	 * 
-	 * @param string $name		The name on the credit card
-	 * @param string $number	The credit card number
-	 * @param 
+	 * @param string  $name		The name on the credit card
+	 * @param string  $number	The credit card number
+     * @param         $expyear
+     * @param         $expmonth
+     * @param string  $address
+     * @param string  $postalcode
+     * @param integer $cvv
 	 */
 	public function __construct($name, $number, $expyear, $expmonth, $address = null, $postalcode = null, $cvv = null)
 	{

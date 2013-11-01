@@ -16,9 +16,6 @@
  * @subpackage Adapter
  */
 
-/**
- * 
- */
 interface QuickBooks_Adapter_Client
 {
 	public function __construct($endpoint, $wsdl = QUICKBOOKS_WSDL, $trace = true);

@@ -10,14 +10,8 @@
  * @subpackage QBXML
  */
 
-/**
- * 
- */
 QuickBooks_Loader::load('/QuickBooks/XML.php');
 
-/**
- * 
- */
 class QuickBooks_QBXML_Schema_Generator
 {
 	protected $_xml;
@@ -28,16 +22,18 @@ class QuickBooks_QBXML_Schema_Generator
 		
 		$this->_xml = $xml;
 	}
-	
-	public function saveAll($dir)
+
+    /**
+     * @param $dir
+     *
+     * @todo Remove print statements
+     */
+    public function saveAll($dir)
 	{
 		$Parser = new QuickBooks_XML($this->_xml);
 		
 		$arr_actions_adds = QuickBooks_Utilities::listActions('*Add', false);
 		$arr_actions_mods = QuickBooks_Utilities::listActions('*Mod', false);
-		
-		//print_r($arr_actions_mods);
-		//exit;
 		
 		$i = 0;
 		
@@ -52,27 +48,14 @@ class QuickBooks_QBXML_Schema_Generator
 			{
 				print('Action name is: ' . $Action->name() . "\n");
 				
-				//if ($Action->name() != 'VendorAddRq')
-				//{
-				//	continue;
-				//}
-				
-				//print_r($Action);
-				
 				$section = $this->_extractSectionForTag($this->_xml, $Action->name());
-				
-				//print($section);
 				
 				$wrapper = '';
 				if ($Action->hasChildren())
 				{
 					$first = $Action->getChild(0);
 					
-					//print_r($first);
-					
-					
-					
-					if (in_array($first->name(), $arr_actions_mods) or 
+					if (in_array($first->name(), $arr_actions_mods) or
 						in_array($first->name(), $arr_actions_adds))
 					{
 						$wrapper = $first->name();
@@ -81,8 +64,6 @@ class QuickBooks_QBXML_Schema_Generator
 					}
 				}
 				
-				//exit;
-				
 				$paths_datatype = array();
 				$paths_maxlength = array();
 				$paths_isoptional = array();
@@ -90,7 +71,6 @@ class QuickBooks_QBXML_Schema_Generator
 				$paths_isrepeatable = array();
 				$paths_reorder = array();
 				
-				//$curdepth = 0;
 				$lastdepth = 0;
 				$paths = $Action->asArray(QUICKBOOKS_XML_ARRAY_PATHS);
 				foreach ($paths as $path => $datatype)
@@ -99,11 +79,8 @@ class QuickBooks_QBXML_Schema_Generator
 					$tag = end($tmp);
 					
 					$comment = $this->_extractCommentForTag($section, $tag);
-					//print("\t{" . $path . '} => ' . $datatype . ' (' . $comment . ')' . "\n");
 					$parse = $this->_parseComment($comment);
-					//print_r($parse);
-					//print("\n");
-					
+
 					$path = trim(substr($path, strlen($Action->name())));
 					
 					if (strlen($wrapper) and 
@@ -131,13 +108,6 @@ class QuickBooks_QBXML_Schema_Generator
 					
 					$paths_reorder[] = $path;
 				}
-				
-				//print(var_export($paths_datatype));
-				//print(var_export($paths_maxlength));
-				//print(var_export($paths_isoptional));
-				//print(var_export($paths_sinceversion));
-				//print(var_export($paths_isrepeatable));
-				//print(var_export($paths_reorder));
 				
 				$contents = file_get_contents('/home/asdg/QuickBooks/QBXML/Schema/Object/Template.php');
 				
@@ -228,4 +198,3 @@ class QuickBooks_QBXML_Schema_Generator
 	}
 }
 
-?>

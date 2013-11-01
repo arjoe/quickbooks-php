@@ -33,6 +33,7 @@ class QuickBooks_Adapter_Server_Builtin implements QuickBooks_Adapter_Server
 {
 	/**
 	 * QuickBooks_SOAP_Server built-in SOAP server instance
+     * @var QuickBooks_SOAP_Server
 	 */
 	protected $_server;
 	
@@ -58,21 +59,11 @@ class QuickBooks_Adapter_Server_Builtin implements QuickBooks_Adapter_Server
 		return $this->_server->handle($raw_http_input);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function setClass($class, $dsn_or_conn, $map, $onerror, $hooks, $log_level, $raw_http_input, $handler_options, $driver_options, $callback_options)
 	{
 		return $this->_server->setClass($class, $dsn_or_conn, $map, $onerror, $hooks, $log_level, $raw_http_input, $handler_options, $driver_options, $callback_options);
 	}
 	
-	/** 
-	 * 
-	 * 
-	 * 
-	 */
 	public function getFunctions()
 	{
 		return $this->_server->getFunctions();

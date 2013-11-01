@@ -33,13 +33,12 @@ class QuickBooks_WebConnector_Result_Debug extends QuickBooks_WebConnector_Resul
 	 */
 	public $debug;
 	
-	/**
-	 * Create a new result object
-	 * 
-	 * @param string $ticket	The ticket of the new login session
-	 * @param string $status	The status of the new login session (blank, a company file path, or "nvu" for an invalid login)
-	 */
-	public function __construct($debug)
+    /**
+     * Initializes a new instance of the {@link QuickBooks_WebConnector_Result_Debug} class.
+     *
+     * @param $debug
+     */
+    public function __construct($debug)
 	{
 		$this->debug = $debug;
 	}

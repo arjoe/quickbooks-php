@@ -38,16 +38,22 @@ abstract class QuickBooks_QBXML_Object
 {
 	/**
 	 * QuickBooks XML parser option - preserve empty XML elements
+     *
+     * @var int
 	 */
 	const XML_PRESERVE = QuickBooks_XML::XML_PRESERVE;
 	
 	/**
 	 * QuickBooks XML parser option - drop empty XML elements
+     *
+     * @var int
 	 */
 	const XML_DROP = QuickBooks_XML::XML_DROP;
 	
 	/**
 	 * QuickBooks XML parser option - compress /> empty XML elements
+     *
+     * @var int
 	 */
 	const XML_COMPRESS = QuickBooks_XML::XML_COMPRESS;
 
@@ -59,7 +65,7 @@ abstract class QuickBooks_QBXML_Object
 	protected $_object = array();
 	
 	/**
-	 * Create a new instance of this QuickBooks class
+	 * Initializes a new instance of the {@link QuickBooks_QBXML_Object} class.
 	 * 
 	 * @param array $arr
 	 */
@@ -127,6 +133,8 @@ abstract class QuickBooks_QBXML_Object
 	 * 
 	 * @param string $key
 	 * @param string $value
+     * @param bool   $cast
+     *
 	 * @return boolean
 	 */
 	public function set($key, $value, $cast = true)
@@ -137,15 +145,11 @@ abstract class QuickBooks_QBXML_Object
 		}
 		else
 		{
-			//print('set(' . $key . ', ' . $value . ', ' . $cast . ')' . "\n");
-			
 			if ($cast)
 			{
 				$value = QuickBooks_Cast::cast($this->object(), $key, $value);
 			}
-			
-			//print('	setting [' . $key . '] to value {' . $value . '}' . "\n");
-			
+
 			$this->_object[$key] = $value;
 		}
 		
@@ -270,15 +274,11 @@ abstract class QuickBooks_QBXML_Object
 	 */
 	public function setBooleanType($key, $value)
 	{
-		//print('setting BooleanType [' . $key . '] to ' . $value . "\n");
-		
 		if ($value == 'true' or $value === 1 or $value === true)
 		{
-			//print("\t" . ' set to TRUE' . "\n");
 			return $this->set($key, 'true');
 		}
 		
-		//print("\t" . ' set to FALSE' . "\n");
 		return $this->set($key, 'false');
 	}
 	
@@ -315,7 +315,9 @@ abstract class QuickBooks_QBXML_Object
 	 * Set a date 
 	 * 
 	 * @param string $key		The key for where to store the date
-	 * @param mixed $date		The date value (accepts anything www.php.net/strtotime can convert or unix timestamps)
+	 * @param string $date		The date value (accepts anything www.php.net/strtotime can convert or unix timestamps)
+     * @param bool   $dont_allow_19691231
+     *
 	 * @return boolean
 	 */
 	public function setDateType($key, $date, $dont_allow_19691231 = true)
@@ -332,7 +334,6 @@ abstract class QuickBooks_QBXML_Object
 		}
 		
 		// 1228241458		vs.		19830102
-		//if (ereg('^[[:digit:]]+$', $date) and strlen($date) > 8)
 		if (ctype_digit($date) and strlen($date) > 8)
 		{
 			// It's a unix timestamp (seconds since unix epoch, conver to string)
@@ -414,10 +415,6 @@ abstract class QuickBooks_QBXML_Object
 		return null;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public function addListItem($key, $obj)
 	{
 		$list = $this->getList($key);
@@ -427,9 +424,6 @@ abstract class QuickBooks_QBXML_Object
 		return $this->set($key, $list);
 	}
 	
-	/**
-	 * 
-	 */
 	public function getList($key)
 	{
 		$list = $this->get($key, array());
@@ -442,9 +436,6 @@ abstract class QuickBooks_QBXML_Object
 		return $list;
 	}
 	
-	/**
-	 * 
-	 */
 	public function getArray($pattern, $defaults = array(), $defaults_if_empty = true)
 	{
 		$list = array();
@@ -511,7 +502,8 @@ abstract class QuickBooks_QBXML_Object
 	 * Convert this QuickBooks object to an XML node object representation
 	 * 
 	 * @param string $root			The node to use as the root node of the XML node structure
-	 * @param string $parent		
+	 * @param string $parent
+     * @param $object
 	 * @return QuickBooks_XML_Node
 	 */
 	public function asXML($root = null, $parent = null, $object = null)
@@ -536,9 +528,6 @@ abstract class QuickBooks_QBXML_Object
 				
 				foreach ($value as $sub)
 				{
-					//print('printing sub' . "\n");
-					//print_r($sub);
-					//print($sub->asXML());
 					$Node->addChildAt($root, $sub->asXML(null, $root));
 				}
 			}
@@ -547,8 +536,6 @@ abstract class QuickBooks_QBXML_Object
 				$Node->setChildDataAt($root . ' ' . $key, $value, true);
 			}
 		}
-		
-		//print_r($Node);
 		
 		return $Node;
 	}
@@ -567,13 +554,14 @@ abstract class QuickBooks_QBXML_Object
 	 * Convert this object to a valid qbXML request/response
 	 * 
 	 * @todo Support for qbXML versions
-	 * 
-	 * @param boolean $compress_empty_elements
-	 * @param string $indent
-	 * @param string $root
+	 *
+     * @param $request
+     * @param $version
+     * @param string $locale
+     * @param string $root
+     *
 	 * @return string
 	 */
-	//public function asQBXML($request, $todo_for_empty_elements = QUICKBOOKS_XML_XML_DROP, $indent = "\t", $root = null)
 	public function asQBXML($request, $version = null, $locale = null, $root = null)
 	{
 		$todo_for_empty_elements = QuickBooks_XML::XML_DROP;
@@ -582,7 +570,6 @@ abstract class QuickBooks_QBXML_Object
 		// Call any cleanup routines
 		$this->_cleanup();
 		
-		// 
 		if (strtolower(substr($request, -2, 2)) != 'rq')
 		{
 			$request .= 'Rq';
@@ -604,7 +591,6 @@ abstract class QuickBooks_QBXML_Object
 			if ($locale)
 			{
 				// List of fields which are not supported for some versions of qbXML
-				
 				if (strlen($locale) == 2)
 				{
 					// The OSR lists locales as 'QBOE', 'QBUK', 'QBCA', etc. vs. our QUICKBOOKS_LOCALE_* constants of just 'OE', 'UK', 'CA', etc.
@@ -639,12 +625,7 @@ abstract class QuickBooks_QBXML_Object
 							if ($locale and 
 								isset($locales[$subpath]))
 							{
-								if (in_array($locale, $locales[$subpath]))
-								{
-									// 
-									//print('found: ' . $subpath . ' (' . $locale . ') so skipping!' . "\n");
-								}
-								else
+								if (!in_array($locale, $locales[$subpath]))
 								{
 									$subpath = substr($subpath, strlen($path) + 1);
 									$tmp2[$subpath] = $arr->get($subpath);									
@@ -681,11 +662,7 @@ abstract class QuickBooks_QBXML_Object
 					{
 						// Check to see if it's supported by the given locale
 						
-						if (in_array($locale, $locales[$path]))
-						{
-							// It's not supported by this locale, don't show add it
-						}
-						else
+						if (!in_array($locale, $locales[$path]))
 						{
 							$tmp[$path] = $this->_object[$path];
 						}
@@ -693,7 +670,6 @@ abstract class QuickBooks_QBXML_Object
 					else
 					{
 						// If we don't know whether or not it's supported, return it!
-							
 						$tmp[$path] = $this->_object[$path];
 					}
 				}
@@ -732,30 +708,13 @@ abstract class QuickBooks_QBXML_Object
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function asList($request)
 	{
 		$arr = $this->_object;
-		$object = $this->object();
-		
-		/*
-		foreach ($arr as $key => $value)
-		{
-			$arr[$key] = QuickBooks_Cast::cast($object, $key, $value);
-		}
-		*/
-		
+
 		return $arr;
 	}
 
-	/**
-	 * 
-	 * 
-	 */
 	static protected function _fromXMLHelper($class, $XML)
 	{
 		if (is_object($XML))
@@ -809,10 +768,9 @@ abstract class QuickBooks_QBXML_Object
 			$type = $exceptions[$type];
 		}
 		
-		//print('trying to create type: {' . $type . '}' . "\n");
-		
 		$class = 'QuickBooks_QBXML_Object_' . ucfirst(strtolower($type));
-		
+
+        // @todo Investigate if(true)
 		if (true) 		//class_exists($class, false))
 		{
 			$Object = QuickBooks_QBXML_Object::_fromXMLHelper($class, $XML);

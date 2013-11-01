@@ -26,11 +26,6 @@ class QuickBooks_IPP_Service_BillPayment extends QuickBooks_IPP_Service
 		return parent::_findAll($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_BILLPAYMENT, $xml);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function findById($Context, $realmID, $ID, $domain = null)
 	{
 		$xml = null;

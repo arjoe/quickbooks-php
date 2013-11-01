@@ -21,19 +21,27 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_WebConnector_Request_ReceiveResponseXML extends QuickBooks_WebConnector_Request
 {
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $ticket;
-	
-	public $hresult;
-	
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     * @todo figure out what this field actually is
+     */
+    public $hresult;
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $message;
-	
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $response;
 	
 	public function __construct($ticket = null, $response = null, $hresult = null, $message = null)
@@ -43,4 +51,21 @@ class QuickBooks_WebConnector_Request_ReceiveResponseXML extends QuickBooks_WebC
 		$this->hresult = $hresult;
 		$this->message = $message;
 	}
+
+    public function getHResult() {
+        return $this->hresult;
+    }
+
+    public function getMessage() {
+        return $this->message;
+    }
+
+    public function getResponse() {
+        return $this->response;
+    }
+
+    public function getTicket() {
+        return $this->ticket;
+    }
+
 }

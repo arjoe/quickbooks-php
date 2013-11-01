@@ -78,19 +78,7 @@ class QuickBooks_SQL_Schema
 			QuickBooks_SQL_Schema::_transform('', $qbxml, $tables);
 		}
 		
-		/*
-		while (count($subtables) > 0)
-		{
-			$node = array_shift($subtables);
-			
-			$subsubtables = array();
-			$tables[] = QuickBooks_SQL_Schema::_transform('', $node, $subsubtables);
-			
-			$subtables = array_merge($subtables, $subsubtables);
-		}
-		*/
-		
-		// The code below tries to guess as a good set of indexes to use for 
+		// The code below tries to guess as a good set of indexes to use for
 		//	any database tables we've generated from the schema. The code looks 
 		//	at all of the fields in the table and if any of them are *ListID or 
 		//	*TxnID it makes them indexes. 
@@ -185,9 +173,6 @@ class QuickBooks_SQL_Schema
 				}
 			}
 			
-			//print_r($indexes);
-			//print_r($uniques);
-			
 			$tables[$table][3] = $indexes;
 			$tables[$table][4] = $uniques;
 		}
@@ -201,7 +186,7 @@ class QuickBooks_SQL_Schema
 	 * @param string $curpath
 	 * @param QuickBooks_XML_Node $node
 	 * @param array $tables
-	 * @return 
+	 * @return bool
 	 */
 	static protected function _transform($curpath, $node, &$tables)
 	{
@@ -218,18 +203,6 @@ class QuickBooks_SQL_Schema
 		{
 			$table = $sql[0];
 			$field = $sql[1];
-			
-			/*
-			if (!$sql[0] or !$sql[1])
-			{
-				print('		table for node: ' . $sql[0] . "\n");
-				print('		field for node: ' . $sql[1] . "\n");
-			}
-			else
-			{
-				print("\n");
-			}
-			*/
 			
 			if ($table)
 			{
@@ -277,12 +250,6 @@ class QuickBooks_SQL_Schema
 		return QuickBooks_Utilities::fnmatch($pattern, $str);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 	static public function mapIndexes($table)
 	{
 		
@@ -296,6 +263,8 @@ class QuickBooks_SQL_Schema
 	 * @param string $path_or_tablefield
 	 * @param string $mode
 	 * @param mixed $map					In SCHEMA_MAP_TO_SQL mode, this is set to a tuple containing the SQL table and SQL field name, in SQL_MAP_TO_SCHEMA mode this is set to the XML path
+     * @param array $options
+     *
 	 * @return void
 	 */
 	static public function mapPrimaryKey($path_or_tablefield, $mode, &$map, $options = array())
@@ -496,7 +465,6 @@ class QuickBooks_SQL_Schema
 			{
 				if (substr($path_or_tablefield, -3, 3) != 'Ret')
 				{
-					//$path_or_tablefield = substr($path_or_tablefield, 0, -3);
 					$path_or_tablefield .= 'Ret';
 					
 					if (isset($xml_to_sql[$path_or_tablefield]))
@@ -523,9 +491,12 @@ class QuickBooks_SQL_Schema
 	/**
 	 * Map an XML node path to an SQL table/field OR map an SQL table/field to an XML node path
 	 * 
-	 * @param string $path			The XML path *or* 
-	 * @param char $mode
-	 * @param array $map
+	 * @param string $path_or_tablefield			The XML path *or*
+	 * @param string $mode
+	 * @param array  $map
+     * @param        $others
+     * @param array  $options
+     *
 	 * @return void
 	 */
 	static public function mapToSchema($path_or_tablefield, $mode, &$map, &$others, $options = array())
@@ -2351,7 +2322,6 @@ class QuickBooks_SQL_Schema
 			$map = array( null, null );		// default map
 			
 			// @todo Can we break out of this big loop early to improve performance? 
-			
 			foreach ($xml_to_sql as $pattern => $table_and_field)
 			{
 				if (substr_count($pattern, ' ') == $spaces and 		// check path depth
@@ -2365,26 +2335,6 @@ class QuickBooks_SQL_Schema
 							{
 								$xml = explode(' ', $path); 
 								$match = $xml[$kpart];
-								
-								/*
-								if ($options['uppercase_tables'])
-								{
-									$table_and_field[0] = strtoupper($table_and_field[0]);
-								}
-								else if ($options['lowercase_tables'])
-								{
-									$table_and_field[0] = strtolower($table_and_field[0]);
-								}
-								
-								if ($options['uppercase_fields'])
-								{
-									$table_and_field[1] = strtoupper($table_and_field[1]);
-								}
-								else if ($options['lowercase_fields'])
-								{
-									$table_and_field[1] = strtolower($table_and_field[1]);
-								}
-								*/
 								
 								$map = array(
 									$table_and_field[0], 
@@ -2416,9 +2366,6 @@ class QuickBooks_SQL_Schema
 					break;
 				}
 			}
-			
-			//print_r($map);
-			//print_r($others);
 		}
 		else		// mode = QUICKBOOKS_SQL_SCHEMA_MAP_TO_XML		map the SQL schema back to QuickBooks qbXML tags
 		{
@@ -2453,8 +2400,6 @@ class QuickBooks_SQL_Schema
 						}
 						else
 						{
-							//print('matched ' . $tablefield . ' to ' . $path . ' (' . $pattern . ') ' . "\n");
-							
 							$pos = strpos($pattern, '*');
 							$field = substr($tablefield, $pos);
 							
@@ -2526,8 +2471,6 @@ class QuickBooks_SQL_Schema
 	 */
 	static public function mapFieldToSQLDefinition($object_type, $field, $qb_type)
 	{
-		// array( type, length, default )
-		
 		static $overrides = array(
 			'billpaymentcheck' => array(
 				'istobeprinted' => array( null, null, 'null' ), 
@@ -2728,9 +2671,6 @@ class QuickBooks_SQL_Schema
 			case 'STRTYPE':
 			default:
 				
-				//print('casting: ' . $object_type . "\n");
-				//print('field: ' . $field . "\n");
-				
 				$x = str_repeat('x', 10000);
 				$length = strlen(QuickBooks_Cast::cast($object_type, $field, $x));
 				
@@ -2770,30 +2710,6 @@ class QuickBooks_SQL_Schema
 				break;
 		}
 			
-		// Overrides for mappings that couldn't be done automatically 
-		/*switch ($object_type)
-		{
-			case 'invoice':
-				switch ($field)
-				{
-					default:
-						break;
-				}
-			default:
-				
-				switch ($field)
-				{
-					case 'isactive':
-						$default = true;
-						break;
-					default:
-						
-						break;
-				}
-				
-				break;
-		}*/
-		
 		// @TODO -- Keith, is this a good way to accomplish converting all txnid/listid fields to varchar? ~Garrett
 		if (stripos($field, 'listid') !== false or stripos($field, 'txnid') !== false)
 		{

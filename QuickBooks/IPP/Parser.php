@@ -15,19 +15,10 @@
  * @subpackage IPP
  */
 
-// 
 QuickBooks_Loader::load('/QuickBooks/IPP/Object.php');
-
-// 
 QuickBooks_Loader::load('/QuickBooks/XML.php');
-
-// 
 QuickBooks_Loader::load('/QuickBooks/XML/Parser.php');
 
-/**
- * 
- * 
- */
 class QuickBooks_IPP_Parser
 {
 	public function __construct()
@@ -39,8 +30,6 @@ class QuickBooks_IPP_Parser
 	{
 		// Massage it... *sigh*
 		$xml = $this->_massageQBOXML($xml);
-	
-		//print($xml);
 	
 		$Parser = new QuickBooks_XML_Parser($xml);
 		
@@ -54,8 +43,6 @@ class QuickBooks_IPP_Parser
 		if ($Doc = $Parser->parse($errnum, $errmsg))
 		{
 			$Root = $Doc->getRoot();
-			
-			//print_r($Root);
 			
 			switch ($method)
 			{
@@ -233,13 +220,6 @@ class QuickBooks_IPP_Parser
 				 ), $xml);
 		}
 		
-		/*
-		if ($optype == QuickBooks_IPP_IDS::OPTYPE_ADD or $optype == QuickBooks_IPP_IDS::OPTYPE_MOD)
-		{
-			//$xml = '<RestResponse>' . $xml . '</RestResponse>';
-		}
-		*/
-		
 		return $xml;
 	}
 	
@@ -352,23 +332,13 @@ class QuickBooks_IPP_Parser
 					break;
 				case QuickBooks_IPP_IDS::OPTYPE_QUERY:		// Parse a QUERY type response
 				case QuickBooks_IPP_IDS::OPTYPE_FINDBYID:
-				
-					//print_r($List);
-					//exit;
-					
-					//print_r($Root);
-					//exit;
-					
 					// Stupid QuickBooks Online... *sigh*
 					if ($optype == QuickBooks_IPP_IDS::OPTYPE_FINDBYID and 
-						$flavor == QuickBooks_IPP_IDS::FLAVOR_ONLINE) //$Root->name() == 'CompanyMetaData')
+						$flavor == QuickBooks_IPP_IDS::FLAVOR_ONLINE)
 					{
 						$List = new QuickBooks_XML_Node(__CLASS__ . '__line_' . __LINE__);
 						$List->addChild($Root);
 					}
-					
-					//print_r($List);
-					//exit;
 					
 					//  Normal parsing of query results
 					$list = array();
@@ -389,24 +359,21 @@ class QuickBooks_IPP_Parser
 					break;
 				case QuickBooks_IPP_IDS::OPTYPE_ADD:	// Parse an ADD type response
 				case QuickBooks_IPP_IDS::OPTYPE_MOD:
-					
-					//print("\n\n\n" . 'response was: ' . $List->name() . "\n\n\n");
-					
-					//print_r('list name [' . $List->name() . ']');
-					
 					switch ($List->name())
 					{
 						case 'Id':		// This is what QuickBooks Online, IDS v2 does
 							
 							return QuickBooks_IPP_IDS::buildIDType($List->getAttribute('idDomain'), $List->data());
-						case 'Error':
+
+                        case 'Error':
 							
 							$err_code = $List->getChildDataAt('Error ErrorCode');
 							$err_desc = $List->getChildDataAt('Error ErrorDesc');
 							$err_db = $List->getChildDataAt('Error DBErrorCode');
 							
 							return false;
-						case 'Success':
+
+                        case 'Success':
 							
 							$checks = array(
 								'Success PartyRoleRef Id', 	// QuickBooks desktop, IDS v2
@@ -429,9 +396,9 @@ class QuickBooks_IPP_Parser
 							$err_db = '';
 							
 							return false;
+
 						default:
-							
-							// This should never happen unless Keith neglected 
+							// This should never happen unless Keith neglected
 							//	to implement some part of the IPP/IDS spec
 							$err_code = QuickBooks_IPP::ERROR_INTERNAL;
 							$err_desc = 'The parseIDS() method could not understand node [' . $List->name() . '] in response: ' . $xml;
@@ -439,9 +406,10 @@ class QuickBooks_IPP_Parser
 							
 							return false;
 					}
-					
-					break;
-				default:
+
+                    break;
+
+                default:
 					
 					$err_code = QuickBooks_IPP::ERROR_INTERNAL;
 					$err_desc = 'The parseIDS() method could not understand the specified optype: [' . $optype . ']';
@@ -490,22 +458,6 @@ class QuickBooks_IPP_Parser
 			{
 				$Object->{'add' . $name}($data);
 			}
-			
-			/*else
-			{
-				if ($data == 'false')
-				{
-					$Object->{'set' . $name}(false);
-				}
-				else if ($data == 'true')
-				{
-					$Object->{'set' . $name}(true);
-				}
-				else
-				{
-					$Object->{'set' . $name}($data);
-				}
-			}*/		
 		}
 	}
 

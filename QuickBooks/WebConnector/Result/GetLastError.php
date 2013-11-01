@@ -36,7 +36,7 @@ class QuickBooks_WebConnector_Result_GetLastError extends QuickBooks_WebConnecto
 	/**
 	 * Create a new result object
 	 * 
-	 * @param string $resp 		A message describing the last error that occured
+	 * @param string $result 		A message describing the last error that occured
 	 */
 	public function __construct($result)
 	{

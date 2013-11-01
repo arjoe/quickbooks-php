@@ -21,16 +21,26 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- */
 class QuickBooks_WebConnector_Request_ClientVersion extends QuickBooks_WebConnector_Request
 {
+    /**
+     * @var string
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     */
 	public $strVersion;
 	
 	public function __construct($version = null)
 	{
 		$this->strVersion = $version;
 	}
+
+    /**
+     * Gets the client version
+     *
+     * @return string
+     */
+    public function getVersion() {
+        return $this->strVersion;
+    }
 }
 

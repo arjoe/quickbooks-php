@@ -15,8 +15,6 @@
 
 /**
  * XML parser interface
- * 
- * 
  */
 interface QuickBooks_XML_Backend
 {

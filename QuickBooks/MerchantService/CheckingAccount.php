@@ -16,10 +16,6 @@
  * @subpackage MerchantService 
  */
 
-/**
- * 
- * 
- */
 class QuickBooks_MerchantService_CheckingAccount
 {
 	const INFO_PERSONAL = 'personal';
@@ -38,9 +34,15 @@ class QuickBooks_MerchantService_CheckingAccount
 	protected $_phone;
 	
 	/**
-	 * Create a new checking account object
+	 * Initializes a new instance of the {@link QuickBooks_MerchantService_CheckingAccount} class.
 	 * 
-	 * @param 
+	 * @param string $routing
+     * @param string $account
+     * @param string $info
+     * @param string $type
+     * @param string $first_name
+     * @param string $last_name
+     * @param string $phone
 	 */
 	public function __construct($routing, $account, $info, $type, $first_name, $last_name, $phone)
 	{

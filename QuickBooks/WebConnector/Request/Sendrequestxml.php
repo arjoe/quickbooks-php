@@ -21,23 +21,36 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_WebConnector_Request_SendRequestXML extends QuickBooks_WebConnector_Request
 {
-	public $ticket;
-	
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
+    public $ticket;
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $strHCPResponse;
-	
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $strCompanyFileName;
-	
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $qbXMLCountry;
-	
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $qbXMLMajorVers;
-	
+
+    /**
+     * @deprecated Will become protected in next release.  Use accessor methods.
+     */
 	public $qbXMLMinorVers;
 	
 	public function __construct($ticket = null, $hcpresponse = null, $companyfile = null, $country = null, $majorversion = null, $minorversion = null)
@@ -49,4 +62,28 @@ class QuickBooks_WebConnector_Request_SendRequestXML extends QuickBooks_WebConne
 		$this->qbXMLMajorVers = (int) $majorversion;
 		$this->qbXMLMinorVers = (int) $minorversion;
 	}
+
+    public function getCompanyFilename() {
+        return $this->strCompanyFileName;
+    }
+
+    public function getHcpResponse() {
+        return $this->strHCPResponse;
+    }
+
+    public function getQbXmlCountry() {
+        return $this->qbXMLCountry;
+    }
+
+    public function getQbXmlMajorVersion() {
+        return $this->qbXMLMajorVers;
+    }
+
+    public function getQbXmlMinorVersion() {
+        return $this->qbXMLMinorVers;
+    }
+
+    public function getTicket() {
+        return $this->ticket;
+    }
 }

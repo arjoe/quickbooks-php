@@ -16,7 +16,6 @@
  * @subpackage IPP
  */
 
-
 QuickBooks_Loader::load('/QuickBooks/IPP/Service.php');
 
 class QuickBooks_IPP_Service_Item extends QuickBooks_IPP_Service
@@ -35,9 +34,11 @@ class QuickBooks_IPP_Service_Item extends QuickBooks_IPP_Service
 	/**
 	 * Find an item by name 
 	 *
-	 * @param unknown_type $Context
-	 * @param unknown_type $realmID
-	 * @param unknown_type $name
+	 * @param QuickBooks_IPP_Context $Context
+	 * @param string                 $realmID
+	 * @param string                 $name
+     *
+     * @return QuickBooks_IPP_Object
 	 */
 	public function findByName($Context, $realmID, $name)
 	{

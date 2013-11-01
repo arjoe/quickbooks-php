@@ -16,9 +16,6 @@
  * @subpackage Encryption
  */
 
-/** 
- * 
- */
 QuickBooks_Loader::load('/QuickBooks/Encryption.php');
 
 define('CRYPT_ENGINE_BUILTIN', 'builtin');

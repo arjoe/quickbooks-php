@@ -16,16 +16,8 @@
  * @subpackage Driver
  */
  
-/**
- * 
- */
 QuickBooks_Loader::load('/QuickBooks/Utilities.php');
  
-/**
- * 
- * 
- *
- */
 class QuickBooks_Driver_Factory
 {
 	/**
@@ -76,9 +68,6 @@ class QuickBooks_Driver_Factory
 			$class = 'QuickBooks_Driver_' . $scheme;
 			$file = '/QuickBooks/Driver/' . str_replace(' ', '/', ucwords(str_replace('_', ' ', strtolower($scheme)))) . '.php';
 			
-			//print('class: ' . $class . "\n");
-			//print('file: ' . $file . "\n");
-			
 			QuickBooks_Loader::load($file);
 			
 			if (class_exists($class))
@@ -86,20 +75,6 @@ class QuickBooks_Driver_Factory
 				$Driver = new $class($dsn_or_conn, $config);
 				$Driver->registerHooks($hooks);
 				$Driver->setLogLevel($log_level);
-				
-				/*
-				static $static = 0;
-				$static++;
-				print('Constructed new instance ' . $static . ' [' . $key . ']' . "\n");
-				mysql_query("INSERT INTO quickbooks_log ( msg, log_datetime ) VALUES ( 'Here is my " . $static . " key: " . $key . "', NOW() )");
-				//print_r($hooks);
-				*/
-				
-				// @todo Ugh this is really ugly... maybe have $log_level passed in as a parameter? Not really a driver option at all?
-				//if (isset($config['log_level']))
-				//{
-				//	$driver->setLogLevel($config['log_level']);
-				//}
 				
 				$instances[$key] = $Driver;
 			}

@@ -33,8 +33,10 @@ class QuickBooks_WebConnector_Queue_Singleton
 	 * 
 	 * @param string $dsn
 	 * @param string $user
-	 * @param string $config
-	 * @return QuickBooks_Queue
+	 * @param array  $config
+     * @param bool   $return_boolean
+     *
+	 * @return \QuickBooks_Queue|bool
 	 */
 	static public function initialize($dsn = null, $user = null, $config = array(), $return_boolean = true)
 	{

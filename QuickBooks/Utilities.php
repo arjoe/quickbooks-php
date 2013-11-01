@@ -31,8 +31,9 @@ class QuickBooks_Utilities
 	 * Parse a DSN style connection string 
 	 * 
 	 * @param string $dsn		The DSN connection string
+     * @param array #defaults
 	 * @param string $part		If you want just a specific part of the string, choose which part here: scheme, host, port, user, pass, query, fragment
-	 * @return mixed 			An array or a string, depending on if you wanted the whole thing parsed or just a piece of it 
+	 * @return array|string		An array or a string, depending on if you wanted the whole thing parsed or just a piece of it
 	 */
 	static public function parseDSN($dsn, $defaults = array(), $part = null)
 	{
@@ -69,7 +70,7 @@ class QuickBooks_Utilities
 	}
 	
 	/**
-	 * Mask certain sensitive data from occuring in output/logs 
+	 * Mask certain sensitive data from occurring in output/logs
 	 * 
 	 * @param string $message
 	 * @returns string
@@ -129,33 +130,6 @@ class QuickBooks_Utilities
 	}
 	
 	/**
-	 * 
-	 *                1        2       3
-	 *               -3       -2      -1
-	 * domainParts('tools.consolibyte.com');
-	 *                0        1       2
-	 * 
-	 */
-	/*static public function domainParts($domain, $part = null)
-	{
-		$tmp = explode('.', $domain);
-		
-		$part = (int) $part;
-		if ($part > 0 and 
-			isset($tmp[$part - 1]))
-		{
-			return $tmp[$part - 1];
-		}
-		else if ($part < 0 and 
-			isset($tmp[count($tmp) + $part]))
-		{
-			return $tmp[count($tmp) + $part];
-		}
-		
-		return $tmp;
-	}*/
-
-	/**
 	 * Extract the requestID attribute from an XML stream
 	 * 
 	 * @param string $xml	The XML stream to look for a requestID attribute in
@@ -163,11 +137,7 @@ class QuickBooks_Utilities
 	 */
 	static public function extractRequestID($xml)
 	{
-		$look = array(
-			
-			);
-		
-		if (false !== ($start = strpos($xml, ' requestID="')) and 
+		if (false !== ($start = strpos($xml, ' requestID="')) and
 			false !== ($end = strpos($xml, '"', $start + 12)))
 		{
 			return substr($xml, $start + 12, $end - $start - 12);
@@ -225,24 +195,27 @@ class QuickBooks_Utilities
 	 * @param array $config			An array of configuration options for the driver
 	 * @param array $hooks			An array mapping hooks to user-defined hook functions to call
 	 * @param integer $log_level	
-	 * @return object				A class instance, a child class of QuickBooks_Driver
+	 * @return QuickBooks_Driver				A class instance, a child class of QuickBooks_Driver
 	 */	
 	static public function driverFactory($dsn_or_conn, $config = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
 	{
 		return QuickBooks_Driver_Factory::create($dsn_or_conn, $config, $hooks, $log_level);
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param string $module
-	 * @param string $key
-	 * @param mixed $value
-	 * @param string $type
-	 * @param array $opts
-	 * @return boolean
-	 */
-	static public function configWrite($dsn, $user, $module, $key, $value, $type = null, $opts = null)
+    /**
+     * Saves the configuration to the database.
+     *
+     * @param string     $dsn
+     * @param      $user
+     * @param      $module
+     * @param      $key
+     * @param      $value
+     * @param null $type
+     * @param null $opts
+     *
+     * @return bool
+     */
+    static public function configWrite($dsn, $user, $module, $key, $value, $type = null, $opts = null)
 	{
 		if ($Driver = QuickBooks_Utilities::driverFactory($dsn))
 		{
@@ -252,16 +225,19 @@ class QuickBooks_Utilities
 		return false;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param string $module
-	 * @param string $key
-	 * @param string $type
-	 * @param array $opts
-	 * @return mixed
-	 */
-	static public function configRead($dsn, $user, $module, $key, &$type, &$opts)
+    /**
+     * Read configuration from the database
+     *
+     * @param string $dsn
+     * @param $user
+     * @param $module
+     * @param $key
+     * @param $type
+     * @param $opts
+     *
+     * @return bool
+     */
+    static public function configRead($dsn, $user, $module, $key, &$type, &$opts)
 	{
 		if ($Driver = QuickBooks_Utilities::driverFactory($dsn))
 		{
@@ -349,8 +325,8 @@ class QuickBooks_Utilities
 	 * Check if a given remote address (IP address) is allowed based on allow and deny arrays
 	 * 
 	 * @param string $remoteaddr
-	 * @param array $allow
-	 * @param array $deny
+	 * @param array $arr_allow
+	 * @param array $arr_deny
 	 * @return boolean
 	 */	
 	static public function checkRemoteAddress($remoteaddr, $arr_allow, $arr_deny)
@@ -477,6 +453,7 @@ class QuickBooks_Utilities
 	 * @param string $object_type
 	 * @param string $TxnID_or_ListID
 	 * @param string $app_ID
+     * @param string $editsequence
 	 * @return boolean
 	 */
 	public static function createMapping($dsn, $user, $object_type, $TxnID_or_ListID, $app_ID, $editsequence = '')
@@ -503,9 +480,6 @@ class QuickBooks_Utilities
 		return $Driver->identToApplication($user, $object_type, $TxnID_or_ListID, $extra);
 	}
 	
-	/**
-	 * 
-	 */
 	public static function hasApplicationID($dsn, $user, $object_type, $TxnID_or_ListID)
 	{
 		if (QuickBooks_Utilities::fetchApplicationID($dsn, $user, $object_type, $TxnID_or_ListID))
@@ -517,7 +491,9 @@ class QuickBooks_Utilities
 	}
 	
 	/**
-	 * 
+	 *
+     * @param string $dsn
+     * @param object $user
 	 * @param string $object_type	A QuickBooks object-type constant, i.e.: QUICKBOOKS_OBJECT_CUSTOMER, QUICKBOOKS_OBJECT_INVOICE, etc. 
 	 * @param mixed $webapp_ID		The unique ID or PRIMARY KEY of the object within your application
 	 * @return string				A QuickBooks TxnID or ListID
@@ -531,11 +507,6 @@ class QuickBooks_Utilities
 		return $Driver->identToQuickBooks($user, $object_type, $webapp_ID, $editseq, $extra);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function fetchQuickBooksEditSequence($dsn, $user, $object_type, $webapp_ID)
 	{
 		$Driver = QuickBooks_Utilities::driverFactory($dsn);
@@ -584,7 +555,9 @@ class QuickBooks_Utilities
 	 * tries to automatically create the mapping when you add or update an 
 	 * object and provide a PRIMARY KEY when calling the ->add* or ->update* 
 	 * method.  
-	 * 
+	 *
+     * @param string $dsn
+     * @param $user
 	 * @param string $object_type
 	 * @param mixed $app_ID
 	 * @return boolean
@@ -604,9 +577,11 @@ class QuickBooks_Utilities
 	 * 
 	 * Initialization should only be done once, and is used to take care of 
 	 * things like creating the database schema, etc.
-	 * 
+	 *
 	 * @param string $dsn				A DSN-style connection string
 	 * @param array $driver_options
+     * @param array $init_options
+     *
 	 * @return boolean
 	 */
 	static public function initialize($dsn, $driver_options = array(), $init_options = array())
@@ -630,10 +605,6 @@ class QuickBooks_Utilities
 		return $Driver->initialized();
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	static public function date($date = null)
 	{
 		if ($date)
@@ -649,13 +620,15 @@ class QuickBooks_Utilities
 		
 		return date('Y-m-d');
 	}
-	
-	/**
-	 *
-	 *
-	 * @return string
-	 */
-	static public function datetime($datetime = null)
+
+    /**
+     * Returns a correctly formatted date and time as a string
+     *
+     * @param integer $datetime
+     *
+     * @return string
+     */
+    static public function datetime($datetime = null)
 	{
 		if ($datetime)
 		{
@@ -768,7 +741,6 @@ class QuickBooks_Utilities
 		
 		if (isset($cache[$action]))
 		{
-			//print('returning cached [' . $action . ']' . "\n");
 			return $cache[$action];
 		}
 		
@@ -779,7 +751,6 @@ class QuickBooks_Utilities
 			if (QuickBooks_Utilities::fnmatch('*' . $type . '*', $action))
 			{
 				$cache[$action] = $type;
-				//print('returning [' . $action . '] => ' . $type . "\n");
 				return $type;
 			}
 		}
@@ -1142,32 +1113,6 @@ class QuickBooks_Utilities
 			
 		$constants = array();
 		
-		//$inter_key = 'QUICKBOOKS_INTERACTIVE_MODE';
-		//$inter_val = QUICKBOOKS_INTERACTIVE_MODE;
-		/*
-		if (is_null($filter))
-		{
-			if ($return_keys)
-			{
-				$constants[] = $inter_key;
-			}
-			else
-			{
-				$constants[] = $inter_val;
-			}
-		}
-		*/
-		/*
-		else if ($return_keys and QuickBooks_Utilities::fnmatch($filter, $inter_key))
-		{
-			$constants[] = $inter_key;
-		}
-		else if (!$return_keys and QuickBooks_Utilities::fnmatch($filter, $inter_val))
-		{
-			$constants[] = $inter_val;
-		}
-		*/
-			
 		foreach (get_defined_constants() as $constant => $value)
 		{
 			foreach ($startswith as $start)
@@ -1295,8 +1240,9 @@ class QuickBooks_Utilities
 	/**
 	 * Converts an action to an XML Element (example: "CustomerAdd" to "CustomerRet")
 	 * 
-	 * @param string $action
+	 * @param string $object
 	 * @return string
+     * @todo Should this be the object or string?
 	 */
 	static public function objectToXMLElement($object)
 	{
@@ -1345,7 +1291,7 @@ class QuickBooks_Utilities
 		
 		
 	/**
-	 * Converts an actrion to the corresponding Query Action
+	 * Converts an action to the corresponding Query Action
 	 * Ex: Customer to CustomerQuery
 	 */
 	static public function convertActionToQuery($action)
@@ -1361,101 +1307,5 @@ class QuickBooks_Utilities
 	{
 		return QuickBooks_Utilities::objectToMod(QuickBooks_Utilities::actionToObject($action));
 	}
-		
-	/**
-	 * Converts a MySQL timestamp value to the timezone of the PHP server this script is running on.
-	 * 
-	 * @deprecated This need to be removed and moved to a driver class!
-	 * 
-	 * Expects $datetime in the formation of "YYYY-MM-DD HH:MM:SS"
-	 * 
-	 * @TODO Double check that a lack of a Driver Instance properly returns false.
-	 * @TODO Investigate possible bug if within a few hours of daylight savings change.
-	 * @TODO This should *not* be in the QuickBooks_Utilties class, any database queries that arn't abstracted need to be in QuickBooks/Driver/Sql/your-sql-file-here.php
-	 */
-	/*static public function mysqlTZToPHPTZ($datetime)
-	{
-		$Driver = QuickBooks_Driver_Singleton::getInstance();
-			
-		$sql = " SELECT UTC_TIME() AS theUtcTime, CURTIME() AS theCurTime ";
-		$res = $Driver->query($sql, $errnum, $errmsg);
-			
-		if (!$res)
-		{
-			return false;
-		}
-			
-		if (!($arr = $Driver->fetch($res)))
-		{
-			return false;
-		}
-			
-		// get the time bits: 
-		$utcTime = explode(":", $arr['theUtcTime']); 
-		$curTime = explode(":", $arr['theCurTime']); 
-		
-		// create unix timestamps for each
-		// since we're calculating a relative time only: 
-		$utc_t = mktime($utcTime[0], $utcTime[1], $utcTime[2]); 
-		$cur_t = mktime($curTime[0], $curTime[1], $curTime[2]); 
-			
-		$mysqlOffset = ($cur_t - $utc_t);
-			
-		$phpOffset = (int) date('Z');
-			
-		//mail("grgisme@gmail.com","Offsets","MysqlOffset: ".($mysqlOffset)."\n\n\nPHPOffset: ".$phpOffset);
-			
-		$timezoneDiff = $mysqlOffset - $phpOffset;
-			
-		$tempTime = explode(" ", $datetime);
-			
-		if (count($tempTime) != 2)//Improper input
-		{
-			return FALSE;
-		}
-			
-		$mysqlTime = explode(":", $tempTime[1]);
-			
-		$mysql_t = mktime($mysqlTime[0], $mysqlTime[1], $mysqlTime[2]);
-			
-		$newMysqlTime = $mysql_t - $timezoneDiff;
-			
-		//mail("grgisme@gmail.com","TimeZone Diff","TimeZone Diff: ".($timezoneDiff));
-			
-		return $tempTime[0]." ".date("H:i:s", $newMysqlTime);
-		
-	}*/
-	
-	/**
-	 * Compares a time reported from QuickBooks to a mysql datetime field
-	 * Ex: QB Time: 2009-01-23T08:33:56-05:00
-	 *     SQL Time: 2009-01-23 08:31:11
-	 * 
-	 * @deprecated This needs to be moved to a driver class!
-	 * 
-	 * Returns -1 if QB Time is Smaller
-	 * Returns 0 if Times are Equal
-	 * Returns 1 if QB Time is Greater
-	 * Returns FALSE on Error
-	 */
-	/*static public function compareQBTimeToSQLTime($QBTime, $SQLTime)
-	{
-		$SQLTime = QuickBooks_Utilities::mysqlTZToPHPTZ($SQLTime);
-			
-		$tempTime = explode(" ", $SQLTime);
-		$mysqlTime = explode(":", $tempTime[1]);
-		$tempTime = explode("-", $tempTime[0]);
-			
-		$mysql_t = mktime($mysqlTime[0], $mysqlTime[1], $mysqlTime[2], $tempTime[1], $tempTime[2], $tempTime[0], 0);
-		$QBTime = strtotime($QBTime);
-			
-		//mail("grgisme@gmail.com","QBTime","QBTime: ".($QBTime)."\n\n\nSQLTime: ".$mysql_t."\n\n\n".$SQLTime."\n\n\nDaylight Savings?: ".date('I'));
-			
-		if ($QBTime < $mysql_t)
-			return -1;
-		elseif($QBTime > $mysql_t)
-			return 1;
-		else
-			return 0;
-	}*/
 }
+

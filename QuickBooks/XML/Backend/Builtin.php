@@ -44,11 +44,8 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 		}
 		
 		// Remove <![CDATA[ sections
-		$has_cdata = false;
 		while (false !== strpos($xml, '<![CDATA['))
 		{
-			$has_cdata = true;
-			
 			$start = strpos($xml, '<![CDATA[');
 			$end = strpos($xml, ']]>', $start);
 			
@@ -144,23 +141,24 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 	 * XML parsing recursive helper function
 	 * 
 	 * @param string $xml
-	 * @param QuickBooks_XML_Node $root
-	 * @return void
+	 * @param QuickBooks_XML_Node $Root
+     * @param integer $errnum
+     * @param string  $errmsg
+     * @param integer $indent
+	 * @return QuickBooks_XML_Node
+     * @todo Fix inconsistent return values (bool for failure rather than null)
 	 */
 	protected function _parseHelper($xml, &$Root, &$errnum, &$errmsg, $indent = 0)
 	{
 		$errnum = QuickBooks_XML::ERROR_OK;
 		$errmsg = '';
 		
-		$arr = array();
 		$xml = trim($xml);
 
 		if (!strlen($xml))
 		{
 			return false;
 		}
-
-		$data = '';
 
 		$vstack = array();
 		$dstack = array();
@@ -183,21 +181,10 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 
 		$raw = $xml;
 		$current = 0;
-		$last = '';
-
-		$i = 0;
 
 		// Parse
 		while (false !== strpos($xml, '<'))
 		{
-			/*
-			print('now examinging:');
-			print('--------------');
-			print($xml);
-			print('-----------');
-			print("\n\n\n");
-			*/
-			
 			$opentag_start = strpos($xml, '<');
 			$opentag_end = strpos($xml, '>');
 			
@@ -211,14 +198,13 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 				$opentag_end = strpos($xml, '>', $cdata_end + 3);
 			}
 			
-			//print('opentag start/end (' . $opentag_start . ', ' . $opentag_end . ') puts us at: {{' . substr($xml, $opentag_start, $opentag_end - $opentag_start) . '}}' . "\n\n");
-			
 			$tag_w_attrs = trim(substr($xml, $opentag_start + 1, $opentag_end - $opentag_start - 1));
 			
 			$tag = '';
 			$attributes = array();
 			$this->_extractAttributes($tag_w_attrs, $tag, $attributes);
-			
+
+            // @todo refactor to eliminate empty if bodies
 			if (substr($tag_w_attrs, 0, 1) == '?')		// xml declration
 			{
 				// ignore
@@ -227,21 +213,10 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 			{
 				// ignore
 			}
-			//else if (substr($tag_w_attrs, 0, 3) == '!--')		// comment
-			//{
-			//	// ignore
-			//}
 			else if (substr($tag_w_attrs, -1, 1) == '/')
 			{
 				// ***DO NOT*** completely ignore, auto-closed because it has no children
 				// Completely ignoring causes some SOAP errors for requests like <serverVersion xmlns="http://developer.intuit.com/" />
-				
-				//print('TAG: [' . substr($tag_w_attrs, 0, -1 . ']' . "\n");
-				//print('TWA: [' . $tag . ']' . "\n");
-				
-				//$tag_w_attrs = substr($tag_w_attrs, 0, -1);
-				//$tag = substr($tag, 0, -1);
-				
 				$tag_w_attrs = rtrim($tag_w_attrs, '/');
 				$tag = rtrim($tag, '/');
 				
@@ -274,7 +249,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 				// NOTE: If you change the code here, you'll likely have to 
 				//	change it in the above else () section as well, as that 
 				//	section handles data-less tags like <serverVersion />
-				
 				$tag = substr($tag, 1);
 				
 				$key = key($vstack);
@@ -301,9 +275,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 					
 					// Set the data to the CDATA section...
 					$data = QuickBooks_XML::encode(substr($data, 9, $cdata_end - 9));
-					
-					// ... and remove the CDATA from the remaining XML string
-					//$current = $current + strlen($data) + 12; 
 				}
 				
 				if (count($vstack))
@@ -320,10 +291,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 				array_unshift($vstack, array( $tag, $tag_w_attrs, $current + $opentag_end + 1 ) );
 				array_unshift($dstack, array( $tag, $tag_w_attrs, $current + $opentag_end + 1 ) );
 			}
-			
-			//print('stacks' . "\n");
-			//print_r($vstack);
-			//print_r($dstack);
 			
 			$xml = substr($xml, $opentag_end + 1);
 			
@@ -344,24 +311,18 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 			return false;
 		}
 
-		//print_r($dstack);
-		//exit;
-		
 		$dstack = array_reverse($dstack);
 
-		$last = '';
 		foreach ($dstack as $node)
 		{
 			$tag = $node[0];
 			$tag_w_attrs = $node[1];
-			$start = $node[2];
 
 			if (count($node) < 5)
 			{
 				continue;
 			}
 
-			$length = $node[3];
 			$payload = $node[4];
 
 			$tmp = '';
@@ -379,7 +340,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 			if (false !== strpos($payload, '<'))
 			{
 				// The tag contains child tags 
-				
 				$tmp = $this->_parseHelper($payload, $Node, $errnum, $errmsg, $indent + 1);
 				if (!$tmp)
 				{
@@ -389,7 +349,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 			else
 			{
 				// This tag has no child tags contained inside it
-				
 				// Make sure we decode any entities
 				$payload = QuickBooks_XML::decode($payload, true);
 				
@@ -397,8 +356,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 			}
 
 			$Root->addChild($Node);
-
-			$last = $tag;
 		}
 
 		return $Root;
@@ -413,13 +370,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
 		
 		$tag = array_shift($tmp);
 		$attributes = $tmp;
-		
-		/*
-		print('extracting attributes from: {{' . $tag_w_attrs . '}}' . "\n");
-		print('	tag: [[' . $tag . ']]' . "\n");
-		print('	attrs: ' . print_r($attributes, true) . "\n");
-		print("\n");
-		*/
 		
 		return true;
 	}	

@@ -22,8 +22,6 @@
 abstract class QuickBooks_WebConnector_Request
 {
 	/**
-	 * 
-	 * 
 	 * @param string $key
 	 * @param mixed $value
 	 * @return void

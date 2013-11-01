@@ -16,7 +16,6 @@
  * @subpackage IPP
  */
 
-
 QuickBooks_Loader::load('/QuickBooks/IPP/Service.php');
 
 class QuickBooks_IPP_Service_Invoice extends QuickBooks_IPP_Service
@@ -26,11 +25,6 @@ class QuickBooks_IPP_Service_Invoice extends QuickBooks_IPP_Service
 		return parent::_findAll($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_INVOICE, $query, null, $page, $size);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function findById($Context, $realmID, $ID, $domain = null)
 	{
 		$xml = null;

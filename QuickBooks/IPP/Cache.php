@@ -33,7 +33,7 @@ class QuickBooks_IPP_Cache
 		
 		QuickBooks_Loader::load($file);
 		
-		return new $class($map_dsn);
+		return new $class($map);
 	}
 	
 	public function refresh($resources = array(), $IDs = null)

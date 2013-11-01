@@ -10,9 +10,6 @@
  * @subpackage SQL
  */
 
-/**
- * 
- */
 class QuickBooks_SQL
 {
 	/**
@@ -58,7 +55,7 @@ class QuickBooks_SQL
 	protected $_config;
 	
 	/**
-	 * 
+	 * Initializes a new instance of the QuickBooks_SQL class
 	 * 
 	 * @param string $dsn
 	 * @param array $sql_options

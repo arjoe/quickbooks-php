@@ -83,7 +83,7 @@ class QuickBooks_MerchantService_Transaction
 	 * @param string $authcode
 	 * @param string $merchant
 	 * @param string $batch
-	 * @param string $paymengroup
+	 * @param string $paymentgroup
 	 * @param string $paymentstatus
 	 * @param string $txnauthtime
 	 * @param string $txnauthstamp
@@ -93,7 +93,7 @@ class QuickBooks_MerchantService_Transaction
 	 * @param string $networkname
 	 * @param string $networknumber
 	 */
-	public function __construct($type, $transID, $clientTransID = null, $authcode = null, $merchant = null, $batch = null, $paymentgroup = null, $paymentstatus = null, $txnauthtime = null, $txnauthstamp = null, $avsstreet = null, $avszip = null, $cvvmatch = null, $networkname = null, $networknumber = null)
+    public function __construct($type, $transID, $clientTransID = null, $authcode = null, $merchant = null, $batch = null, $paymentgroup = null, $paymentstatus = null, $txnauthtime = null, $txnauthstamp = null, $avsstreet = null, $avszip = null, $cvvmatch = null, $networkname = null, $networknumber = null)
 	{
 		$this->_type = $type;
 		$this->_transID = $transID;
@@ -112,10 +112,6 @@ class QuickBooks_MerchantService_Transaction
 		$this->_networknumber = $networknumber;
 	}
 	
-	/** 
-	 * 
-	 * 
-	 */
 	public function setExtraData($resultcode, $resultmessage, $creditcardnumber, $expmonth, $expyear, $nameoncard, $address, $postalcode)
 	{
 		$this->_resultcode = $resultcode;
@@ -163,10 +159,6 @@ class QuickBooks_MerchantService_Transaction
 		return $this->_transID;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public function getClientTransactionID()
 	{
 		return $this->_clientTransID;
@@ -248,8 +240,6 @@ class QuickBooks_MerchantService_Transaction
 	}
 
 	/**
-	 * 
-	 * 
 	 * @return array
 	 */
 	public function toArray()
@@ -406,7 +396,6 @@ class QuickBooks_MerchantService_Transaction
 	public function toQBXML()
 	{
 		// CreditCardTxnInfo
-		
 		$arr = array(
 			'CreditCardTxnInputInfo' => array(
 				'CreditCardNumber' => $this->_creditcardnumber, 
@@ -458,8 +447,6 @@ class QuickBooks_MerchantService_Transaction
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @param string $xml
 	 * @return QuickBooks_MerchantService_Transaction
 	 */

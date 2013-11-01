@@ -67,11 +67,6 @@ if (!defined('QUICKBOOKS_SERVER_SQL_ITERATOR_MAXRETURNED'))
 	define('QUICKBOOKS_SERVER_SQL_ITERATOR_MAXRETURNED', 25);
 }
 
-/*function __temp_error_handler($requestID, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg)
-{
-	return true;
-}*/
-
 /**
  * QuickBooks driver classes
  */
@@ -107,10 +102,6 @@ QuickBooks_Loader::load('/QuickBooks/Callbacks/SQL/Errors.php');
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Handlers.php', false);
 
-/**
- * 
- * 
- */
 class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 {
 	/**
@@ -136,14 +127,11 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 	
 	/**
 	 * Delete Modes. Decides whether an item actually gets deleted, or just remains marked deleted.
-	 *
 	 */
 	const DELETE_REMOVE = 2;
-	//define('QUICKBOOKS_SERVER_SQL_ON_DELETE_REMOVE', QUICKBOOKS_SERVER_SQL_DELETE_REMOVE);
-	
+
 	const DELETE_FLAG = 4;
-	//define('QUICKBOOKS_SERVER_SQL::ON_DELETE_FLAG', QUICKBOOKS_SERVER_SQL_DELETE_FLAG);
-			
+
 	/**
 	 * 
 	 * 
@@ -162,17 +150,23 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 	 * 
 	 * @param string $dsn_or_conn		DSN-style connection string or an already opened connection to the driver
 	 * @param string $how_often			The maximum time we wait between updates/syncs (you can use any valid interval: "1 hour", "15 minutes", 60, etc.)
-	 * @param char $mode				The mode the server should run in (see constants above)
-	 * @param char $conflicts			The steps towards update conflict resolution the server should take (see constants above)
-	 * @param mixed $users				The user (or an array of users) who will be using the SQL server
-	 * @param array $map				
-	 * @param array $onerror			
-	 * @param string $wsdl				
-	 * @param array $soap_options		
-	 * @param array $handler_options	
-	 * @param array $driver_options		
-	 */
-	public function __construct(
+	 * @param string $mode				The mode the server should run in (see constants above)
+	 * @param string $conflicts			The steps towards update conflict resolution the server should take (see constants above)
+     * @param int    $delete
+	 * @param array  $users				The user (or an array of users) who will be using the SQL server
+	 * @param array  $map
+     * @param array  $onerror
+     * @param array  $hooks
+     * @param array|int    $log_level
+     * @param string $soap
+     * @param string $wsdl
+	 * @param array  $soap_options
+	 * @param array  $handler_options
+     * @param array  $driver_options
+     * @param array  $sql_options
+     * @param array  $callback_options
+     */
+    public function __construct(
 		$dsn_or_conn, 
 		$how_often, 
 		$mode, 
@@ -191,8 +185,6 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 		$sql_options = array(), 
 		$callback_options = array())
 	{
-		// $dsn_or_conn, $map, $onerror = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL, $soap = QUICKBOOKS_SOAPSERVER_BUILTIN, $wsdl = QUICKBOOKS_WSDL, $soap_options = array(), $handler_options = array(), $driver_options = array()
-		
 		if (!is_array($users))
 		{
 			$users = array( $users );
@@ -212,23 +204,6 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 					'QuickBooks_Callbacks_SQL_Callbacks::' . $action . 'Response' );
 			}
 		}
-		
-		/*
-		$sql_map[QUICKBOOKS_DERIVE_ITEM] = array( 
-			'QuickBooks_Callbacks_SQL_Callbacks::ItemDeriveRequest', 
-			'QuickBooks_Callbacks_SQL_Callbacks::ItemDeriveResponse' );
-			
-		$sql_map[QUICKBOOKS_DERIVE_CUSTOMER] = array( 
-			'QuickBooks_Callbacks_SQL_Callbacks::CustomerDeriveRequest', 
-			'QuickBooks_Callbacks_SQL_Callbacks::CustomerDeriveResponse' );
-
-		$sql_map[QUICKBOOKS_DERIVE_INVOICE] = array( 
-			'QuickBooks_Callbacks_SQL_Callbacks::InvoiceDeriveRequest', 
-			'QuickBooks_Callbacks_SQL_Callbacks::InvoiceDeriveResponse' );			
-		*/
-		
-		//print_r($sql_map);
-		//exit;
 		
 		// Default error handlers
 		$sql_onerror = array(
@@ -256,13 +231,8 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 			'map' => $sql_map,
 			);
 		
-		//print_r($sql_options);
-		//exit;
-		
 		$defaults = $this->_sqlDefaults($sql_options);
 				
-		//$sql_callback_options['_only_query'] = $defaults['only_query'];
-		//$sql_callback_options['_dont_query'] = $defaults['dont_query'];
 		$sql_callback_options['_only_import'] = $defaults['only_import'];
 		$sql_callback_options['_dont_import'] = $defaults['dont_import'];
 		$sql_callback_options['_only_add'] = $defaults['only_add'];
@@ -280,19 +250,7 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
 		// Initialize the Driver singleton
 		$Driver = QuickBooks_Driver_Singleton::getInstance($dsn_or_conn, $driver_options, $sql_hooks, $log_level);		
 		
-		// $dsn_or_conn, $map, $onerror = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL, $soap = QUICKBOOKS_SOAPSERVER_BUILTIN, $wsdl = QUICKBOOKS_WSDL, $soap_options = array(), $handler_options = array(), $driver_options = array()
 		parent::__construct($dsn_or_conn, $sql_map, $sql_onerror, $sql_hooks, $log_level, $soap, $wsdl, $soap_options, $handler_options, $driver_options, $sql_callback_options);
-		
-		/*
-		// TESTING only
-		$requestID = null;
-		$user = 'quickbooks';
-		$hook = QUICKBOOKS_HANDLERS_HOOK_LOGINSUCCESS;
-		$err = null;
-		$hook_data = array();
-		$callback_config = $sql_callback_options;
-		QuickBooks_Callbacks_SQL_Callbacks::onAuthenticate($requestID, $user, $hook, $err, $hook_data, $callback_config);
-		*/
 	}
 	
 	/**

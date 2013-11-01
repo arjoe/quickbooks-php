@@ -41,8 +41,10 @@ class QuickBooks_IPP_IntuitAnywhere
 	const URL_APP_MENU = 'https://appcenter.intuit.com/api/v1/Account/AppMenu';
 	
 	/**
+     * Initializes a new instance of the {@link QuickBooks_IPP_IntuitAnywhere} class.
 	 * 
-	 *
+	 * @param string $dsn
+     * @param string $encryption_key
 	 * @param string $consumer_key		The OAuth consumer key Intuit gives you
 	 * @param string $consumer_secret	The OAuth consumer secret Intuit gives you
 	 * @param string $this_url			The URL of your QuickBooks_IntuitAnywhere class instance
@@ -110,6 +112,8 @@ class QuickBooks_IPP_IntuitAnywhere
 	 * Returns TRUE if an OAuth token exists for this user, FALSE otherwise
 	 * 
 	 * @param string $app_username
+     * @param string $app_tenant
+     *
 	 * @return bool
 	 */
 	public function check($app_username, $app_tenant)
@@ -155,13 +159,7 @@ class QuickBooks_IPP_IntuitAnywhere
 					$companies = $IPP->getAvailableCompanies($Context);
 				}
 				
-				/*
-				print('[[' . $IPP->lastRequest() . ']]');
-				print('[[' . $IPP->lastResponse() . ']]');
-				print('here we are! [' . $IPP->errorCode() . ']');
-				*/
-				
-				// Check the last error code now... 
+				// Check the last error code now...
 				if ($IPP->errorCode() == 401 or 			// most calls return this
 					$IPP->errorCode() == 3200)				// but for some stupid reason the getAvailableCompanies call returns this
 				{
@@ -179,6 +177,8 @@ class QuickBooks_IPP_IntuitAnywhere
 	 * Load OAuth credentials from the database
 	 *
 	 * @param string $app_username
+     * @param string $app_tenant
+     *
 	 * @return array
 	 */
 	public function load($app_username, $app_tenant)
@@ -236,8 +236,6 @@ class QuickBooks_IPP_IntuitAnywhere
 	
 	/**
 	 * Handle an OAuth request login thing
-	 *
-	 * 
 	 */
 	public function handle($app_username, $app_tenant)
 	{
@@ -253,17 +251,6 @@ class QuickBooks_IPP_IntuitAnywhere
 			if (isset($_GET['oauth_token']))
 			{
 				// We're in the middle of an OAuth token session
-				
-				/*
-				$arr = mysql_fetch_array(mysql_query("
-					SELECT
-						*
-					FROM
-						quickbooks_oauth
-					WHERE
-						oauth_request_token = '" . $_REQUEST['oauth_token'] . "' "));
-				*/
-				
 				if ($arr = $this->_driver->oauthRequestResolve($_GET['oauth_token']))
 				{
 					$info = $this->_getAccessToken(
@@ -271,25 +258,8 @@ class QuickBooks_IPP_IntuitAnywhere
 						$arr['oauth_request_token_secret'], 
 						$_GET['oauth_verifier']);
 					
-					//print('got back [' . $info . ']');
-					//print_r($info);
-					//exit;
-					
 					if ($info)
 					{
-						/*
-						mysql_query("
-							UPDATE
-								quickbooks_oauth
-							SET
-								oauth_access_token = '" . $info['oauth_token'] . "', 
-								oauth_access_token_secret = '" . $info['oauth_token_secret'] . "', 
-								qb_realm = '" . $_REQUEST['realmId'] . "', 
-								qb_flavor = '" . $_REQUEST['dataSource'] . "'
-							WHERE
-								quickbooks_oauth_id = " . $arr['quickbooks_oauth_id']);
-						*/
-						
 						$this->_driver->oauthAccessWrite(
 							$this->_key, 
 							$arr['oauth_request_token'], 
@@ -298,11 +268,6 @@ class QuickBooks_IPP_IntuitAnywhere
 							$_GET['realmId'], 
 							$_GET['dataSource']);
 						
-						//print_r($_REQUEST);
-						//exit;
-						//print_r($info);
-		
-						//print('authd now, go here <a href="exchange_data.php">exchange_data.php</a>');
 						header('Location: ' . $this->_that_url);
 						exit;
 					}
@@ -331,9 +296,10 @@ class QuickBooks_IPP_IntuitAnywhere
 	}
 
 	/**
-	 * 
-	 * 
+     * @param string $app_username
+     * @param string $app_tenant
 	 * @param string $url
+     *
 	 * @return string
 	 */	
 	protected function _getAuthenticateURL($app_username, $app_tenant, $url) 
@@ -341,27 +307,12 @@ class QuickBooks_IPP_IntuitAnywhere
 		// Fetch a request token from the OAuth service
 		$info = $this->_request(QuickBooks_IPP_OAuth::METHOD_GET, QuickBooks_IPP_IntuitAnywhere::URL_REQUEST_TOKEN, array( 'oauth_callback' => $url ));
 		
-		//print('info [' . $info . ']');
-		
 		$vars = array();
 		parse_str($info, $vars);
 		
 		// Write the request tokens to the database
 		$this->_driver->oauthRequestWrite($app_username, $app_tenant, $vars['oauth_token'], $vars['oauth_token_secret']);
-		
-		/*
-		mysql_query("
-			INSERT INTO 
-				quickbooks_oauth
-			(
-				oauth_request_token,
-				oauth_request_token_secret
-			) VALUES (
-				'" . $vars['oauth_token'] . "',
-				'" . $vars['oauth_token_secret'] . "'
-			)");
-		*/
-		
+
 		// Return the auth URL
 		return QuickBooks_IPP_IntuitAnywhere::URL_CONNECT_BEGIN . '?oauth_callback=' . urlencode($url) . '&oauth_consumer_key=' . $this->_consumer_key . '&oauth_token=' . $vars['oauth_token'];	
 	}
@@ -408,7 +359,7 @@ class QuickBooks_IPP_IntuitAnywhere
 	 * 
 	 * @param string $app_username
 	 * @param string $app_tenant
-	 * @return html string
+	 * @return string
 	 */
 	public function widgetMenu($app_username, $app_tenant)
 	{
@@ -440,10 +391,7 @@ class QuickBooks_IPP_IntuitAnywhere
 		// 3 => header string
 		$signed = $OAuth->sign($method, $url, $token, $secret, $params);
 		
-		//print_r($signed);
-		
 		// Create the new HTTP object
-		//$HTTP = new QuickBooks_HTTP($url);
 		$HTTP = new QuickBooks_HTTP($signed[2]);
 		
 		$headers = array(
@@ -457,9 +405,6 @@ class QuickBooks_IPP_IntuitAnywhere
 		
 		$HTTP->verifyHost(false);
 		$HTTP->verifyPeer(false);
-		
-		// We need the headers back
-		//$HTTP->returnHeaders(true);
 		
 		// Send the request
 		$return = $HTTP->GET();

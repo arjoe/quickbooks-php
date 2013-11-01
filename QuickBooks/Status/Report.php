@@ -15,20 +15,10 @@
  * @subpackage Error
  */
 
-// 
 QuickBooks_Loader::load('/QuickBooks/Driver/Factory.php');
-
-// 
 QuickBooks_Loader::load('/QuickBooks/Utilities.php');
-
-// 
 QuickBooks_Loader::load('/QuickBooks/SQL/Schema.php');
 
-/**
- * 
- * 
- *
- */
 class QuickBooks_Status_Report
 {
 	const MODE_QUEUE_ERRORS = 'queue-errors';
@@ -58,11 +48,6 @@ class QuickBooks_Status_Report
 		$this->_driver = QuickBooks_Driver_Factory::create($dsn, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function create($mode, $user = null, $date_from = null, $date_to = null, $fetch_full_record = false, $restrict = array())
 	{
 		$Driver = $this->_driver;
@@ -130,8 +115,6 @@ class QuickBooks_Status_Report
 		{
 			$levels[-1] = array( QuickBooks_Status_Report::STATUS_UNKNOWN, 'Status is unknown.');
 		}
-		
-		//print_r($levels);
 		
 		// Find the status from the ticket table
 		$last = $Driver->authLast($user);
@@ -236,11 +219,6 @@ class QuickBooks_Status_Report
 		return $report;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	protected function &_createForMirror($mode, $user, $date_from, $date_to, $fetch_full_record, $restrict)
 	{
 		$Driver = $this->_driver;
@@ -250,31 +228,23 @@ class QuickBooks_Status_Report
 		$do_restrict = count($restrict) > 0;
 		
 		$actions = QuickBooks_Utilities::listActions('*IMPORT*');
-		//print_r($actions);
-		//print_r($restrict);
-		
+
 		foreach ($actions as $action)
 		{
 			$object = QuickBooks_Utilities::actionToObject($action);
 			
-			//print('checking object [' . $object . ']' . "<br />");
-			
-			if ($do_restrict and 
+			if ($do_restrict and
 				!in_array($object, $restrict))
 			{
 				continue;
 			}
-			
-			//print('doing object: ' . $object . '<br />');
 			
 			$pretty = $this->_prettyName($object);
 			$report[$pretty] = array();
 			
 			QuickBooks_SQL_Schema::mapPrimaryKey($object, QUICKBOOKS_SQL_SCHEMA_MAP_TO_SQL, $table_and_field);  
 			
-			//print_r($table_and_field);
-			
-			if (!empty($table_and_field[0]) and 
+			if (!empty($table_and_field[0]) and
 				!empty($table_and_field[1]))
 			{
 				$sql = "
@@ -306,8 +276,6 @@ class QuickBooks_Status_Report
 				}
 				
 				$sql .= " ORDER BY qbsql_id DESC ";
-				
-				//print($sql);
 				
 				$errnum = 0;
 				$errmsg = '';
@@ -371,8 +339,6 @@ class QuickBooks_Status_Report
 	 */
 	protected function _prettyName($constant)
 	{
-		//$constant = str_replace('Import', '', $constant);
-		
 		$strlen = strlen($constant);
 		for ($i = 1; $i < $strlen; $i++)
 		{
@@ -506,10 +472,7 @@ class QuickBooks_Status_Report
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @todo Make this better for error codes that get thrown for more than one different type of error.
-	 * 
 	 */
 	static public function describe($errcode, $errmsg)
 	{

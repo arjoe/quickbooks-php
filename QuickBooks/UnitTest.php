@@ -99,10 +99,6 @@ class QuickBooks_UnitTest
 		}
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	final public function result($format = null)
 	{
 		
@@ -234,5 +230,3 @@ class QuickBooks_UnitTest
 		return;
 	}
 }
-
-?>

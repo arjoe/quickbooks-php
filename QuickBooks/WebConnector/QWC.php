@@ -17,8 +17,6 @@
 
 /**
  * QuickBooks .QWC file generation
- * 
- * 
  */
 class QuickBooks_WebConnector_QWC
 {
@@ -76,7 +74,6 @@ class QuickBooks_WebConnector_QWC
 	 * @param string $appdisplayname
 	 * @param string $appuniquename
 	 * @param string $appid
-	 * @return string
 	 */
 	public function __construct(
 		$name, 
@@ -130,8 +127,6 @@ class QuickBooks_WebConnector_QWC
 	}
 
 	/**
-	 * 
-	 * 
 	 * @return string
 	 */
 	public function generate()
@@ -154,29 +149,7 @@ class QuickBooks_WebConnector_QWC
 		$appuniquename = $this->_appuniquename;
 		$appid = $this->_appid;	
 	
-		/*
-		AppDisplayName
-		AppUniqueName
-		AuthFlags
-			- 0x0 (all, default)
-			- 0x0 (All, default) 
-			- 0x1 (SupportQBSimpleStart) 
-			- 0x2 (SupportQBPro) 
-			- 0x4 (SupportQBPremier) 
-			- 0x8 (SupportQBEnterprise)
-		Notify			true or false
-		PersonalDataPref
-			- pdpNotNeeded
-			- pdpOptional
-			- pdpRequired
-		Style	(do not support, package only supports default style)
-		UnattendedModePref
-			- umpRequired
-			- umpOptional
-		CertURL
-		*/ 
-		
-		if ($run_every_n_seconds and 
+		if ($run_every_n_seconds and
 			!is_numeric($run_every_n_seconds))
 		{
 			$run_every_n_seconds = QuickBooks_Utilities::intervalToSeconds($run_every_n_seconds);

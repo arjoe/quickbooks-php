@@ -35,14 +35,8 @@ define('QUICKBOOKS_TIMESTAMP', microtime(true));
  */
 define('QUICKBOOKS_BASEDIR', dirname(__FILE__));
 
-/**
- * Path separator for file paths/include/require paths
- * @var string
- */
-define('QUICKBOOKS_DIRECTORY_SEPARATOR', PATH_SEPARATOR);
-
 // Include path modifications (relative paths within library)
-ini_set('include_path', ini_get('include_path') . QUICKBOOKS_DIRECTORY_SEPARATOR . dirname(__FILE__));
+ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__));
 
 if (function_exists('date_default_timezone_get'))
 {
@@ -52,9 +46,9 @@ if (function_exists('date_default_timezone_get'))
 		$arrerr = error_get_last() and 
 		substr($arrerr['message'], 0, strlen('date_default_timezone_get')) == 'date_default_timezone_get')
 	{
-		// Ooops, they never set their time-zone and PHP is warning them about 
-		// 	this! Let's try to auto-set their timezone, and set a flag so that 
-		// 	they can find out what's going wrong later.  
+		// Oops, they never set their time-zone and PHP is warning them about
+		// this! Let's try to auto-set their timezone, and set a flag so that
+		// they can find out what's going wrong later.
 		
 		/**
 		 * 
@@ -97,23 +91,17 @@ define('QUICKBOOKS_PACKAGE_NAME', 'QuickBooks PHP DevKit');
  */
 define('QUICKBOOKS_PACKAGE_VERSION', '2.0');
 
-if (!defined('QUICKBOOKS_CRLF'))
-{
-	/**
-	 * The carraige-return line-feed sequence to use
-	 * @var string
-	 */
-	define('QUICKBOOKS_CRLF', "\r\n");
-}
+/**
+ * The carraige-return line-feed sequence to use
+ * @var string
+ */
+define('QUICKBOOKS_CRLF', "\r\n");
 
-if (!defined('QUICKBOOKS_SALT'))
-{
-	/**
-	 * Salt value for hashing passwords
-	 * @var string
-	 */
-	define('QUICKBOOKS_SALT', 'andB@++3ry');
-}
+/**
+ * Salt value for hashing passwords
+ * @var string
+ */
+define('QUICKBOOKS_SALT', 'andB@++3ry');
 
 if (!defined('QUICKBOOKS_HASH'))
 {
@@ -268,7 +256,7 @@ define('QUICKBOOKS_SOAPSERVER_BUILTIN', 'builtin');
 /**
  * QuickBooks flag to request to enter "Interactive Mode"
  * 
- * *** DO NOT CHANGE THIS *** This is a required QuickBooks-defined constant that is neccessary for interactive mode requests
+ * *** DO NOT CHANGE THIS *** This is a required QuickBooks-defined constant that is necessary for interactive mode requests
  * 
  * @var string
  */
@@ -891,49 +879,49 @@ define('QUICKBOOKS_CUSTOMER_DELIVERYMETHOD_EMAIL', 'Email');
 
 /**
  * Queuing status for queued QuickBooks transactions - QUEUED
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_QUEUED', 'q');
 
 /**
  * QuickBooks status for queued QuickBooks transactions - was queued, then SUCCESSFULLY PROCESSED
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_SUCCESS', 's');
 
 /**
  * QuickBooks status for queued QuickBooks transactions - was queued, an ERROR OCCURED when processing it
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_ERROR', 'e');
 
 /**
  * QuickBooks status for items that have been dequeued and are being processed by QuickBooks (we assume) but we havn't received a response back about them yet
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_PROCESSING', 'i');
 
 /**
  * QuickBooks status for items that were dequeued, had an error occured, and then the error was handled by an error handler
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_HANDLED', 'h');
 
 /**
  * QuickBooks status for items that were cancelled
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_CANCELLED', 'c');
 
 /**
  * QuickBooks status for items that were forcibly removed from the queue
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_REMOVED', 'r');
 
 /**
  * QuickBooks status for items that were NoOp
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_STATUS_NOOP', 'n');
 
@@ -969,13 +957,13 @@ define('QUICKBOOKS_ERROR_HOOK', -4);
 
 /**
  * Status for an enabled user
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_USER_ENABLED', 'e');
 
 /**
  * Status for a disabled user
- * @var char
+ * @var string
  */
 define('QUICKBOOKS_USER_DISABLED', 'd');
 

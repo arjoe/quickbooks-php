@@ -10,9 +10,6 @@
  * @subpackage SQL
  */
 
-/**
- * 
- */
 class QuickBooks_SQL_Object
 {
 	/**
@@ -31,9 +28,10 @@ class QuickBooks_SQL_Object
 	protected $_arr;
 		
 	/**
+	 * Initializes a new instance of the {@link QuickBooks_SQL_Object} class.
 	 * 
-	 * 
-	 * @param string $type
+	 * @param string $table
+     * @param string $path
 	 * @param array $arr
 	 */
 	public function __construct($table, $path, $arr = array())
@@ -80,7 +78,6 @@ class QuickBooks_SQL_Object
 	 * Set an attribute of the SQL object
 	 * 
 	 * @param string $key
-	 * @param mixed $value
 	 * @return void
 	 */
 	public function remove($key)

@@ -78,7 +78,7 @@ class QuickBooks_Gateway_OnlineEdition
 	/**
 	 * Get the error number of the last error that occured
 	 * 
-	 * @return mixed		The error number (or error code, some QuickBooks error codes are hex strings)
+	 * @return integer		The error number (or error code, some QuickBooks error codes are hex strings)
 	 */
 	public function errorNumber()
 	{
@@ -180,8 +180,6 @@ class QuickBooks_Gateway_OnlineEdition
 					$is_error = false;
 					$is_continue = true;
 		
-					//if ($qbms_code != QuickBooks_MerchantService::ERROR_OK)
-					//if (!$qboe_severity or $qboe_severity == QuickBooks_Gateway_OnlineEdition::SEVERITY_ERROR)
 					if ($qboe_code != QuickBooks_Gateway_OnlineEdition::ERROR_OK)
 					{
 						$this->_driver->queueStatus($ticket, $requestID, QUICKBOOKS_STATUS_ERROR, $qboe_code . ': ' . $qboe_message);
@@ -217,7 +215,6 @@ class QuickBooks_Gateway_OnlineEdition
 						; // Do nothing...
 					}
 
-					//if ($qboe_code == QuickBooks_Gateway_OnlineEdition::ERROR_OK or $qboe_severity == QuickBooks_Gateway_OnlineEdition::SEVERITY_WARN or $qboe_severity == QuickBooks_Gateway_OnlineEdition::SEVERITY_INFO)
 					if ($is_continue and !$is_error)
 					{
 						if ($qboe_code == QuickBooks_Gateway_OnlineEdition::ERROR_OK or $qboe_severity == QuickBooks_Gateway_OnlineEdition::SEVERITY_WARN or $qboe_severity == QuickBooks_Gateway_OnlineEdition::SEVERITY_INFO)
@@ -415,9 +412,6 @@ class QuickBooks_Gateway_OnlineEdition
 	}	
 
 	/**
-	 * 
-	 * 
-	 * 
 	 * @param string $message
 	 * @param integer $level
 	 * @return boolean
@@ -444,12 +438,12 @@ class QuickBooks_Gateway_OnlineEdition
 	}
 
 	/**
-	 * 
-	 * 
 	 * @param string $xml
 	 * @param string $version
 	 * @param string $onerror
+     *
 	 * @return string
+     * @todo Add support for onError
 	 */
 	protected function _makeValidQBXML($xml, $version = '{$version}', $onerror = '{$onerror}')
 	{
@@ -511,8 +505,6 @@ class QuickBooks_Gateway_OnlineEdition
 	}	
 
 	/**
-	 * 
-	 * 
 	 * @param integer $errnum
 	 * @param string $errmsg
 	 * @return void
@@ -524,10 +516,7 @@ class QuickBooks_Gateway_OnlineEdition
 	}	
 	
 	/**
-	 * 
-	 * 
-	 * @param integer $errnum
-	 * @param string $errmsg
+     * @param string $response
 	 * @return void
 	 */
 	protected function _setLastResponse($response)
@@ -536,10 +525,7 @@ class QuickBooks_Gateway_OnlineEdition
 	}	
 	
 	/**
-	 * 
-	 * 
-	 * @param integer $errnum
-	 * @param string $errmsg
+	 * @param string $request
 	 * @return void
 	 */
 	protected function _setLastRequest($request)
@@ -547,17 +533,12 @@ class QuickBooks_Gateway_OnlineEdition
 		$this->_last_request = $request;
 	}	
 
-	/**
-	 * 
-	 */
 	public function connect()
 	{
 		return $this->_signOn();
 	}
 
 	/**
-	 * 
-	 *
 	 * @return boolean
 	 */
 	protected function _signOn()
@@ -632,30 +613,16 @@ class QuickBooks_Gateway_OnlineEdition
 		return false;
 	}	
 
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 	protected function _isSignedOn()
 	{
 		return strlen($this->_ticket_session) > 0;
 	}	
 
-	/**
-	 *  
-	 * 
-	 */
 	public function useTestEnvironment($yes_or_no)
 	{
 		$this->_test = (boolean) $yes_or_no;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public function useLiveEnvironment($yes_or_no)
 	{
 		$this->_test = ! (boolean) $yes_or_no;
@@ -679,10 +646,8 @@ class QuickBooks_Gateway_OnlineEdition
 	 * Issue a qbXML request to the API, and retrieve the qbXML response 
 	 * 
 	 * @param string $qbxml			A valid qbXML request
-	 * @param mixed $callbacks		A valid callback value (function name, object and method, or class name and method) or an array of callbacks
-	 * @param mixed $webapp_ID		Your web application's primary ID value for this record (if applicable)
-	 * @param integer $priority		The priority of this request (if using a queued model of communication)
-	 * @return boolean				
+     *
+	 * @return boolean
 	 */
 	public function qbxml($qbxml)
 	{
@@ -704,11 +669,9 @@ class QuickBooks_Gateway_OnlineEdition
 	 * @param string $action
 	 * @param string $type
 	 * @param string $qbxml
-	 * @param array $callbacks
-	 * @param mixed $uniqueid
-	 * @param integer $priority
 	 * @param string $err
 	 * @param integer $recur
+     *
 	 * @return boolean
 	 */
 	protected function _handleQBXML($method, $action, $type, $qbxml, &$err, $recur = null)
@@ -726,9 +689,7 @@ class QuickBooks_Gateway_OnlineEdition
 			}
 		}
 
-		//$this->_log('Outgoing XML request: ' . $qbxml, null, QUICKBOOKS_LOG_DEBUG);
-
-		// The qbXML requests that get passed to this function are without the 
+		// The qbXML requests that get passed to this function are without the
 		//	typical qbXML wrapper info, so we need to modify them to make them 
 		// 	into complete, valid requests. 
 		$qbxml = $this->_makeValidQBXML($qbxml, '6.0', 'continueOnError');
@@ -746,8 +707,6 @@ class QuickBooks_Gateway_OnlineEdition
 			return false;
 		}
 
-		//die($code . ': ' . $message);
-		
 		return $response;
 	}
 	
@@ -779,12 +738,8 @@ class QuickBooks_Gateway_OnlineEdition
 	 */
 	protected function _requestCurl($xml)
 	{
-		$ch = curl_init(); 
-	
-		$header[] = 'Content-Type: application/x-qbxml'; 
+		$header[] = 'Content-Type: application/x-qbxml';
 		$header[] = 'Content-Length: ' . strlen($xml); 
-		
-		//$this->_certificate = '/Users/kpalmer/Projects/QuickBooks/QuickBooks/dev/test_qboe.pem';
 		
 		$params = array();
 		$params[CURLOPT_HTTPHEADER] = $header; 
@@ -805,14 +760,9 @@ class QuickBooks_Gateway_OnlineEdition
 		$params[CURLOPT_SSL_VERIFYPEER] = false;
 		$params[CURLOPT_SSL_VERIFYHOST] = 0;		
 		
-		// Diagnostic information: https://merchantaccount.quickbooks.com/j/diag/http
-		// curl_setopt($ch, CURLOPT_INTERFACE, '<myipaddress>');
-		
 		$ch = curl_init();
 		curl_setopt_array($ch, $params);
 		$response = curl_exec($ch);
-		
-		//$this->_log('CURL options: ' . print_r($params, true), QUICKBOOKS_LOG_DEBUG);
 		
 		// @todo Strip credit card numbers from logged XML... (or should this be within the _log() method?)
 		

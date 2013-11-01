@@ -85,13 +85,6 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 						$discov = false;
 					}
 					
-					/*
-					if ($mark_as_dequeued)
-					{
-						$arr[QUICKBOOKS_DRIVER_SQL_FIELD_ENQUEUE_TIME] = date('Y-m-d H:i:s');
-					}
-					*/
-						
 					$Driver->update(
 						QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0], 
 						$arr, 
@@ -149,8 +142,6 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 	
 	public function table($map, $object_or_action, $ID)
 	{
-		$Driver = $this->_driver;
-		
 		if ($map == QuickBooks_Map::MAP_QBXML)
 		{
 			$object = QuickBooks_Utilities::actionToObject($object_or_action);
@@ -180,14 +171,10 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 		
 		$list = array();
 		
-		//$Driver->log('Input is: ' . print_r($adds, true));
-		
-		// Check if any objects need to be pushed back to QuickBooks 
+		// Check if any objects need to be pushed back to QuickBooks
 		foreach ($sql_add as $action => $priority)
 		{
 			$object = QuickBooks_Utilities::actionToObject($action);
-			
-			//$Driver->log('Action is: ' . $action . ', object is: ' . $object);
 			
 			$table_and_field = array();
 			
@@ -196,9 +183,7 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 			
 			$Driver->log('Searching table: ' . print_r($table_and_field, true) . ' for ADDED records.');
 			
-			//print_r($table_and_field);
-			
-			if (!empty($table_and_field[0]) and 
+			if (!empty($table_and_field[0]) and
 				!empty($table_and_field[1]))
 			{
 				// For ADDs
@@ -234,10 +219,7 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 						" . QUICKBOOKS_DRIVER_SQL_FIELD_TO_DELETE . " != 1 AND 
 						" . QUICKBOOKS_DRIVER_SQL_FIELD_FLAG_DELETED . " != 1 AND 
 						" . QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY . " <= '" . $NOW . "' ";
-				//		" . QUICKBOOKS_DRIVER_SQL_FLAG_TO_VOID . " != 1 ";
-				
-				//$Driver->log($sql);
-						
+
 				$errnum = 0;
 				$errmsg = '';
 				
@@ -282,14 +264,7 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 								" . QUICKBOOKS_DRIVER_SQL_FIELD_ID . " = " . $arr[QUICKBOOKS_DRIVER_SQL_FIELD_ID], $errnum, $errmsg);
 					}
 					
-					/*
-					if (count($list[$action]) >= $limit)
-					{
-						break;
-					}
-					*/
-					
-					if ($limit > 0 and 
+					if ($limit > 0 and
 						$count >= $limit)
 					{
 						break 2;
@@ -318,22 +293,22 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 	
 	/**
 	 * 
-	 * @param unknown_type $table
-	 * @param unknown_type $Object
-	 * @param unknown_type $tmp_TxnID_or_ListID
+	 * @param string $table
+     * @param string $action
+	 * @param object $Object
+	 * @param string $tmp_TxnID_or_ListID
+     *
+     * @return array
 	 */
 	protected function _updateRelatives($table, $action, $Object, $tmp_TxnID_or_ListID)
 	{
 		$Driver = $this->_driver;
 		
-		//print('updating relatives' . "\n");
-
 		// This should *ONLY* be used when we are ADDING records
 		//	If it's an update, any relatives *should already have* the permenent ListID
 		//	If it's an add, any relatives *have not yet been added* and thus can be marked modified without causing sync issues
 		if (substr($action, -3, 3) != 'Add')
 		{
-			//print('returning false because of action: ' . $action . "\n");
 			return false;
 		}
 		
@@ -341,8 +316,6 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 			'invoice' => array( 
 				'key' => 'TxnID',
 				'relatives' => array(
-					//'estimate_linkedtxn' => 'ToTxnID:Type=Invoice',
-					//'salesorder_linkedtxn' => 'ToTxnID:Type=Invoice',
 					'receivepayment_appliedtotxn' => 'ToTxnID:TxnType=Invoice', // 'ToTxnID:Type=Invoice',
 					'invoice_invoiceline' => 'Invoice_TxnID', //  
 					'dataext' => 'Entity_ListID:EntityType=Customer', 	// update the Entity_ListID where EntityType = 'Customer' (and the existing Entity_ListID is the old ListID)
@@ -372,7 +345,6 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 		
 		if (empty($map[$table]))
 		{
-			//print('returning false because of missing map: ' . $table . "\n");
 			return 0;
 		}
 		
@@ -380,11 +352,7 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 		foreach ($map[$table]['relatives'] as $relative_table => $relative_field)
 		{
 			$Driver->log('Now updating [' . $relative_table . '] for field [' . $relative_field . '] with value [' . $TxnID_or_ListID . ']', null, QUICKBOOKS_LOG_DEBUG);
-			//print('updating realtive: ' . $relative_table . "\n");			
 
-			//$multipart = array( $relative_field => $extra['AddResponse_OldKey'] );
-			//$tmp = new QuickBooks_SQL_Object($relative_table, null);
-			
 			//@todo Make the Boolean TRUE value used in the QUICKBOOKS_DRIVER_SQL_FIELD_DELETED_FLAG field a constant,
 			//      in case the sql driver used uses something other than 1 and 0.
 			//$tmp->set($relative_field, $TxnID_or_ListID);
@@ -403,9 +371,6 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 				$relative_field = substr($relative_field, 0, $pos);
 				
 				$where = " AND " . str_replace('=', "='", $tmp) . "'";
-				
-				//print('TMP IS: [' . $where . ']');
-				//exit;
 			}
 			
 			$errnum = null;
@@ -417,8 +382,6 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
 					" . $relative_field . " = '%s' 
 				WHERE
 					" . $relative_field . " = '%s' " . $where;
-
-			//print($sql . "\n\n");
 
 			$Driver->query($sql, $errnum, $errmsg, null, null, array(
 					$TxnID_or_ListID, 

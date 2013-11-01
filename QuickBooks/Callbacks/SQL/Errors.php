@@ -16,17 +16,10 @@
  * @subpackage SQL
  */
 
-// For DEBUGGING only
-//require_once '/Users/kpalmer/Projects/QuickBooks/QuickBooks.php';
-
-/**
- * 
- */
 class QuickBooks_Callbacks_SQL_Errors
 {
 	/**
 	 * @TODO Change this to return false by default, and only catch the specific errors we're concerned with.
-	 * 
 	 */
 	static public function catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
@@ -47,18 +40,6 @@ class QuickBooks_Callbacks_SQL_Errors
 			// Ignore errors for these requests
 			return true;
 		}
-		
-		/*
-		$Parser = new QuickBooks_XML($xml);
-		$errnumTemp = 0;
-		$errmsgTemp = '';
-		$Doc = $Parser->parse($errnumTemp, $errmsgTemp);
-		$Root = $Doc->getRoot();		
-		$emailStr = var_export($Root->children(), true);
-			
-		$List = $Root->getChildAt('QBXML QBXMLMsgsRs '.QuickBooks_Utilities::actionToResponse($action));
-		$Node = current($List->children());
-		*/
 		
 		$map = array();
 		$others = array();
@@ -121,8 +102,6 @@ class QuickBooks_Callbacks_SQL_Errors
 				// @todo Hopefully at some point we'll have a better idea of how to handle this error...
 				
 				return true;
-			//case 3120:			// 3120 errors are handled in the 3210 error handler section
-			//	break;
 			case 3170:	// This list has been modified by another user.
 			case 3175:
 			case 3176:
@@ -172,10 +151,6 @@ class QuickBooks_Callbacks_SQL_Errors
 				return true;
 			case 3120:
 			case 3210:
-				
-				//print_r($existing);
-				//print('TXNID: [' . $existing['TxnID'] . ']');
-				
 				// 3210: The &quot;AppliedToTxnAdd payment amount&quot; field has an invalid value &quot;129.43&quot;.  QuickBooks error message: You cannot pay more than the amount due.
 				if ($action == QUICKBOOKS_ADD_RECEIVEPAYMENT and 
 					(false !== strpos($errmsg, 'pay more than the amount due') or false !== strpos($errmsg, 'cannot be found')) and 
@@ -258,32 +233,3 @@ class QuickBooks_Callbacks_SQL_Errors
 		return true;
 	}
 }
-
-/*
-$requestID = 'asdf';
-$user = 'quickbooks';
-$action = QUICKBOOKS_ADD_RECEIVEPAYMENT;
-$ident = 1;
-$extra = array();
-$err = null;
-
-$xml = '<?xml version="1.0" ?>
-<QBXML>
-<QBXMLMsgsRs>
-<ReceivePaymentAddRs
-requestID="U2hpcE1ldGhvZEltcG9ydHxmMmMyNzk1OGQ5Y2UwMTZiYzViN2RmYTZlMDJlODM5NA=="
-statusCode="3210" statusSeverity="Info" statusMessage="The &quot;AppliedToTxnAdd payment amount&quot; field has an invalid value &quot;129.43&quot;.  QuickBooks error message: You cannot pay more than the amount due." />
-</QBXMLMsgsRs>
-</QBXML>';
-
-$errnum = 3210;
-$errmsg = 'The &quot;AppliedToTxnAdd payment amount&quot; field has an invalid value &quot;129.43&quot;.  QuickBooks error message: You cannot pay more than the amount due.';
-$config = array();
-
-$tmp = QuickBooks_Driver_Singleton::getInstance('mysql://root:root@localhost/quickbooks_sql', array(), array(), QUICKBOOKS_LOG_DEVELOP);
-QuickBooks_Callbacks_SQL_Errors::catchall($requestID, $user, $action, $ident, $extra, $err, $xml, $errnum, $errmsg, $config);
-*/
-
-
-
-

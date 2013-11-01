@@ -10,19 +10,9 @@
  * @subpackage QBXML
  */
 
-/**
- * 
- */
 require_once 'QuickBooks.php';
-
-/**
- * 
- */
 require_once 'QuickBooks/QBXML/Schema/Object.php';
 
-/**
- * 
- */
 class QuickBooks_QBXML_Schema_Object_VehicleModRq extends QuickBooks_QBXML_Schema_Object
 {
 	protected function &_qbxmlWrapper()
@@ -70,6 +60,8 @@ class QuickBooks_QBXML_Schema_Object_VehicleModRq extends QuickBooks_QBXML_Schem
   'Desc' => true,
   'IncludeRetElement' => true,
 );
+
+        return $paths;
 	}
 	
 	protected function &_sinceVersionPaths()
@@ -99,19 +91,7 @@ class QuickBooks_QBXML_Schema_Object_VehicleModRq extends QuickBooks_QBXML_Schem
 			
 		return $paths;
 	}
-	
-	/*
-	abstract protected function &_inLocalePaths()
-	{
-		static $paths = array(
-			'FirstName' => array( 'QBD', 'QBCA', 'QBUK', 'QBAU' ), 
-			'LastName' => array( 'QBD', 'QBCA', 'QBUK', 'QBAU' ),
-			);
-		
-		return $paths;
-	}
-	*/
-	
+
 	protected function &_reorderPathsPaths()
 	{
 		static $paths = array (
@@ -126,5 +106,3 @@ class QuickBooks_QBXML_Schema_Object_VehicleModRq extends QuickBooks_QBXML_Schem
 		return $paths;
 	}
 }
-
-?>

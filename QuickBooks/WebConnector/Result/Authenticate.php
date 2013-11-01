@@ -38,6 +38,8 @@ class QuickBooks_WebConnector_Result_Authenticate extends QuickBooks_WebConnecto
 	 * 
 	 * @param string $ticket	The ticket of the new login session
 	 * @param string $status	The status of the new login session (blank, a company file path, or "nvu" for an invalid login)
+     * @param int    $wait_before_next_update
+     * @param int    $min_run_every_n_seconds
 	 */
 	public function __construct($ticket, $status, $wait_before_next_update = null, $min_run_every_n_seconds = null)
 	{

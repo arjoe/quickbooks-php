@@ -16,9 +16,6 @@
  * @subpackage Server
  */
 
-/**
- * 
- */
 class QuickBooks_Callbacks_Integrator_Errors
 {
 	/**
@@ -30,8 +27,6 @@ class QuickBooks_Callbacks_Integrator_Errors
 	 *
 	 * Solution: 
 	 * 	Send the request again, it usually goes through the second time.
-	 * 
-	 * 
 	 */
 	static public function e3170_errorsaving($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
@@ -44,28 +39,18 @@ class QuickBooks_Callbacks_Integrator_Errors
 			default:
 				return false;
 		}
-		
-		// (default clause for switch() statement)
-	}	
+	}
 	
-	/**
-	 *
-	 *
-	 *
-	 */
 	static public function e3180_errorsaving($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
 		switch ($action)
 		{
 			case QUICKBOOKS_ADD_DATAEXT:
-				
 				// Ignore it, this happens when we try to DataExtAdd a DataExt that already exists
 				return true;
 			default:
 				return false;
 		}
-		
-		// (default clause for switch() statement)
 	}
 	
 	static public function e3200_editsequence($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
@@ -73,7 +58,6 @@ class QuickBooks_Callbacks_Integrator_Errors
 		switch ($action)
 		{
 			case QUICKBOOKS_MOD_CUSTOMER:
-				
 				// EditSequence for this customer is out-of-date, query for the customer to get the latest EditSequence, and re-send
 				return QuickBooks_Callbacks_Integrator_Callbacks::integrateQueryCustomer($ID);
 			default:
@@ -81,16 +65,8 @@ class QuickBooks_Callbacks_Integrator_Errors
 		}
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 	static public function e3100_alreadyexists($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
-		//print('exists!');
-		
 		// These are special-case handlers, handle these by querying
 		switch ($ID)
 		{
@@ -103,9 +79,7 @@ class QuickBooks_Callbacks_Integrator_Errors
 				//	query (havn't we queried already...?) or just ignore this because
 				//	we'll refer to these items by FullName in the requests, so if
 				//	it already exists we're golden, or...? 
-				
-				return true;
-				
+
 				switch ($action)
 				{
 					case QUICKBOOKS_ADD_SERVICEITEM:
@@ -145,7 +119,6 @@ class QuickBooks_Callbacks_Integrator_Errors
 				
 				// Do a query for the customer
 				// @todo Does this have the potential to cause an infinite loop?  Add, taken by Vendor, Query, Add, taken by Vendor, Query, etc. etc. etc.
-				//return QuickBooks_Callbacks_Integrator_Callbacks::integrateQueryCustomer($ID);
 				return true;
 		}
 		
@@ -154,9 +127,6 @@ class QuickBooks_Callbacks_Integrator_Errors
 	
 	/** 
 	 * This error occurs when we send a request to QuickBooks that has an error, or that QuickBooks doesn't understand (old version of QuickBooks)
-	 * 
-	 * @param string $requestID
-	 * @return boolean
 	 */
 	static public function e0x80040400_foundanerror($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
@@ -180,11 +150,6 @@ class QuickBooks_Callbacks_Integrator_Errors
 		return false;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */	
 	static public function e_catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
 		if (!empty($config['_error_email']))

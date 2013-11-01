@@ -16,15 +16,9 @@
  * @subpackage Adapter
  */
 
-/**
- * 
- */
 QuickBooks_Loader::load('/QuickBooks/Adapter/Client.php');
 
-/**
- * 
- */
-class QuickBooks_Adapter_Client_Php extends SoapClient implements QuickBooks_Adapter_Client
+class QuickBooks_Adapter_Client_Php extends \SoapClient implements QuickBooks_Adapter_Client
 {
 	public function __construct($endpoint, $wsdl = QUICKBOOKS_WSDL, $trace = true)
 	{
@@ -36,8 +30,8 @@ class QuickBooks_Adapter_Client_Php extends SoapClient implements QuickBooks_Ada
 		{
 			$options['trace'] = 1;
 		}
-		
-		parent::__construct($wsdl, $options);
+
+		parent::SoapClient($wsdl, $options);
 	}
 	
 	/**

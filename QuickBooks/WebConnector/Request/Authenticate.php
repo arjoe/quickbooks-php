@@ -21,13 +21,18 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- */
 class QuickBooks_WebConnector_Request_Authenticate extends QuickBooks_WebConnector_Request
 {
+    /**
+     * @var string
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     */
 	public $strUserName;
-	
+
+    /**
+     * @var string
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     */
 	public $strPassword;
 	
 	public function __construct($username = null, $password = null)
@@ -35,5 +40,13 @@ class QuickBooks_WebConnector_Request_Authenticate extends QuickBooks_WebConnect
 		$this->strUserName = $username;
 		$this->strPassword = $password;
 	}
+
+    public function getUsername() {
+        return $this->strUserName;
+    }
+
+    public function getPassword() {
+        return $this->strPassword;
+    }
 }
 

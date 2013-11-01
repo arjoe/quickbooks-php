@@ -29,10 +29,12 @@ class QuickBooks_IPP_Service_Customer extends QuickBooks_IPP_Service
 	/**
 	 * Get a customer by ID 
 	 * 
-	 * @param QuickBooks_IPP_Context $Context	
+	 * @param \QuickBooks_IPP_Context $Context
 	 * @param string $realm					
-	 * @param string $ID						The ID of the customer (this expects an IdType, which includes the domain)
-	 * @return QuickBooks_IPP_Object_Customer	The customer object
+	 * @param string $IDType						The ID of the customer (this expects an IdType, which includes the domain)
+     * @param string $query
+     *
+	 * @return \QuickBooks_IPP_Object_Customer	The customer object
 	 */
 	public function findById($Context, $realm, $IDType, $query = null)
 	{
@@ -56,8 +58,6 @@ class QuickBooks_IPP_Service_Customer extends QuickBooks_IPP_Service
 	
 	/**
 	 * Delete a customer from IDS/QuickBooks
-	 *
-	 *
 	 */
 	public function delete($Context, $realm, $IDType)
 	{

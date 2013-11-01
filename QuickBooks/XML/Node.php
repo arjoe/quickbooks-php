@@ -167,12 +167,6 @@ class QuickBooks_XML_Node
 		return true;
 	}
 
-	/**
-	 *
-	 * @param <type> $path
-	 * @param <type> $attr
-	 * @param <type> $value 
-	 */
 	public function setChildAttributeAt($path, $attr, $value, $create = false)
 	{
 		if ($child = $this->getChildAt($path))
@@ -261,12 +255,6 @@ class QuickBooks_XML_Node
 		return $this->_getChildAtHelper($this, $path);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param <type> $path
-	 * @return <type> 
-	 */
 	public function childExistsAt($path)
 	{
 		$child = $this->getChildAt($path);
@@ -277,7 +265,7 @@ class QuickBooks_XML_Node
 	 * Add a child XML node at a particular path
 	 * 
 	 * @param string $path
-	 * @param QuickBooks_XML_Node $child
+	 * @param QuickBooks_XML_Node $node
 	 * @param boolean $create
 	 * @return boolean
 	 */
@@ -291,7 +279,7 @@ class QuickBooks_XML_Node
 	 * 
 	 * @param QuickBooks_XML_Node $root
 	 * @param string $path
-	 * @param QuickBooks_XML_Node $child
+	 * @param QuickBooks_XML_Node $node
 	 * @param boolean $create
 	 * @return boolean
 	 */
@@ -303,7 +291,6 @@ class QuickBooks_XML_Node
 		}
 		
 		$explode = explode('/', $path);
-		/*$explode = explode(' ', $path);*/
 		$current = array_shift($explode);
 		$next = current($explode);
 		
@@ -349,11 +336,6 @@ class QuickBooks_XML_Node
 		$explode = explode('/', $path);
 		$allbutend = implode('/', array_slice($explode, 0, -1));
 		
-		/*
-		$explode = explode(' ', $path);
-		$allbutend = implode(' ', array_slice($explode, 0, -1));
-		*/
-		
 		$end = end($explode);
 		
 		$child = $this->getChildAt($path);
@@ -388,33 +370,21 @@ class QuickBooks_XML_Node
 		return false;
 	}
 	
-	/**
-	 * 
-	 */
 	protected function _pathHelper()
 	{
 		
 	}
 	
-	/**
-	 * 
-	 */
 	public function path($path)
 	{
 		
 	}
 	
-	/**
-	 * 
-	 */
 	protected function _getChildByTagHelper()
 	{
 		
 	}
 	
-	/**
-	 * 
-	 */
 	public function getChildByTag($name)
 	{
 		
@@ -643,7 +613,7 @@ class QuickBooks_XML_Node
 	}
 	
 	/**
-	 * Resursive helper function for converting to XML
+	 * Recursive helper function for converting to XML
 	 * 
 	 * @param QuickBooks_XML_Node $node
 	 * @param integer $tabs
@@ -662,7 +632,6 @@ class QuickBooks_XML_Node
 			foreach ($node->attributes() as $key => $value)
 			{
 				// Make sure double-encode is *off* 
-				//$xml .= ' ' . $key . '="' . QuickBooks_XML::encode($value, true, false) . '"';
 				$xml .= ' ' . $key . '="' . QuickBooks_XML::encode($value) . '"';
 			}
 			
@@ -682,12 +651,10 @@ class QuickBooks_XML_Node
 				foreach ($node->attributes() as $key => $value)
 				{
 					// Double-encode is *off*
-					//$xml .= ' ' . $key . '="' . QuickBooks_XML::encode($value, true, false) . '"';
 					$xml .= ' ' . $key . '="' . QuickBooks_XML::encode($value) . '"';
 				}
 				
 				// Double-encode is *off*
-				//$xml .= '>' . QuickBooks_XML::encode($node->data(), true, false) . '</' . $node->name() . '>' . "\n";
 				$xml .= '>' . QuickBooks_XML::encode($node->data()) . '</' . $node->name() . '>' . "\n";
 			}
 			else
@@ -695,7 +662,6 @@ class QuickBooks_XML_Node
 				if ($node->hasData() or $empty == QuickBooks_XML::XML_PRESERVE)
 				{
 					// Double-encode is *off*
-					//$xml .= str_repeat($indent, $tabs) . '<' . $node->name() . '>' . QuickBooks_XML::encode($node->data(), true, false) . '</' . $node->name() . '>' . "\n";
 					$xml .= str_repeat($indent, $tabs) . '<' . $node->name() . '>' . QuickBooks_XML::encode($node->data()) . '</' . $node->name() . '>' . "\n";
 				}
 				else if ($empty == QuickBooks_XML::XML_COMPRESS)
@@ -707,28 +673,6 @@ class QuickBooks_XML_Node
 					; // do nothing, drop the empty element
 				}
 			}
-			
-			/*
-			$xml .= str_repeat($indent, $tabs) . '<' . $node->name();
-			
-			foreach ($node->attributes() as $key => $value)
-			{
-				$xml .= ' ' . $key . '="' . htmlentities($value, ENT_QUOTES) . '"';
-			}
-			
-			if ($node->data())
-			{
-				$xml .= '>' . htmlentities($node->data()) . '</' . $node->name() . '>' . "\n";
-			}
-			else if ($compress)
-			{
-				$xml .= ' />' . "\n";
-			}
-			else
-			{
-				$xml .= '></' . $node->name() . '>' . "\n";
-			}
-			*/
 		}
 		
 		return $xml;
@@ -746,9 +690,6 @@ class QuickBooks_XML_Node
 		return $this->_asXMLHelper($this, 0, $todo_for_empty_elements, $indent);
 	}
 	
-	/**
-	 * 
-	 */
 	protected function _asJSONHelper($node, $tabs, $indent)
 	{
 		$json = '';
@@ -780,7 +721,9 @@ class QuickBooks_XML_Node
 	
 	/**
 	 * Get a JSON representation of this XML node
-	 * 
+	 *
+     * @param string $indent
+     *
 	 * @return string
 	 */
 	public function asJSON($indent = "\t")
@@ -789,7 +732,7 @@ class QuickBooks_XML_Node
 	}
 	
 	/**
-	 * Get an array represtation of this XML node
+	 * Get an array representation of this XML node
 	 * 
 	 * @param string $mode
 	 * @return array 
@@ -841,12 +784,13 @@ class QuickBooks_XML_Node
 	/**
 	 * Save this XML node structure as an XML file
 	 * 
-	 * @param mixed $path_or_resource			The filepath of the file you want write to *or* an opened file resource
-	 * @param string $mode						The mode to open the file in
-	 * @param boolean $todo_for_empty_elements	A constant, one of: QUICKBOOKS_XML_XML_COMPRESS, QUICKBOOKS_XML_XML_DROP, QUICKBOOKS_XML_XML_PRESERVE 
+	 * @param mixed   $path_or_resource			The filepath of the file you want write to *or* an opened file resource
+	 * @param string  $mode						The mode to open the file in
+	 * @param integer $todo_for_empty_elements	A constant, one of: QUICKBOOKS_XML_XML_COMPRESS, QUICKBOOKS_XML_XML_DROP, QUICKBOOKS_XML_XML_PRESERVE
+     *
 	 * @return integer							The number of bytes written to the file
 	 */
-	public function saveXML($path_or_resource, $mode = 'wb', $todo_for_empty_elements = QuickBooks_XML::XML_COMPRESS)
+    public function saveXML($path_or_resource, $mode = 'wb', $todo_for_empty_elements = QuickBooks_XML::XML_COMPRESS)
 	{
 		$xml = $this->asXML($todo_for_empty_elements);
 		
@@ -907,5 +851,3 @@ class QuickBooks_XML_Node
 		
 	}
 }
-
-?>

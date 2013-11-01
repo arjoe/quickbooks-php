@@ -36,7 +36,7 @@ class QuickBooks_WebConnector_Result_InteractiveDone extends QuickBooks_WebConne
 	/**
 	 * Create a new result object
 	 * 
-	 * @param string $version
+	 * @param string $str
 	 */
 	public function __construct($str)
 	{

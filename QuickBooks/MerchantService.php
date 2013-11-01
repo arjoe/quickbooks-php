@@ -54,7 +54,7 @@ QuickBooks_Loader::load('/QuickBooks/MerchantService/Transaction.php');
 /**
  * QuickBooks Merchant Service implementation
  */
-class Quickbooks_MerchantService
+class QuickBooks_MerchantService
 {
 	/**
 	 * No error occurred
@@ -185,20 +185,6 @@ class Quickbooks_MerchantService
 	const MODE_WITHRECEIPT = 'InPersonWithReceipt';
 	const MODE_WITHOUTRECEIPT = 'InPersonNoReceipt';
 	
-	/*
-	2000
-	Authentication failed -- Invalid login name or password / certificate / ticket
-	2010
-	Unauthorized
-	2020
-	Session Authentication required
-	2030
-	Unsupported signon version
-	2040
-	Internal err
-	
-	*/
-	
 	/**
 	 * 
 	 * Status OK, AVS Street and Zip fail, card security code fail
@@ -209,35 +195,6 @@ class Quickbooks_MerchantService
 	
 	const TEST_COMMUNICATIONERROR = 'configid=10200_comm';
 	
-	/*
-	<NameOnCard>configid=value </NameOnCard>
-	Simply replace “value in the above line with one of the ConfigID values listeds in Table 6-2 
-	on page 44. 
-	Table 6-2 ConfigID values and the errors they generate:
-	Error to be 
-	Returned ConfigID value to insert Error Emulated
-	10200 10200_comm An error occurred while communicating with the credit 
-	card processing gateway.
-	10201 10201_login An error occurred during login to the processing 
-	gateway.
-	10301 10301_ccinvalid This credit card account number is invalid.
-	10400 10400_insufffunds This account does not have sufficient funds to process 
-	this transaction.
-	10401 10401_decline The request to process this transaction has been 
-	declined. 
-	10403 10403_acctinvalid The merchant account information submitted is not 
-	recognized.
-	10404 10404_referral This transaction has been declined, but can be 
-	approved by obtaining a Voice Authorization code from 
-	the card issuer.
-	10405 10405_void An error occurred while attempting to void this 
-	transaction.
-	10406 10406_capture An error occurred while processing the capture 
-	transaction.
-	10500 10500_general A general error occurred at the credit card processing 
-	gateway.
-	*/
-
 	/**
 	 * The connection ticket used to connect to QuickBooks Merchant Service
 	 * @var string
@@ -250,26 +207,13 @@ class Quickbooks_MerchantService
 	 */
 	protected $_application_login;
 	
-	//protected $_app_name;
-	
-	//protected $_app_url;
-	
-	//protected $_app_id;
-	
-	//protected $_auth_id;
-	
 	protected $_certificate;
-	
-	//protected $_logfile = '/tmp/curlerrors.txt';
 	
 	protected $_driver;
 	
 	protected $_test;
 	protected $_debug;
 	protected $_masking;
-	
-	//Testing - https://webmerchantaccount.ptc.quickbooks.com/j/AppGateway
-	//Debug - https://webmerchantaccount.quickbooks.com/j/diag/http
 	
 	protected $_live_gateway = 'https://webmerchantaccount.quickbooks.com/j/AppGateway';
 	protected $_test_gateway = 'https://webmerchantaccount.ptc.quickbooks.com/j/AppGateway';
@@ -288,12 +232,7 @@ class Quickbooks_MerchantService
 	protected $_warnnum;
 	protected $_warnmsg;
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	public function __construct($dsn, $certificate, $application_login = null, $connection_ticket = null) 
+	public function __construct($dsn, $certificate, $application_login = null, $connection_ticket = null)
 	{
 		$this->_test = false;
 		$this->_debug = false;
@@ -323,11 +262,7 @@ class Quickbooks_MerchantService
 		{
 			$this->_ticket_connection = $connection_ticket;
 		}
-		else if ($this->_driver)
-		{
-			//$this->_ticket_connection = $this->_driver->
-		}
-		
+
 		$this->_certificate = $certificate;		
 		
 		$this->_errnum = QuickBooks_MerchantService::ERROR_OK;
@@ -410,11 +345,6 @@ class Quickbooks_MerchantService
 		$this->_errmsg = $errmsg;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	protected function _setWarning($warnnum, $warnmsg = '')
 	{
 		$this->_warnnum = $warnnum;
@@ -503,9 +433,6 @@ class Quickbooks_MerchantService
 		if (false !== ($spos = strpos($data, $attr . '="')) and 
 			false !== ($epos = strpos($data, '"', $spos + strlen($attr) + 2)))
 		{
-			//print('start: ' . $spos . "\n");
-			//print('end: ' . $epos . "\n");
-			
 			return substr($data, $spos + strlen($attr) + 2, $epos - $spos - strlen($attr) - 2);
 		}
 		
@@ -622,7 +549,8 @@ class Quickbooks_MerchantService
 	 * @param string $type
 	 * @param string $path
 	 * @param string $xml
-	 * @param object $Creditcard
+	 * @param object $CreditCard
+     * @param $Transaction
 	 * @return QuickBooks_MerchantService_Transaction
 	 */
 	protected function _doQBMS($type, $path, $xml, $CreditCard = null, $Transaction = null)
@@ -660,7 +588,6 @@ class Quickbooks_MerchantService
 		
 		$this->_log('QBMS Response: ' . $qbms_severity . '/' . $qbms_code . ': ' . $qbms_message, QUICKBOOKS_LOG_DEBUG);
 		
-		//if ($qbms_code != QuickBooks_MerchantService::ERROR_OK)
 		if (!$qbms_severity or $qbms_severity == QuickBooks_MerchantService::SEVERITY_ERROR)
 		{
 			$this->_setError($qbms_code, $qbms_message);
@@ -669,7 +596,6 @@ class Quickbooks_MerchantService
 		else if ($qbms_severity == QuickBooks_MerchantService::SEVERITY_WARN)
 		{
 			$this->_setWarning($qbms_code, $qbms_message);
-			// return false;		// DO NOT RETURN HERE (it's just a warning)
 		}
 		else if ($qbms_severity == QuickBooks_MerchantService::SEVERITY_INFO)
 		{
@@ -728,48 +654,6 @@ class Quickbooks_MerchantService
 	
 	public function debitCheck($CheckingAccount, $amount, $payment_mode, $check_number = null, $comment = null, $is_recurring = false, $force_new_transaction = true)
 	{
-		/*
-<CustomerCheckDebitRq>
-	<TransRequestID >STRTYPE</TransRequestID> <!-- required -->
-	<KeyEnteredCheckInfo> <!-- optional -->
-		<RoutingNumber >STRTYPE</RoutingNumber> <!-- required -->
-		<AccountNumber >STRTYPE</AccountNumber> <!-- required -->
-		<CheckNumber >STRTYPE</CheckNumber> <!-- optional -->
-		<!-- BEGIN OR -->
-		<PersonalPaymentInfo> <!-- optional -->
-		<!-- PersonalDebitAccountType may have one of the following values: Checking, Savings -->
-		<PersonalDebitAccountType >ENUMTYPE</PersonalDebitAccountType> <!-- required -->
-		<PayorFirstName >STRTYPE</PayorFirstName> <!-- required -->
-		<PayorLastName >STRTYPE</PayorLastName> <!-- required -->
-		</PersonalPaymentInfo>
-		<!-- OR -->
-		<BusinessPaymentInfo> <!-- optional -->
-			<!-- BusinessDebitAccountType may have one of the following values: Checking, Savings -->
-			<BusinessDebitAccountType >ENUMTYPE</BusinessDebitAccountType> <!-- required -->
-			<PayorFirstName >STRTYPE</PayorFirstName> <!-- optional -->
-			<PayorLastName >STRTYPE</PayorLastName> <!-- optional -->
-		</BusinessPaymentInfo>
-		<!-- END OR -->
-	</KeyEnteredCheckInfo>
-	
-	<PayorPhoneNumber >STRTYPE</PayorPhoneNumber> <!-- optional -->
-	<Amount >AMTTYPE</Amount> <!-- required -->
-	<!-- PaymentMode may have one of the following values: Internet, Telephone, SignedAuthOnFile, Mailed, InPersonWithReceipt, InPersonNoReceipt -->
-	<PaymentMode >ENUMTYPE</PaymentMode> <!-- required -->
-	<PayeeName >STRTYPE</PayeeName> <!-- optional -->
-	<BatchID >STRTYPE</BatchID> <!-- optional -->
-	<IsRecurring >BOOLTYPE</IsRecurring> <!-- optional -->
-	<Comment >STRTYPE</Comment> <!-- optional -->
-</CustomerCheckDebitRq>
-
-<CustomerCheckDebitRs statusCode="INTTYPE" statusSeverity="STRTYPE" statusMessage="STRTYPE">
-	<CheckTransID >STRTYPE</CheckTransID> <!-- optional -->
-	<CheckAuthorizationCode >STRTYPE</CheckAuthorizationCode> <!-- optional -->
-	<TxnAuthorizationTime >DATETIMETYPE</TxnAuthorizationTime> <!-- optional -->
-	<ClientTransID >STRTYPE</ClientTransID> <!-- optional -->
-	<StatusDetail >STRTYPE</StatusDetail> <!-- optional -->
-</CustomerCheckDebitRs>
-*/
 
 		$this->_setError(QuickBooks_MerchantService::ERROR_OK);
 		$this->_log('debitCheck()', QUICKBOOKS_LOG_VERBOSE);
@@ -797,8 +681,6 @@ class Quickbooks_MerchantService
 		
 		$xml .= $this->_createCheckingAccountXML($CheckingAccount, $check_number, $amount, $payment_mode);
 
-		//<BatchID >STRTYPE</BatchID> <!-- optional -->
-		
 		if ($comment)
 		{
 			$xml .= '			<Comment>' . substr(QuickBooks_XML::encode($comment), 0, 500) . '</Comment>' . QUICKBOOKS_CRLF;
@@ -855,24 +737,6 @@ class Quickbooks_MerchantService
 				return false;
 			}
 		}
-		
-		/*
-		<CustomerCreditCardWalletAddRq>
-			<CustomerID >STRTYPE</CustomerID> <!-- required -->
-			<CreditCardNumber >STRTYPE</CreditCardNumber> <!-- required -->
-			<ExpirationMonth >INTTYPE</ExpirationMonth> <!-- required -->
-			<ExpirationYear >INTTYPE</ExpirationYear> <!-- required -->
-			<NameOnCard >STRTYPE</NameOnCard> <!-- optional -->
-			<CreditCardAddress >STRTYPE</CreditCardAddress> <!-- optional -->
-			<CreditCardPostalCode >STRTYPE</CreditCardPostalCode> <!-- optional -->
-		</CustomerCreditCardWalletAddRq>
-		
-		<CustomerCreditCardWalletAddRs statusCode="INTTYPE" statusSeverity="STRTYPE" statusMessage="STRTYPE">
-			<WalletEntryID >STRTYPE</WalletEntryID> <!-- optional -->
-			<IsDuplicate >BOOLTYPE</IsDuplicate> <!-- optional -->
-			<StatusDetail >STRTYPE</StatusDetail> <!-- optional -->
-		</CustomerCreditCardWalletAddRs>
-		*/		
 		
 		$include_address_data = true;
 		$include_amounts = false;
@@ -1018,8 +882,6 @@ class Quickbooks_MerchantService
 			$xml .= '			<CardSecurityCode>' . $cvv . '</CardSecurityCode>' . QUICKBOOKS_CRLF;
 		}
 		
-		//<BatchID >STRTYPE</BatchID> <!-- optional -->
-		
 		if ($comment)
 		{
 			$xml .= '			<Comment>' . substr(QuickBooks_XML::encode($comment), 0, 500) . '</Comment>' . QUICKBOOKS_CRLF;
@@ -1075,15 +937,12 @@ class Quickbooks_MerchantService
 		$xml .= '			<WalletEntryID>' . $walletID . '</WalletEntryID>' . QUICKBOOKS_CRLF;
 		$xml .= '			<CustomerID>' . QuickBooks_XML::encode($customerID) . '</CustomerID>' . QUICKBOOKS_CRLF;
 		
-		// 				_createCreditCardXML($Card, $amount, $salestax, $is_card_present, $is_ecommerce, $is_recurring, $include_address_data = true, $include_amounts = true, $include_card_number = true, $include_card_cvv = true, $include_card_dates = true
 		$xml .= $this->_createCreditCardXML(null, $amount, $salestax, false, $is_ecommerce, $is_recurring, false, true, false, true, false);
 		
 		if ($cvv)
 		{
 			$xml .= '			<CardSecurityCode>' . $cvv . '</CardSecurityCode>' . QUICKBOOKS_CRLF;
 		}		
-		
-		//<BatchID >STRTYPE</BatchID> <!-- optional -->
 		
 		if ($comment)
 		{
@@ -1132,10 +991,6 @@ class Quickbooks_MerchantService
 		return $this->_doQBMS(QuickBooks_MerchantService::TYPE_WALLETQUERY, 'QBMSXML/QBMSXMLMsgsRs/CustomerWalletQueryRs', $xml);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public function authorize($Card, $amount, $salestax = null, $comment = null, $is_card_present = false, $is_ecommerce = true, $is_recurring = false, $force_new_transaction = true)
 	{
 		$this->_setError(QuickBooks_MerchantService::ERROR_OK);
@@ -1271,7 +1126,6 @@ class Quickbooks_MerchantService
 					$trans[$node] = $Node->getChildDataAt($path . '/' . $node);
 				}
 				
-				// 
 				if ($trans['DebitCardTransID'])
 				{
 					$trans['CreditCardTransID'] = $trans['DebitCardTransID'];
@@ -1372,10 +1226,6 @@ class Quickbooks_MerchantService
 				$xml .= '			<ExpirationMonth>' . $Card->getExpirationMonth() . '</ExpirationMonth>' . QUICKBOOKS_CRLF;
 				$xml .= '			<ExpirationYear>' . $Card->getExpirationYear() . '</ExpirationYear>' . QUICKBOOKS_CRLF;
 			}
-			
-			//$xml .= '			<IsCardPresent>BOOLTYPE</IsCardPresent>' . QUICKBOOKS_CRLF;
-			//$xml .= '			<IsECommerce >BOOLTYPE</IsECommerce>' . QUICKBOOKS_CRLF;
-			//$xml .= '			<IsRecurring >BOOLTYPE</IsRecurring>' . QUICKBOOKS_CRLF;
 		}
 		
 		if ($include_amounts)
@@ -1394,9 +1244,7 @@ class Quickbooks_MerchantService
 			$xml .= '			<CreditCardPostalCode>' . substr(str_replace(array('-', ' ', '.'), '', $Card->getPostalCode()), 0, 9) . '</CreditCardPostalCode>' . QUICKBOOKS_CRLF;
 		}
 		
-		//$xml .= '			<CommercialCardCode >STRTYPE</CommercialCardCode>' . QUICKBOOKS_CRLF;
-		
-		if ($include_amounts and 
+		if ($include_amounts and
 			!is_null($salestax))
 		{
 			$xml .= '			<SalesTaxAmount>' . sprintf('%01.2f', (float) $salestax) . '</SalesTaxAmount>' . QUICKBOOKS_CRLF;
@@ -1409,39 +1257,9 @@ class Quickbooks_MerchantService
 			$xml .= '			<CardSecurityCode>' . $Card->getCVVCode() . '</CardSecurityCode>' . QUICKBOOKS_CRLF;
 		}
 		
-		/*
-		<Lodging>
-		<FolioID >STRTYPE</FolioID> <!-- required -->
-		<!-- ChargeType may have one of the following values: ConventionFees, GiftShop, Golf, HealthClub, Hotel, Restaurant, Salon, Tennis -->
-		<ChargeType >ENUMTYPE</ChargeType> <!-- optional -->
-		<CheckInDate >DATETYPE</CheckInDate> <!-- optional -->
-		<CheckOutDate >DATETYPE</CheckOutDate> <!-- optional -->
-		<LengthOfStay >INTTYPE</LengthOfStay> <!-- optional -->
-		<RoomRate >AMTTYPE</RoomRate> <!-- optional -->
-		<!-- ExtraCharge may have one of the following values: GiftShop, Laundry, MiniBar, Restaurant, Telephone, Other -->
-		<ExtraCharge >ENUMTYPE</ExtraCharge> <!-- must occur 0 - 6 times -->
-		<!-- SpecialProgram may have one of the following values: AdvanceDeposit, AssuredReservation, DelayedCharge, ExpressService, NormalCharge, NoShowCharge -->
-		<SpecialProgram >ENUMTYPE</SpecialProgram> <!-- optional -->
-		<TotalAuthAmount >AMTTYPE</TotalAuthAmount> <!-- optional -->
-		</Lodging>
-		<Restaurant> <!-- optional -->
-		<ServerID >STRTYPE</ServerID> <!-- optional -->
-		<FoodAmount >AMTTYPE</FoodAmount> <!-- optional -->
-		<BeverageAmount >AMTTYPE</BeverageAmount> <!-- optional -->
-		<TaxAmount >AMTTYPE</TaxAmount> <!-- optional -->
-		<TipAmount >AMTTYPE</TipAmount> <!-- optional -->
-		</Restaurant>
-		*/
-		
-		return $xml;		
+		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
 	public function charge($Card, $amount, $salestax = null, $comment = null, $is_card_present = false, $is_ecommerce = true, $is_recurring = false, $force_new_transaction = true)
 	{
 		$this->_setError(QuickBooks_MerchantService::ERROR_OK);
@@ -1488,7 +1306,9 @@ class Quickbooks_MerchantService
 	 * 
 	 * 
 	 * @param QuickBooks_MerchantService_Transaction $Transaction
-	 * @param float $amount
+	 * @param float     $amount
+     * @param string    $comment
+     * @param bool      $force_new_transaction
 	 * @return QuickBooks_MerchantService_Transaction
 	 */
 	public function capture($Transaction, $amount = null, $comment = null, $force_new_transaction = true)
@@ -1551,12 +1371,21 @@ class Quickbooks_MerchantService
 		return $this->_doQBMS(QuickBooks_MerchantService::TYPE_CAPTURE, 'QBMSXML/QBMSXMLMsgsRs/CustomerCreditCardCaptureRs', $xml, null, $Transaction);
 	}
 	
-	/**
-	 * Refund a credit card a given amount
-	 * 
-	 * 
-	 */
-	public function refund($Card, $amount, $salestax = null, $comment = null, $is_card_present = false, $is_ecommerce = true, $force_new_transaction = true)
+    /**
+     * Refund a credit card a given amount
+     *
+     * @param       $Card
+     * @param float     $amount
+     * @param float     $salestax
+     * @param string    $comment
+     * @param bool      $is_card_present
+     * @param bool      $is_ecommerce
+     * @param bool      $force_new_transaction
+     *
+     * @return bool|QuickBooks_MerchantService_Transaction
+     * @todo Fix inconsistent return value
+     */
+    public function refund($Card, $amount, $salestax = null, $comment = null, $is_card_present = false, $is_ecommerce = true, $force_new_transaction = true)
 	{
 		$this->_setError(QuickBooks_MerchantService::ERROR_OK);
 		$this->_log('refund()', QUICKBOOKS_LOG_VERBOSE);
@@ -1612,11 +1441,6 @@ class Quickbooks_MerchantService
 		return $this->_doQBMS(QuickBooks_MerchantService::TYPE_CAPTURE, 'QBMSXML/QBMSXMLMsgsRs/CustomerCreditCardRefundRs', $xml, $Card);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function void($Transaction, $comment = null, $force_new_transaction = true)
 	{
 		$this->_setError(QuickBooks_MerchantService::ERROR_OK);
@@ -1663,11 +1487,6 @@ class Quickbooks_MerchantService
 		return $this->_doQBMS(QuickBooks_MerchantService::TYPE_VOID, 'QBMSXML/QBMSXMLMsgsRs/CustomerCreditCardTxnVoidRs', $xml);
 	}
 		
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public function voidOrRefund($Transaction, $amount = null, $salestax = null, $comment = null, $force_new_transaction = true)
 	{
 		$this->_setError(QuickBooks_MerchantService::ERROR_OK);
@@ -1770,10 +1589,6 @@ class Quickbooks_MerchantService
 		}
 		
 		$BatchID = $this->_getBatch($BatchID, true);
-		
-		// Send the batch close request
-		
-		
 	}
 	
 	/**
@@ -1794,12 +1609,11 @@ class Quickbooks_MerchantService
 	}
 	
 	/**
-	 * 
-	 * 
-	 * 
+	 *
 	 * @param string $message
 	 * @param integer $level
 	 * @return boolean
+     * @deprecated Use log instead
 	 */
 	protected function _log($message, $level = QUICKBOOKS_LOG_NORMAL)
 	{
@@ -1807,27 +1621,30 @@ class Quickbooks_MerchantService
 		{
 			$message = QuickBooks_Utilities::mask($message);
 		}
-		
+
 		if ($this->_debug)
 		{
 			print($message . QUICKBOOKS_CRLF);
 		}
-		
+
 		if ($this->_driver)
 		{
-			// Send it to the driver to be logged 
+			// Send it to the driver to be logged
 			$this->_driver->log($message, $this->_ticket_session, $level);
 		}
-		
+
 		return true;
 	}
-	
-	/**
-	 * Log a message 
-	 *
-	 *
-	 */
-	public function log($message, $level = QUICKBOOKS_LOG_NORMAL)
+
+    /**
+     * Log a message
+     *
+     * @param string    $message    The message to log
+     * @param int       $level      The log level of the message
+     *
+     * @return bool true if successful, false otherwise.
+     */
+    public function log($message, $level = QUICKBOOKS_LOG_NORMAL)
 	{
 		return $this->_log($message, $level);
 	}

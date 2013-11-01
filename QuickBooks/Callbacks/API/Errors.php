@@ -16,9 +16,6 @@
  * @subpackage Callbacks
  */
 
-/**
- * 
- */
 class QuickBooks_Callbacks_API_Errors
 {
 	/**
@@ -53,13 +50,6 @@ class QuickBooks_Callbacks_API_Errors
 	 */
 	static public function e500_notfound($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
-		//$requestID, $user, $action, $ident, $extra, $errerr, $xml, $errnum, $errmsg, $this->_callback_config
-		// Not found, *still call the callback!*
-		
-		/*
-		$extra['callbacks'], $method, $action, $ID, $err, $qbxml, $qbobject, $qbres
-		*/
-		
 		// Get the driver instance
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		
@@ -90,7 +80,6 @@ class QuickBooks_Callbacks_API_Errors
 				true) // method_exists()) 	// is this safe to do?
 			{
 				// Callback *static method*
-				
 				$tmp = explode('::', $func);
 				
 				$return = call_user_func(array( $tmp[0], $tmp[1] ), $method, $action, $ident, $err, $xml, $qbobject, $qbres);
@@ -98,7 +87,6 @@ class QuickBooks_Callbacks_API_Errors
 			else if (function_exists($func))
 			{
 				// Callback *function* 
-				
 				$return = call_user_func($func, $method, $action, $ident, $err, $xml, $qbobject, $qbres);
 			}
 			else
@@ -124,7 +112,6 @@ class QuickBooks_Callbacks_API_Errors
 	
 	static public function catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
 	{
-		
 		return false;
 	}
 }

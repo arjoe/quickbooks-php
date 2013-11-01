@@ -31,7 +31,9 @@ class QuickBooks_IPP_Service_TimeActivity extends QuickBooks_IPP_Service
 	 * 
 	 * @param QuickBooks_IPP_Context $Context	
 	 * @param string $realmID					
-	 * @param string $ID						The ID of the timeactivity (this expects an IdType, which includes the domain)
+	 * @param string $IDType						The ID of the timeactivity (this expects an IdType, which includes the domain)
+     * @param string $query
+     *
 	 * @return QuickBooks_IPP_Object_TimeActivity	The timeactivity object
 	 */
 	public function findById($Context, $realmID, $IDType, $query = null)

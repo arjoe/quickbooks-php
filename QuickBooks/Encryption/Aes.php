@@ -14,12 +14,8 @@
  * @package QuickBooks
  */
 
-// 
 QuickBooks_Loader::load('/QuickBooks/Encryption.php');
 
-/**
- * 
- */
 class QuickBooks_Encryption_AES extends QuickBooks_Encryption
 {
 	static function encrypt($key, $plain, $salt = null)
@@ -51,24 +47,13 @@ class QuickBooks_Encryption_AES extends QuickBooks_Encryption
 		$ks = mcrypt_enc_get_key_size($crypt);
 		$key = substr(md5($key), 0, $ks);
 		
-		//print('before base64 [' . $encrypted . ']' . '<br />');
-		
 		$encrypted = base64_decode($encrypted);
-		
-		//print('given key was: ' . $key);
-		//print('iv size: ' . $iv_size);
-		
-		//print('decrypting [' . $encrypted . ']' . '<br />');
 		
 		mcrypt_generic_init($crypt, $key, substr($encrypted, 0, $iv_size));
 		$decrypted = trim(mdecrypt_generic($crypt, substr($encrypted, $iv_size)));
 		mcrypt_generic_deinit($crypt);
 		mcrypt_module_close($crypt);
 		
-		//print('decrypted: [[**(' . $salt . ')');
-		//print_r($decrypted);
-		//print('**]]');
-			
 		$tmp = unserialize($decrypted);
 		$decrypted = current($tmp);
 		

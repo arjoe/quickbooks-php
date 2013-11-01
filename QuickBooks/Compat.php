@@ -17,33 +17,41 @@
 
 if (!function_exists('array_intersect_key'))
 {
-	function array_intersect_key($isec, $keys)
+    /**
+     * Returns an array containing all the entries of array1 which have keys that are present in all the arguments.
+     *
+     * @param array $array1 The array with master keys to check.
+     * @param array $array2 An array to compare keys against.
+     *
+     * @return array An associative array containing all the entries of array1 which have keys that are present in all arguments.
+     */
+    function array_intersect_key(array $array1, array $array2)
 	{
 		$argc = func_num_args();
 		if ($argc > 2)
 		{
-			for ($i = 1; !empty($isec) && $i < $argc; $i++)
+			for ($i = 1; !empty($array1) && $i < $argc; $i++)
 			{
 				$arr = func_get_arg($i);
-				foreach (array_keys($isec) as $key)
+				foreach (array_keys($array1) as $key)
 				{
 					if (!isset($arr[$key]))
 					{
-						unset($isec[$key]);
+						unset($array1[$key]);
 					}
 				}
 			}
 			
-			return $isec;
+			return $array1;
 		}
 		else
 		{
 			$res = array();
-			foreach (array_keys($isec) as $key)
+			foreach (array_keys($array1) as $key)
 			{
-				if (isset($keys[$key]))
+				if (isset($array2[$key]))
 				{
-					$res[$key] = $isec[$key];
+					$res[$key] = $array1[$key];
 				}
 			}
 			return $res;

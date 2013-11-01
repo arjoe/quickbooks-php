@@ -16,14 +16,8 @@
  * @subpackage Adapter
  */
 
-/**
- * 
- */
 QuickBooks_Loader::load('/QuickBooks/Adapter/Server.php');
 
-/**
- * 
- */
 class QuickBooks_Adapter_Server_PHP implements QuickBooks_Adapter_Server
 {
 	protected $_server;

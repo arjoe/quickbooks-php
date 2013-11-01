@@ -40,11 +40,6 @@
  * @subpackage Server
  */
 
-// For debugging... 
-//require_once '/Users/kpalmer/Projects/QuickBooks/QuickBooks.php';
-//require_once '/Users/kpalmer/Sites/saas/library/quickbooks/QuickBooks.php';
-//require_once '/home/playscape/www/html/QuickBooks/QuickBooks.php';
-
 /**
  * Mapper for qbXML schema
  */
@@ -78,8 +73,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 	 */
 	static public function onAuthenticate($requestID, $user, $hook, &$err, $hook_data, $callback_config)
 	{
-		// $requestID, $user, $hook, &$err, $hook_data, $callback_config
-		
 		// Driver instance
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		
@@ -95,34 +88,15 @@ class QuickBooks_Callbacks_SQL_Callbacks
 		// $map parameter
 		$sql_map = $callback_config['map'];
 		
-		// Which things do you want to query? (QuickBooks => SQL database)
-		/*
-		$sql_query = array();
-		foreach (QuickBooks_Utilities::listActions('*QUERY*') as $action)
-		{
-			$sql_query[$action] = QuickBooks_Utilities::priorityForAction($action);
-		}
-		
-		$sql_query = QuickBooks_Callbacks_SQL_Callbacks::_filterActions($sql_query, $callback_config['_only_query'], $callback_config['_dont_query'], QUICKBOOKS_QUERY);
-		*/
-
-		//$start = microtime(true);
-		//$_start = microtime(true);
-
 		$sql_import = array();
 		$tmp = QuickBooks_Utilities::listActions('*IMPORT*');
-		//print('0.01 [' . (microtime(true) - $start) . ']' . "\n\n"); 
 		foreach ($tmp as $action)
 		{
 			$sql_import[$action] = QuickBooks_Utilities::priorityForAction($action);
 		}
-		//print('0.02 [' . (microtime(true) - $start) . ']' . "\n\n"); 
-		
+
 		$sql_import = QuickBooks_Callbacks_SQL_Callbacks::_filterActions($sql_import, $callback_config['_only_import'], $callback_config['_dont_import'], QUICKBOOKS_IMPORT);
-		//print('0.03 [' . (microtime(true) - $start) . ']' . "\n\n"); 
-		
-		//print('0.1 [' . (microtime(true) - $start) . ']' . "\n\n"); 
-		
+
 		// Which things you want to *add* to QuickBooks (SQL => QuickBooks (adds only!))
 		//	@todo These should be changed to use QuickBooks_Utilities::listActions('*ADD*')
 		$sql_add = array();
@@ -132,8 +106,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 		}
 		
 		$sql_add = QuickBooks_Callbacks_SQL_Callbacks::_filterActions($sql_add, $callback_config['_only_add'], $callback_config['_dont_add'], QUICKBOOKS_ADD);
-			
-		//print('0.2 [' . (microtime(true) - $start) . ']' . "\n\n"); 
 			
 		// Which things you want to *modify* in QuickBooks (SQL => QuickBooks (modifys only!))
 		//	@todo These should be changed to use QuickBooks_Utilities::listActions('*MOD*')
@@ -145,8 +117,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 		
 		$sql_mod = QuickBooks_Callbacks_SQL_Callbacks::_filterActions($sql_mod, $callback_config['_only_modify'], $callback_config['_dont_modify'], QUICKBOOKS_MOD);
 		
-		//print('0.3 [' . (microtime(true) - $start) . ']' . "\n\n"); 
-		
 		// Which things you want to *audit* in QuickBooks (QuickBooks => SQL)
 		$sql_audit = array();
 		foreach (QuickBooks_Utilities::listActions('*AUDIT*') as $action)
@@ -154,34 +124,21 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			$sql_audit[$action] = QuickBooks_Utilities::priorityForAction($action);
 		}
 		
-		//print('1 [' . (microtime(true) - $start) . ']' . "\n\n"); $start = microtime(true);
-		
-		// Queueing class
-		//$Queue = new QuickBooks_Queue($dsn_or_conn);
-		
 		// List of all actions we're performing
 		$actions = array();
 		
 		if ($mode == QuickBooks_WebConnector_Server_SQL::MODE_READONLY or 
 			$mode == QuickBooks_WebConnector_Server_SQL::MODE_READWRITE)
 		{
-			//print_r($sql_query);
-			//print_r($sql_map);
-			
 			// Register recurring events for things you want to query
-			//foreach ($sql_query as $action => $priority)
 			foreach ($sql_import as $action => $priority)
 			{
-				//$Driver->log('Registering recurring event for: ' . $action, null, QUICKBOOKS_LOG_DEBUG);
-				
 				// Make sure that there are handlers registered for this recurring action
 				if (!isset($sql_map[$action]))
 				{
-					//trigger_error('No registered handler for: ' . $action);
 					continue;
 				}
 				
-				//$Queue->recurring($run_every, $action, md5(__FILE__), $priority, null, $user);
 				$Driver->recurEnqueue($user, $run_every, $action, md5(__FILE__), true, $priority);
 				
 				$actions[] = $action;
@@ -211,27 +168,7 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			}
 		}
 		
-		//print('2 [' . (microtime(true) - $start) . ']' . "\n\n"); $start = microtime(true);
-		
-		/*
-		// Queue up the audit requests
-		//	Audit requests pull in just the calculated TotalAmount and the 
-		//	TimeModified timestamp from transactions, and store these in 
-		//	the qbsql_audit_* fields so we can tell if there are transactions 
-		//	in QuickBooks that don't match up correctly to what's in the SQL 
-		//	database.
-		foreach ($sql_audit as $action => $priority)
-		{
-			if (!isset($sql_map[$action]))
-			{
-				continue;
-			}
-			
-			$Driver->queueEnqueue($user, $action, 1, true, $priority);
-		}
-		*/
-		
-		// Searching the tables can take a long time, you could potentially 
+		// Searching the tables can take a long time, you could potentially
 		//	have 10 or 15 seconds between when we search for new customers, and 
 		//	when we search for new invoices. What we don't want to have happen 
 		//	is that we search for new customers to be queued up, then a new 
@@ -254,15 +191,9 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			$mark_as_queued = false;
 			$map = $Map->adds($sql_add, $mark_as_queued);
 			
-			//$Driver->log('ADDS: ' . print_r($map, true));
-			
 			// Go through each action in the returned map
 			foreach ($map as $action => $list)
 			{
-				//$Driver->log('Now doing: ' . $action . ', ' . print_r($list, true));
-				
-				//$__start = microtime(true);
-				
 				// Go through each ID for each action
 				$counter = 0;
 				foreach ($list as $ID => $priority)
@@ -271,18 +202,13 @@ class QuickBooks_Callbacks_SQL_Callbacks
 					
 					if (time() - $time_start > $time_limit)
 					{
-						//print('HIT LIMIT SO WE\'RE BREAKING OUT OF HERE [' . $action . '] [ ' . $counter . ' of ' . count($list) . ']!' . "\n");
 						break 2;
 					}
 										// Queue it up to be added to QuickBooks
 					$Driver->queueEnqueue($user, $action, $ID, true, $priority);
 				}
-				
-				//print('now ' . $action . ' [' . (microtime(true) - $__start) . ']' . "\n");
 			}
 		}
-		
-		//print('3 [' . (microtime(true) - $start) . ']' . "\n\n"); $start = microtime(true);
 		
 		// Objects that need to be *MODIFIED* within QuickBooks
 		if ($mode == QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY or 
@@ -298,8 +224,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 				// Convert to table and primary key, select qbsql id
 				QuickBooks_SQL_Schema::mapPrimaryKey($object, QUICKBOOKS_SQL_SCHEMA_MAP_TO_SQL, $table_and_field);  
 				
-				//$Driver->log('Searching table: ' . print_r($table_and_field, true) . ' for MODIFIED records.', null, QUICKBOOKS_LOG_DEBUG);
-				
 				// If we managed to map a table, we need to search that table for changed records
 				if (!empty($table_and_field[0]) and !empty($table_and_field[1]))
 				{
@@ -307,7 +231,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 					//	- Do not sync if to_delete = 1
 					//	- Do not sync if to_skip = 1
 					//	- Do not sync if an error occurred on this record
-					
 					$sql = "
 						SELECT 
 							" . QUICKBOOKS_DRIVER_SQL_FIELD_ID . ", 
@@ -340,17 +263,12 @@ class QuickBooks_Callbacks_SQL_Callbacks
 						$Driver->queueEnqueue($user, $action, $arr[QUICKBOOKS_DRIVER_SQL_FIELD_ID], true, $priority);
 						
 						$actions[] = $action;
-						
-						// Mark the record as enqueued   - let's wait until the hashing is in for this
-						//$Driver->query(..., $errnum, $errmsg);
 					}
 				}
 			}
 		}		
 		
-		//print('4 [' . (microtime(true) - $start) . ']' . "\n\n"); $start = microtime(true);
-		
-		if ($mode == QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY or 
+		if ($mode == QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY or
 			$mode == QuickBooks_WebConnector_Server_SQL::MODE_READWRITE)
 		{
 			// Check if any *voided* objects need to be voided in QuickBooks
@@ -371,8 +289,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 
 				// Convert to table and primary key, select qbsql id
 				QuickBooks_SQL_Schema::mapPrimaryKey($object, QUICKBOOKS_SQL_SCHEMA_MAP_TO_SQL, $table_and_field);  
-				
-				//$Driver->log('Searching table: ' . print_r($table_and_field, true) . ' for VOIDED records.', null, QUICKBOOKS_LOG_DEBUG);
 				
 				if (!empty($table_and_field[0]))
 				{
@@ -405,9 +321,7 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			}
 		}
 		
-		//print('5 [' . (microtime(true) - $start) . ']' . "\n\n"); $start = microtime(true);
-		
-		if ($mode == QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY or 
+		if ($mode == QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY or
 			$mode == QuickBooks_WebConnector_Server_SQL::MODE_READWRITE)
 		{
 			// Check if any *deleted* objects need to be deleted from QuickBooks 
@@ -458,39 +372,7 @@ class QuickBooks_Callbacks_SQL_Callbacks
 				}
 			}
 		}
-		
-		//print('6 [' . (microtime(true) - $start) . ']' . "\n\n"); $start = microtime(true);
-		
-		/*
-		// This makes sure that timestamps are set up for every action we're doing (fixes a bug where timestamps never get recorded on initial sync without iterator)
-		foreach ($actions as $action)
-		{
-			$module = __CLASS__;
-			
-			$key_curr = QuickBooks_Callbacks_SQL_Callbacks::_keySyncCurr($action);
-			$key_prev = QuickBooks_Callbacks_SQL_Callbacks::_keySyncPrev($action);
-			
-			$type = null;
-			$opts = null;
-			$curr_sync_datetime = $Driver->configRead($user, $module, $key_curr, $type, $opts);	// last sync started... 
-			$prev_sync_datetime = $Driver->configRead($user, $module, $key_prev, $type, $opts);	// last sync started... 
-			
-			$datetime = QuickBooks_Utilities::datetime('1983-01-02');
-			
-			if (!$curr_sync_datetime)
-			{
-				$Driver->configWrite($user, $module, $key_curr, $datetime, null);
-			}
-			
-			if (!$prev_sync_datetime)
-			{
-				$Driver->configWrite($user, $module, $key_prev, $datetime, null);
-			}
-		}
-		*/
-		
-		//print("\n\n" . 'here [ ' . (microtime(true) - $_start) . ']' . "\n\n\n");
-		
+
 		return true;
 	}
 	
@@ -500,6 +382,7 @@ class QuickBooks_Callbacks_SQL_Callbacks
 	 * @param array $action_to_priority
 	 * @param array $only_do
 	 * @param array $dont_do
+     * @param $type
 	 * @return array
 	 */
 	static protected function _filterActions($action_to_priority, $only_do, $dont_do, $type)
@@ -507,10 +390,8 @@ class QuickBooks_Callbacks_SQL_Callbacks
 		$start = microtime(true);
 		foreach ($action_to_priority as $action => $priority)
 		{
-			//print('stepping 1... [' . (microtime(true) - $start) . ']' . "\n");
 			$converted = QuickBooks_Utilities::actionToObject($action);
-			//print('stepping 2... [' . (microtime(true) - $start) . ']' . "\n");
-			
+
 			if (count($only_do) and
 				(false === array_search($action, $only_do) and 
 				 false === array_search($converted, $only_do)))
@@ -525,11 +406,8 @@ class QuickBooks_Callbacks_SQL_Callbacks
 				unset($action_to_priority[$action]);
 			}
 		}
-		//print("\n" . 'ending... [' . (microtime(true) - $start) . ']' . "\n\n");
-		
+
 		arsort($action_to_priority);
-		
-		//print_r($action_to_priority);
 		
 		return $action_to_priority;
 	}
@@ -558,10 +436,11 @@ class QuickBooks_Callbacks_SQL_Callbacks
 	/**
 	 * Returns TRUE if the current version if it's greater than or equal to the required version
 	 *
-	 * * NOTE: * 
-	 * 
 	 * @param float $required
 	 * @param float $current
+     * @param string $locale
+     * @param $action
+     *
 	 * @return float
 	 */
 	protected static function _requiredVersion($required, $current, $locale = QUICKBOOKS_LOCALE_US, $action = null)
@@ -601,6 +480,9 @@ class QuickBooks_Callbacks_SQL_Callbacks
 	 * @param float $required
 	 * @param float $current
 	 * @param string $element
+     * @param string $locale
+     * @param string $action
+     *
 	 * @return string
 	 */
 	protected static function _requiredVersionForElement($required, $current, $element, $locale = QUICKBOOKS_LOCALE_US, $action = null)
@@ -624,6 +506,8 @@ class QuickBooks_Callbacks_SQL_Callbacks
 	 * 	XML tag, makes sense for them to have a closing bracket there
 	 * 
 	 * @param mixed $extra 		The $extra value that is passed to the method you're calling this from
+     * @param $version
+     * @param string $locale
 	 * @return string
 	 */
 	protected static function _buildIterator($extra, $version = null, $locale = null)
@@ -696,8 +580,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 		
 		$col_defs = array();
 		
-		//mysql_query("INSERT INTO quickbooks_log ( msg, log_datetime ) VALUES ( 'TESTING', NOW() ) ") or die(mysql_error());
-		
 		// First, find the column definitions
 		$tmp = $xml;
 		$find = 'ColDesc';
@@ -708,9 +590,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			
 			$col_defs[$colID] = $type;
 		}
-		
-		//print_r($col_defs);
-		//exit;
 		
 		$items = array();
 		
@@ -753,32 +632,8 @@ class QuickBooks_Callbacks_SQL_Callbacks
 				}
 			}
 			
-			//$items[] = $item;
-			
-			/*
-			Inventory for "another inventory": Array
-			(
-			    [FullName] => another inventory
-			    [Blank] => another inventory
-			    [ItemDesc] => 
-			    [ItemVendor] => 
-			    [ReorderPoint] => 5
-			    [QuantityOnHand] => 35
-			    [SuggestedReorder] => false
-			    [QuantityOnOrder] => 0
-			    [EarliestReceiptDate] => 
-			    [SalesPerWeek] => 0
-			)
-			*/
-			
 			$Driver->log('Inventory for "' . $item['FullName'] . '": ' . print_r($item, true), null, QUICKBOOKS_LOG_DEBUG);
-			//$errnum = null;
-			//$errmsg = null;
-			//mysql_query("INSERT INTO quickbooks_log VALUES ( msg, log_datetime) VALUES ( '" . mysql_real_escape_string(print_r($item, true)) . "', NOW() ) ");
-			// UPDATE item SET QuantityOnHand = x WHERE FullName = y, resync = NOW() AND qbsql_resync_datetime = qbsql_modify_timestamp
-			// if (!affected_rows)
-			// 	UPDATE item SET QuantityOnHand = x WHERE FullName = y 		// this was a modified item, so it needs to stay modified
-			
+
 			$sql1 = "
 				UPDATE 
 					" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . "iteminventory 
@@ -800,8 +655,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			$errmsg = null;
 			$Driver->query($sql1, $errnum, $errmsg, 0, 1, $vars1); 
 			
-			//$Driver->log($sql1, null, QUICKBOOKS_LOG_DEBUG);
-			
 			if (!$Driver->affected())
 			{
 				$sql2 = "
@@ -819,8 +672,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 				$errnum = null;
 				$errmsg = null;
 				$Driver->query($sql2, $errnum, $errmsg, 0, 1, $vars2); 
-				
-				//$Driver->log($sql2, null, QUICKBOOKS_LOG_DEBUG);
 			}
 			
 			$hooks = array();
@@ -842,10 +693,6 @@ class QuickBooks_Callbacks_SQL_Callbacks
 			$err = null;
 			QuickBooks_Callbacks_SQL_Callbacks::_callHooks($hooks, QuickBooks_SQL::HOOK_SQL_INVENTORY, $requestID, $user, $err, $hook_data, $callback_config);
 		}
-		
-		//print_r($items);
-		
-		//$Driver->log('Inventory: ' . print_r($items, true), null, QUICKBOOKS_LOG_VERBOSE);
 	}
 
 public static function InventoryAssemblyLevelsRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
@@ -879,8 +726,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		$col_defs = array();
 		
-		//mysql_query("INSERT INTO quickbooks_log ( msg, log_datetime ) VALUES ( 'TESTING', NOW() ) ") or die(mysql_error());
-		
 		// First, find the column definitions
 		$tmp = $xml;
 		$find = 'ColDesc';
@@ -891,10 +736,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			
 			$col_defs[$colID] = $type;
 		}
-		
-		//print_r($col_defs);
-		//exit;
-		
+
 		$items = array();
 		
 		// Now, find the actual data
@@ -935,32 +777,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					$item[$col_defs[$colID]] = $value;
 				}
 			}
-			
-			//$items[] = $item;
-			
-			/*
-			Inventory for "another inventory": Array
-			(
-			    [FullName] => another inventory
-			    [Blank] => another inventory
-			    [ItemDesc] => 
-			    [ItemVendor] => 
-			    [ReorderPoint] => 5
-			    [QuantityOnHand] => 35
-			    [SuggestedReorder] => false
-			    [QuantityOnOrder] => 0
-			    [EarliestReceiptDate] => 
-			    [SalesPerWeek] => 0
-			)
-			*/
-			
+
 			$Driver->log('Inventory Assembly for "' . $item['FullName'] . '": ' . print_r($item, true), null, QUICKBOOKS_LOG_DEBUG);
-			//$errnum = null;
-			//$errmsg = null;
-			//mysql_query("INSERT INTO quickbooks_log VALUES ( msg, log_datetime) VALUES ( '" . mysql_real_escape_string(print_r($item, true)) . "', NOW() ) ");
-			// UPDATE item SET QuantityOnHand = x WHERE FullName = y, resync = NOW() AND qbsql_resync_datetime = qbsql_modify_timestamp
-			// if (!affected_rows)
-			// 	UPDATE item SET QuantityOnHand = x WHERE FullName = y 		// this was a modified item, so it needs to stay modified
 
 			$sql1 = "
 				UPDATE
@@ -983,8 +801,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$errmsg = null;
 			$Driver->query($sql1, $errnum, $errmsg, 0, 1, $vars1);
 
-			//$Driver->log($sql1, null, QUICKBOOKS_LOG_DEBUG);
-
 			if (!$Driver->affected())
 			{
 				$sql2 = "
@@ -1002,8 +818,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				$errnum = null;
 				$errmsg = null;
 				$Driver->query($sql2, $errnum, $errmsg, 0, 1, $vars2);
-
-				//$Driver->log($sql2, null, QUICKBOOKS_LOG_DEBUG);
 			}
 
 			$hooks = array();
@@ -1025,10 +839,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$err = null;
 			QuickBooks_Callbacks_SQL_Callbacks::_callHooks($hooks, QuickBooks_SQL::HOOK_SQL_INVENTORYASSEMBLY, $requestID, $user, $err, $hook_data, $callback_config);
 		}
-
-		//print_r($items);
-
-		//$Driver->log('Inventory: ' . print_r($items, true), null, QUICKBOOKS_LOG_VERBOSE);
 	}
 	
 	static protected function _reportExtractColID($xml)
@@ -1075,11 +885,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		if (false !== ($sta = strpos($xml, $find)))
 		{
 			$end = strpos($xml, ' />', $sta);
-			/*if (false === $end)
-			{
-				$end = strpos($xml, '</' . $find);
-			}*/
-			
+
 			if (false !== $end)
 			{
 				$data = substr($xml, $sta - 1, $end - $sta + 4);
@@ -1286,12 +1092,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$others = array();
 			
 			QuickBooks_SQL_Schema::mapToSchema(trim(QuickBooks_Utilities::objectToXMLElement($Node->getChildDataAt("TxnDeletedRet TxnDelType"))), QUICKBOOKS_SQL_SCHEMA_MAP_TO_SQL, $map, $others);
-			
-			/*
-			$sqlObject = new QuickBooks_SQL_Object($map[0], trim(QuickBooks_Utilities::objectToXMLElement($Node->getChildDataAt("TxnDeletedRet TxnDelType"))));
-			$table = $sqlObject->table();
-			*/
-			
+
 			if (!empty($map[0]))
 			{
 				$table = $map[0];
@@ -1319,7 +1120,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		{
 			$Object = new QuickBooks_SQL_Object(null, null, $arr);
 			
-			$xml .= '<?xml version="1.0" encoding="utf-8"?>
+			$xml = '<?xml version="1.0" encoding="utf-8"?>
 			<?qbxml version="' . QuickBooks_Callbacks_SQL_Callbacks::_version($version, $locale) . '"?>
 			<QBXML>
 				<QBXMLMsgsRq onError="' . QUICKBOOKS_SERVER_SQL_ON_ERROR . '">
@@ -1336,11 +1137,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ListDelResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -1383,8 +1179,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	
 	/**
 	 * Void a transaction
-	 * 
-	 * @return string
 	 */
 	public static function TxnVoidRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
@@ -1412,8 +1206,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	
 	/**
 	 * Receive a response from QuickBooks about a voided transaction
-	 * 
-	 * @return boolean
 	 */
 	public static function TxnVoidResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array())
 	{
@@ -1432,8 +1224,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			'AmountDue' => 0.0, 
 			'Amount' => 0.0, 
 			'OpenAmount' => 0.0, 
-			'Amount' => 0.0, 
-			'Subtotal' => 0.0, 
+			'Subtotal' => 0.0,
 			'TotalAmount' => 0.0, 
 			'BalanceRemaining' => 0.0, 
 			'SalesTaxTotal' => 0.0,
@@ -1449,11 +1240,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return true;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function TxnDelRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -1480,11 +1266,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function TxnDelResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -1506,8 +1287,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$sqlObject = new QuickBooks_SQL_Object($map[0], trim(QuickBooks_Utilities::objectToXMLElement($extra['objectType'])));
 			$table = $sqlObject->table();
 			$multipart = array( "TxnID" => $Node->getChildDataAt("TxnDelRs TxnID") );
-			
-			//$config['delete'] = 
 			
 			//Check the delete mode and if desired, just flag them rather than remove the rows.
 			// @todo Fix this wrong delete flag field
@@ -1670,7 +1449,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		// Bill. 		IsPaid, OpenAmount, AmountDue
 		// Charge. 		BalanceRemaining
 		// CreditMemo.	IsPending, CreditRemaining
-		
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		$Parser = new QuickBooks_XML_Parser($xml);
 		
@@ -1716,8 +1494,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							);
 						
 						$Driver->log('Updating DERIVED ' . $xpath . ' fields: ' . print_r($arr, true) . ' where qbsql_id = ' . $ID, null, QUICKBOOKS_LOG_VERBOSE);
-						//mysql_query("INSERT INTO quickbooks_log ( msg ) VALUES ( '" . mysql_real_escape_string('Updating DERIVED ' . $xpath . ' fields: ' . print_r($arr, true) . ' where qbsql_id = ' . $ID) . "' ) ");
-						
+
 						$Driver->update(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table, 
 							$arr, 
 							array( array( 'qbsql_id' => $ID ) ), 
@@ -1728,14 +1505,10 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					
 					break;
 				case QUICKBOOKS_OBJECT_VENDOR:
-					
-					// Vendor.		
-					
-					
+					// Vendor.
 					break;
 				case QUICKBOOKS_OBJECT_CUSTOMER:
-					
-					// Customer.	Balance, TotalBalance, 
+					// Customer.	Balance, TotalBalance,
 					
 					$arr = array(
 						'ListID' => $Node->getChildDataAt('CustomerRet ListID'), 
@@ -1747,8 +1520,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						'Balance' => $Node->getChildDataAt('CustomerRet Balance'),
 						'TotalBalance' => $Node->getChildDataAt('CustomerRet TotalBalance'),
 						);
-					
-					//$Driver->log('Updating DERIVED CUSTOMER fields: ' . print_r($arr, true) . ' where: ' . print_r($extra, true), null, QUICKBOOKS_LOG_VERBOSE);
 					
 					$Driver->log('Updating DERIVED CUSTOMER fields: ' . print_r($arr, true) . ' where qbsql_id = ' . $ID, null, QUICKBOOKS_LOG_VERBOSE);
 					
@@ -1784,7 +1555,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					
 					break;
 				case QUICKBOOKS_OBJECT_INVOICE:
-					
 					// Invoice.		IsPending, AppliedAmount, BalanceRemaining, IsPaid
 					
 					$existing = $Driver->get(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . 'invoice', array( QUICKBOOKS_DRIVER_SQL_FIELD_ID => $ID ));
@@ -1864,11 +1634,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return true;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CustomerAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -1891,11 +1656,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CustomerAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -1926,11 +1686,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function InventoryAdjustmentAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -1946,11 +1701,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_addResponse(QUICKBOOKS_OBJECT_INVENTORYADJUSTMENT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CustomerMsgAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -1962,11 +1712,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CustomerMsgAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -1982,11 +1727,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_CUSTOMERMSG, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function JournalEntryAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2004,11 +1744,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function JournalEntryAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2043,11 +1778,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function JournalEntryModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2064,11 +1794,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_JOURNALENTRY, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CustomerModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2084,8 +1809,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				$Customer->remove('CreditCardInfo_ExpirationYear');
 			}
 			
-			//print('THIS IS RUNNING' . "\n");
-				
 			// Set these fields to "blank" if they aren't being set in the qbXML request
 			$clear = array(
 				'Phone', 
@@ -2099,10 +1822,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				
 			foreach ($clear as $field)
 			{
-				//if (!$Customer->exists($field))
 				if (!$Customer->get($field))
 				{
-					//print('setting ' . $field . ' to NULL' . "\n");
 					$Customer->set($field, QUICKBOOKS_SERVER_SQL_VALUE_CLEAR);
 				}
 			}
@@ -2113,11 +1834,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CustomerModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2134,9 +1850,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_CUSTOMER, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/** 
-	 * 
-	 */
 	public static function ClassAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2148,11 +1861,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ClassAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2170,9 +1878,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	
-	/** 
-	 * 
-	 */
 	public static function DataExtAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2231,11 +1936,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function DataExtAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2253,9 +1953,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	
-	/** 
-	 * 
-	 */
 	public static function DataExtModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2314,11 +2011,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function DataExtModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2335,9 +2027,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_DATAEXT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/** 
-	 * 
-	 */
 	public static function ShipMethodAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2349,11 +2038,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ShipMethodAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2370,9 +2054,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SHIPMETHOD, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/** 
-	 * 
-	 */
 	public static function PaymentMethodAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2384,11 +2065,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function PaymentMethodAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2405,11 +2081,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_PAYMENTMETHOD, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function AccountAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2421,11 +2092,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function AccountAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2442,11 +2108,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_ACCOUNT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function AccountModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2458,11 +2119,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function AccountModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2479,11 +2135,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_ACCOUNT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemDiscountAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2495,11 +2146,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemDiscountAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2516,11 +2162,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_DISCOUNTITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemDiscountModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2532,11 +2173,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemDiscountModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2553,11 +2189,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_DISCOUNTITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemFixedAssetAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2569,11 +2200,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemFixedAssetAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2590,11 +2216,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_FIXEDASSETITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemFixedAssetModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2606,11 +2227,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemFixedAssetModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2627,11 +2243,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_FIXEDASSETITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	    /**
-     *
-     *
-     *
-     */
     public static function ItemInventoryAssemblyAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
     {
     	$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2643,11 +2254,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
     	return '';
     }
 
-    /**
-     *
-     *
-     *
-     */
     public static function ItemInventoryAssemblyAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
     {
     	$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2663,15 +2269,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
     	$extra['IsAddResponse'] = true;
     	$extra['is_add_response'] = true;
     	QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_INVENTORYASSEMBLYITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
-
-    	//$Driver->queueEnqueue($user, QUICKBOOKS_QUERY_INVENTORYADJUSTMENT, md5(__FILE__), true, QuickBooks_Utilities::priorityForAction(QUICKBOOKS_QUERY_INVENTORYADJUSTMENT));
     }
 
-    /**
-     *
-     *
-     *
-     */
     public static function ItemInventoryAssemblyModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
     {
     	$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2683,11 +2282,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
     	return '';
     }
 
-    /**
-     *
-     *
-     *
-     */
     public static function ItemInventoryAssemblyModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
     {
     	$Parser = new QuickBooks_XML_Parser($xml);
@@ -2704,11 +2298,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
     	QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_INVENTORYASSEMBLYITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
     }
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemInventoryAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2720,11 +2309,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemInventoryAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2740,15 +2324,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		$extra['IsAddResponse'] = true;
 		$extra['is_add_response'] = true;
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_INVENTORYITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
-		
-		//$Driver->queueEnqueue($user, QUICKBOOKS_QUERY_INVENTORYADJUSTMENT, md5(__FILE__), true, QuickBooks_Utilities::priorityForAction(QUICKBOOKS_QUERY_INVENTORYADJUSTMENT));
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemInventoryModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2760,11 +2337,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemInventoryModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2781,12 +2353,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_INVENTORYITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemNonInventoryAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2798,11 +2364,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemNonInventoryAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2819,11 +2380,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_NONINVENTORYITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemNonInventoryModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2835,11 +2391,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemNonInventoryModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2856,11 +2407,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_NONINVENTORYITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemOtherChargeAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2872,11 +2418,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemOtherChargeAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2893,11 +2434,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_OTHERCHARGEITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemOtherChargeModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2909,11 +2445,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemOtherChargeModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2930,11 +2461,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_OTHERCHARGEITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemPaymentAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2946,11 +2472,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemPaymentAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -2967,11 +2488,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_PAYMENTITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemPaymentModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -2983,11 +2499,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemPaymentModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3004,11 +2515,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_PAYMENTITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSalesTaxAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3020,11 +2526,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSalesTaxAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3041,11 +2542,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESTAXITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSalesTaxModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3057,11 +2553,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSalesTaxModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3078,11 +2569,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESTAXITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemServiceAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3094,11 +2580,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemServiceAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3115,11 +2596,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SERVICEITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemServiceModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3131,11 +2607,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemServiceModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3152,11 +2623,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SERVICEITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSubtotalAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3168,11 +2634,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSubtotalAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3189,11 +2650,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SUBTOTALITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSubtotalModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3205,11 +2661,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EmployeeAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3221,11 +2672,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EmployeeAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3242,11 +2688,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_EMPLOYEE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EmployeeModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3258,11 +2699,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EmployeeModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3279,11 +2715,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_EMPLOYEE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ItemSubtotalModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3300,11 +2731,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SUBTOTALITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EstimateAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3316,11 +2742,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EstimateAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3337,11 +2758,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_ESTIMATE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EstimateModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3353,11 +2769,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EstimateModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3374,11 +2785,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_ESTIMATE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function PurchaseOrderAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3390,11 +2796,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function PurchaseOrderAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3411,11 +2812,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_PURCHASEORDER, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function PurchaseOrderModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3427,11 +2823,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function PurchaseOrderModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3448,11 +2839,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_PURCHASEORDER, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ReceivePaymentAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3464,11 +2850,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ReceivePaymentAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3485,17 +2866,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_addResponse(QUICKBOOKS_OBJECT_RECEIVEPAYMENT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ReceivePaymentModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
-		//$args = func_get_args();
-		//$Driver = QuickBooks_Driver_Singleton::getInstance();
-		//$Driver->log('got in: ' . print_r($args, true));
-		
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		if ($ReceivePayment = $Driver->get(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . 'receivepayment', array( QUICKBOOKS_DRIVER_SQL_FIELD_ID => $ID )))
 		{
@@ -3505,11 +2877,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function ReceivePaymentModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3526,11 +2893,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_RECEIVEPAYMENT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function InvoiceAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3542,11 +2904,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function InvoiceAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3568,10 +2925,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	 */
 	public static function InvoiceModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
-		//$Driver = QuickBooks_Driver_Singleton::getInstance();
-		//$args = func_get_args();
-		//$Driver->log('got in: ' . print_r($args, true));
-	
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		if ($Invoice = $Driver->get(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . 'invoice', array( QUICKBOOKS_DRIVER_SQL_FIELD_ID => $ID )))
 		{
@@ -3600,11 +2953,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_INVOICE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesReceiptAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3616,11 +2964,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesReceiptAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3670,12 +3013,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESRECEIPT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CreditMemoAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3687,11 +3024,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CreditMemoAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3811,11 +3143,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESORDER, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesOrderModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3827,11 +3154,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesOrderModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3848,11 +3170,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESORDER, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesRepAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3864,11 +3181,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesRepAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3885,11 +3197,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESREP, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesRepModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3901,11 +3208,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesRepModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3922,11 +3224,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESREP, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesTaxCodeAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3938,11 +3235,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesTaxCodeAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3959,11 +3251,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESTAXCODE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesTaxCodeModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -3975,11 +3262,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function SalesTaxCodeModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -3996,11 +3278,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESTAXCODE, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4012,11 +3289,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4043,11 +3315,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4064,18 +3331,12 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_BILL, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCheckAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		if ($BillPaymentCheck = $Driver->get(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . 'billpaymentcheck', array( QUICKBOOKS_DRIVER_SQL_FIELD_ID => $ID )))
 		{
 			// Special handling for bill payment check add requests
-			
 			// If a RefNumber is printed, then it can't be set as IsToBePrinted
 			if (!empty($BillPaymentCheck['RefNumber']))
 			{
@@ -4092,11 +3353,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCheckAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4113,11 +3369,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_BILLPAYMENTCHECK, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCheckModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4129,11 +3380,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCheckModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4150,11 +3396,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_BILLPAYMENTCHECK, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCreditCardAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4166,11 +3407,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCreditCardAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4187,11 +3423,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_BILLPAYMENTCREDITCARD, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4203,11 +3434,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4224,11 +3450,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_VENDOR, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4240,11 +3461,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4262,11 +3478,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorCreditAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4278,11 +3489,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorCreditAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4299,11 +3505,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_VENDORCREDIT, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorCreditModRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -4315,11 +3516,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return ''; 
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function VendorCreditModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -4382,9 +3578,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Loader::load($file);
 		$schema_object = new $class();
 		
-		//print_r($Object->asArray());
-		//exit;
-		
 		$Node = new QuickBooks_XML_Node($action);
 		foreach ($Object->asArray() as $field => $value)	// map the SQL fields back to XML
 		{
@@ -4409,8 +3602,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				$map = substr($map, $retpos + 4);
 				$map = $retval . $schema_object->unfold($map);
 			}
-			
-			//print('dealing with: [' . $map . '] unmapped from (' . $unmapped . ')' . "\n");
 			
 			if (!$map)
 			{
@@ -4440,15 +3631,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					{
 						continue;
 					}
-					
-					/* and 
-						( strlen($Object->get($begi . 'City')) or strlen($Object->get($begi . 'State')) or strlen($Object->get($begi . 'Country')) or strlen($Object->get($begi . 'PostalCode')) ))
-					{
-						continue;
-					}
-					*/
-
-					; // <Judge Roy Snyder>... I'll allow it! 
 				}
 				else
 				{
@@ -4465,20 +3647,15 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				$use_abbrevs = false;
 				$htmlspecialchars = true;
 				
-				//print('THIS RAN [' . $value . ']');
-				
 				$value = QuickBooks_Cast::cast(
 					null, 
 					null, 
 					$value, 
 					$use_abbrevs, 
 					$htmlspecialchars);
-					
-				//print(' => [' . $value . ']' . "\n");
 			}
 			
 			// Special handling for non-US versions of QuickBooks
-			
 			$begi = substr($field, 0, -5);
 			$last = substr($field, -5, 5);
 			if ($locale == QUICKBOOKS_LOCALE_UK and 
@@ -4486,9 +3663,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				!strlen($Object->get($begi . 'County')))		// UK *County* support instead of states
 			{
 				$Object->set($begi . 'County', $value);
-				//print_r($map);
 				$map = substr($map, 0, -5) . 'County';
-				//die();
 			}
 						
 			// OK, the paths look like this: 
@@ -4507,8 +3682,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			{
 				$map = str_replace('Ret', 'Mod', $map);
 			}
-			
-			//print('	OK, handling [' . $map . ']' . "\n");
 			
 			if (false === strpos($map, ' '))
 			{
@@ -4580,10 +3753,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						$Child->setData($value);
 						$Node->addChild($Child);
 					}
-				}
-				else
-				{
-					; // ignore it 
 				}
 			}
 			else
@@ -4679,10 +3848,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		// Get the child tables here - make sure they're in the proper order for the xml schema
 		$children = QuickBooks_Callbacks_SQL_Callbacks::_getChildTables(strtolower($type));
 		
-		//print('for type: [' . $type . ']');
-		//print_r($children);
-		//exit;
-		
 		if (!empty($children)) // Get the rows
 		{
 			$data = QuickBooks_Callbacks_SQL_Callbacks::_queryChildren($children, $Object->get($children[0]['parent']));
@@ -4694,10 +3859,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		}
 			
 		$nodes = QuickBooks_Callbacks_SQL_Callbacks::_childObjectsToXML(strtolower($type), $action, $data);
-		
-		//print('NODES:');
-		//print_r($nodes);
-		//exit;
 		
 		if (count($nodes))
 		{
@@ -4718,11 +3879,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				
 			}
 		}
-		
-		//print('ACTION IS: [' . $action . ']');
-		
-		//print_r($Node);
-		
+
 		$xml .= $Node->asXML(QuickBooks_XML::XML_PRESERVE);
 		
 		// Bad hack... 
@@ -4737,10 +3894,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
- 	 * 
- 	 * 
- 	 */
 	protected static function _ModRequest($type, $Object, $requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		return QuickBooks_Callbacks_SQL_Callbacks::_AddRequest($type, $Object, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $version, $locale, $config);
@@ -4861,12 +4014,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			}
 			
 			$Node = new QuickBooks_XML_Node($map);
-			/*
-				$retArr[$index]["table"] = $table;
-				$retArr[$index]["data"] = QuickBooks_SQL_Object($table, null, $arr);
-				$retArr[$index]["children"]
-			*/
-			
+
 			foreach ($child['data']->asArray() as $field => $value)	// map the SQL fields back to XML
 			{
 				$map = '';
@@ -4889,16 +4037,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						$map = str_replace('Ret ', 'Mod ', $map);
 					}
 					
-					//print('unfolding: {' . $map . '}' . "\n");
-					
 					$map = $schema_object->unfold($map);
-					
-					//print('	unfolded to: [' . $map . ']' . "\n");
 				}
-				
-				//print($field . ' => ' . $value . "\n");
-				//print_r($map);
-				//print("\n\n");
 				
 				if (!$map or !strlen($value))
 				{
@@ -4923,14 +4063,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				}
 					
 				$map = preg_replace("/.*".$Node->name()." /", "", $map);
-				
-				/*
-				if (strtolower($Node->name()) == "estimatelinemod" and 
-					strpos($map, 'TxnLineID') !== false )
-				{
-					$value = -1;
-				}
-				*/
 				
 				if (false === strpos($map, ' '))
 				{
@@ -5075,12 +4207,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('account', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);		
 	}
 	
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
 	public static function AccountQueryRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		if (!empty($extra['ListID']))
@@ -5103,7 +4229,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			return QUICKBOOKS_NOOP;
 		}
 		
-		$xml .= '<?xml version="1.0" encoding="utf-8"?>
+		$xml = '<?xml version="1.0" encoding="utf-8"?>
 			<?qbxml version="' . QuickBooks_Callbacks_SQL_Callbacks::_version($version, $locale) . '"?>
 			<QBXML>
 				<QBXMLMsgsRq onError="' . QUICKBOOKS_SERVER_SQL_ON_ERROR . '">
@@ -5122,10 +4248,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return QuickBooks_Callbacks_SQL_Callbacks::AccountImportResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function BillPaymentCheckImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -5292,10 +4414,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function BillImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5379,10 +4497,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function BillingRateQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5426,10 +4540,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function BuildAssemblyQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5449,18 +4559,12 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_CHECK, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CheckAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		if ($Check = $Driver->get(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . 'check', array( QUICKBOOKS_DRIVER_SQL_FIELD_ID => $ID )))
 		{
 			// Special handling for check add requests
-			
 			// If a RefNumber is printed, then it can't be set as IsToBePrinted
 			if (!empty($Check['RefNumber']))
 			{
@@ -5477,11 +4581,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CheckAddResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5521,11 +4620,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return '';
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function CheckModResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5562,10 +4656,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function CheckImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5585,10 +4675,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_CHECK, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function JournalEntryImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -5608,10 +4694,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function JournalEntryImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5655,10 +4737,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function ChargeImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5695,10 +4773,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function ClassImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5791,8 +4865,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		$List = $Root->getChildAt('QBXML QBXMLMsgsRs PreferencesQueryRs');
 		
-		//print_r($List);
-		
 		$extra['is_import_response'] = true;
 		
 		return QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('preferences', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
@@ -5859,10 +4931,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function CreditCardChargeImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5901,10 +4969,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function CreditCardCreditImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5945,10 +5009,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function CreditMemoImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -5986,10 +5046,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	/**
-	 * 
 	 * @todo The $type parameter to _QueryResponse should be from a mapping, not a constant, to support custom mapping later on
-	 * 
-	 * 
 	 */
 	public static function CustomerMsgImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
@@ -6018,16 +5075,13 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			// This version of QuickBooks *does not support iterators*, so instead of using
 			//	these IMPORT requests, we'll just queue up a bunch of Query requests instead
 			// @todo This may actually change the behavior of things a bit, because _query_response may be handled slightly differently than _import_response... but will it matter?
-			
 			$key_prev = QuickBooks_Callbacks_SQL_Callbacks::_keySyncPrev($action);
 				
 			$module = __CLASS__;
 				
-			//$action = null;
 			$type = null;
 			$opts = null;
-			// 					configRead($user, $module, $key, &$type, &$opts)
-			$prev_sync_datetime = $Driver->configRead($user, $module, $key_prev, $type, $opts);	// last sync started... 
+			$prev_sync_datetime = $Driver->configRead($user, $module, $key_prev, $type, $opts);	// last sync started...
 			
 			// Calculate the # of days ago the last sync was... 
 			$prev_sync_timestamp = strtotime($prev_sync_datetime);
@@ -6073,10 +5127,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	/**
-	 * 
 	 * @todo The $type parameter to _QueryResponse should be from a mapping, not a constant, to support custom mapping later on
-	 * 
-	 * 
 	 */
 	public static function CustomerImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
@@ -6156,9 +5207,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	/**
-	 * 
 	 * @todo The $type parameter to _QueryResponse should be from a mapping, not a constant, to support custom mapping later on
-	 * 
 	 */
 	public static function CustomerTypeImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
@@ -6179,12 +5228,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('customertype', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 
-	/**
-	 *
-	 *
-	 *
-	 *
-	 */
 	public static function DataExtDefQueryRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -6203,14 +5246,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					</DataExtDefQueryRq>
 				</QBXMLMsgsRq>
 			</QBXML>';
-		/*
-						<AssignToObject>Customer</AssignToObject>
-						<AssignToObject>Employee</AssignToObject>
-						<AssignToObject>Vendor</AssignToObject>
-						<AssignToObject>Item</AssignToObject>
 
-		 */
-			
 		return $xml;
 	}
 	
@@ -6253,9 +5289,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	/**
-	 * 
 	 * @todo The $type parameter to _QueryResponse should be from a mapping, not a constant, to support custom mapping later on
-	 * 
 	 */
 	public static function DateDrivenTermsQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
@@ -6301,10 +5335,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function DepositImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -6324,11 +5354,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('deposit', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EmployeeImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -6347,10 +5372,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function EmployeeImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -6370,11 +5391,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('employee', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function EstimateImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -6403,10 +5419,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function EstimateImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -6482,9 +5494,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		if (!$iterator)
 		{
 			// Doesn't support iterators
-			
 			// Queue up by month
-			
 			return QUICKBOOKS_NOOP;
 		}
 		
@@ -6572,7 +5582,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		}
 
 		// <MaxReturned>' . QUICKBOOKS_SERVER_SQL_ITERATOR_MAXRETURNED . '</MaxReturned>
-		
 		//  ' . QuickBooks_Callbacks_SQL_Callbacks::_buildIterator($extra) . '
 		
 		$xml .= '<?xml version="1.0" encoding="utf-8"?>
@@ -6829,11 +5838,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse(QUICKBOOKS_OBJECT_SALESTAXGROUPITEM, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}	
 	
-	/** 
-	 * 
-	 * 
-	 * 
-	 */ 
 	public static function ItemImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -6929,10 +5933,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function JobTypeQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -6952,11 +5952,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('jobtype', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 *
-	 *
-	 *
-	 */
 	public static function PaymentMethodImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -6975,10 +5970,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function PaymentMethodImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7015,10 +6006,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function PayrollItemWageImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7052,10 +6039,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function PayrollItemNonWageImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7072,10 +6055,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('payrollitemnonwage', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function PriceLevelImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7098,10 +6077,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function PriceLevelImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7121,10 +6096,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('pricelevel', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 *
-	 *
-	 */	
 	public static function PurchaseOrderImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7153,10 +6124,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function PurchaseOrderImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7219,10 +6186,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return QuickBooks_Callbacks_SQL_Callbacks::PurchaseOrderImportResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 *
-	 */
 	public static function ReceivePaymentImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7256,10 +6219,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function ReceivePaymentImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7350,10 +6309,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function ReceivePaymentQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$extra['is_query_response'] = true;
@@ -7372,7 +6327,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		// IncludeLinkedTxns is actually qbXML versions 2.0 or greater... but
 		//	since this entire action is qbXML versions 2.1 or greater, we can
 		//	just assume it'll be present. 
-		
 		$xml .= '<?xml version="1.0" encoding="utf-8"?>
 			<?qbxml version="' . $version . '"?>
 			<QBXML>
@@ -7404,10 +6358,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('salesorder', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function SalesReceiptImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7427,10 +6377,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function SalesReceiptImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7463,10 +6409,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function SalesRepImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7505,10 +6447,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function SalesTaxCodeImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7548,10 +6486,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function ShipMethodImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7571,13 +6505,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('shipmethod', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	public static function TermsImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7596,10 +6523,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function TermsImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7618,10 +6541,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('terms', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
-	
-	
+
 	public static function TimeTrackingImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7639,10 +6559,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function TimeTrackingImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7659,9 +6575,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('timetracking', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
 	
-	
-	
-		
 	public static function UnitOfMeasureSetQueryRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7684,10 +6597,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function UnitOfMeasureSetQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7731,10 +6640,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function VehicleMileageQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7753,9 +6658,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('vehiclemileage', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
-	
 	
 	public static function VehicleImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
@@ -7779,10 +6681,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function VehicleImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7801,9 +6699,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('vehicle', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
-	
 	
 	public static function VendorCreditImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
@@ -7843,9 +6738,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('vendorcredit', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
-	
+
 	public static function VendorTypeImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
 		$xml = '';
@@ -7863,10 +6756,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function VendorTypeImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7885,8 +6774,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('vendortype', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
 	
 	public static function VendorImportRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
@@ -7907,10 +6794,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function VendorImportResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7929,10 +6812,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('vendor', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
-	
-	
 	
 	public static function WorkersCompCodeQueryRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array())
 	{
@@ -7956,10 +6835,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	public static function WorkersCompCodeQueryResponse($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() )
 	{
 		$Parser = new QuickBooks_XML_Parser($xml);
@@ -7978,9 +6853,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		QuickBooks_Callbacks_SQL_Callbacks::_QueryResponse('workerscompcode', $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config);
 	}
-	
-	
-	
+
 	/*
 	No registered handler for: CreditCardMemoQuery
 	No registered handler for: DataExtDefQuery
@@ -7994,7 +6867,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	
 	
 	/**
-	 * 
 	 * @todo Make the Boolean TRUE value used in the QUICKBOOKS_DRIVER_SQL_FIELD_DELETED_FLAG field a constant, in case the sql driver used uses something other than 1 and 0.
 	 * @todo Change all ListID and TxnID instances to use the QuickBooks_Utilities::actionToKey function.
 	 */
@@ -8463,20 +7335,11 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @todo Make the Boolean TRUE value used in the QUICKBOOKS_DRIVER_SQL_FIELD_DELETED_FLAG field a constant, in case the sql driver used uses something other than 1 and 0.
 	 * @todo Change all ListID and TxnID instances to use the QuickBooks_Utilities::actionToKey function.
 	 */
 	protected static function _queryChildren($children, $keyID)
 	{
-		/*	
-			$retArr[$index]['tableName'] = $key;
-			$retArr[$index]['relField'] = $value;
-			$retArr[$index]['parentKey'] = $get_children_map[$table]['id_field'];
-			$retArr[$index]['children'] = QuickBooks_Callbacks_SQL_Callbacks::_GetChildrenTables($key);
-		*/
-		
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 			
 		if (empty($children))
@@ -8521,8 +7384,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$res = $Driver->query($sql, $errnum, $errmsg);
 			while ($arr = $Driver->fetch($res))
 			{
-				//print_r($arr);
-				
 				if (!empty($arr[QUICKBOOKS_DRIVER_SQL_FIELD_TO_SKIP]))
 				{
 					// If this record has been marked as to skip, do not 
@@ -8532,12 +7393,9 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					//	sent to QuickBooks because they really come from a 
 					//	LinkedTxn and you don't want to end up with duplicate 
 					//	line items (one set from the LinkedTxn and one set 
-					//	from these actulal line item records...)...)
-					
+					//	from these actual line item records...)...)
 					continue;
 				}
-				
-				//print_r($arr);
 				
 				// Some special cases for certain tables
 				switch ($table)
@@ -8553,21 +7411,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						
 						break;
 				}
-				
-				/*
-				$index = count($ret);
-				$ret[$index] = array();
-				$ret[$index]['table'] = $table;
-				$ret[$index]['data'] = new QuickBooks_SQL_Object($table, null, $arr);
-				if (!empty($child['children']))
-				{
-					$ret[$index]['children'] = QuickBooks_Callbacks_SQL_Callbacks::_queryChildren($child['children'], $arr[$child['children'][0]['parent']]);
-				}
-				else
-				{
-					$ret[$index]['children'] = array();
-				}
-				*/
 				
 				$children = array();
 				if (!empty($child['children']))
@@ -8619,9 +7462,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	 * 			estimate.Customer_ListID
 	 * 			receivepayment.Customer_ListID
 	 * 			etc. etc. etc.
-	 * 
-	 * @param 
-	 * @return 
 	 */
 	protected static function _updateRelatives($table, $user, $action, $ID, $object, $extra, $callback_config = array(), $deleteDataExt = false, $fullDelete = false)
 	{
@@ -8637,96 +7477,9 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				'relatives' => array(
 					'billpaymentcheck_appliedtotxn' => 'ToTxnID', 
 					'billpaymentcreditcard_appliedtotxn' => 'ToTxnID', 
-					//'dataext' => 'Txn_TxnID'
 				)
 			),
-			
-			/*					
-					"billingrate" => array( "id_field" => "ListID",
-											"relatives" => array(
-												"billingrate_billingrateperitem" => "BillingRate_ListID"
-												)
-										),
-										
-					"billpaymentcheck" => array( "id_field" => "ListID",
-													"relatives" => array(
-															"billpaymentcheck_appliedtotxn" => "FromTxnID",
-															"dataext" => "Entity_ListID"
-																)
-												),
-												
-					"billpaymentcreditcard" => array( "id_field" => "ListID",
-														 "relatives" => array(
-																"billpaymentcreditcard_appliedtotxn" => "FromTxnID",
-																"dataext" => "Entity_ListID"
-															)
-												),
-												
-					"charge" => array( "id_field" => "TxnID",
-									  "relatives" => array(
-											"dataext" => "Txn_TxnID"
-											)
-									),
-									
-					"check" => array( "id_field" => "TxnID",
-									  "relatives" => array(
-											"check_expenseline" => "Check_TxnID",
-											"check_itemgroupline" => "Check_TxnID",
-											"check_itemgroupline_itemline" => "Check_TxnID",
-											"check_itemline" => "Check_TxnID",
-											"check_linkedtxn" => "FromTxnID",
-											"dataext" => "Txn_TxnID"
-											)
-									),
-									
-					"company" => array( "id_field" => "CompanyName",
-									  "relatives" => array(
-											"company_subscribedservices_service" => "Company_CompanyName"
-											)
-									),
-									
-					"creditcardcharge" => array( "id_field" => "TxnID",
-												 "relatives" => array(
-														"creditcardcharge_expenseline" => "CreditCardCharge_TxnID",
-														"creditcardcharge_itemgroupline" => "CreditCardCharge_TxnID",
-														"creditcardcharge_itemgroupline_itemline" => "CreditCardCharge_TxnID",
-														"creditcardcharge_itemline" => "CreditCardCharge_TxnID",
-														"dataext" => "Txn_TxnID"
-													)
-												),
-												
-					"creditcardcredit" => array( "id_field" => "TxnID",
-												 "relatives" => array(
-														"creditcardcredit_expenseline" => "CreditCardCredit_TxnID",
-														"creditcardcredit_itemgroupline" => "CreditCardCredit_TxnID",
-														"creditcardcredit_itemgroupline_itemline" => "CreditCardCredit_TxnID",
-														"creditcardcredit_itemline" => "CreditCardCredit_TxnID",
-														"dataext" => "Txn_TxnID"
-													)
-												),
-												
-					"creditmemo" => array( "id_field" => "TxnID",
-												 "relatives" => array(
-														"creditmemo_creditmemoline" => "CreditMemo_TxnID",
-														"creditmemo_creditmemolinegroup" => "CreditMemo_TxnID",
-														"creditmemo_creditmemolinegroup_creditmemoline" => "CreditMemo_TxnID",
-														"creditmemo_linkedtxn" => "FromTxnID",
-														"dataext" => "Txn_TxnID"
-													)
-												),
-												
-					"creditmemolinegroup" => array( "id_field" => "TxnLineID",
-												"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-											),
-											
-					"creditmemolinegroup_creditmemoline" => array( "id_field" => "TxnLineID",
-												"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-											),
-					*/		
+
 			'customer' => array( 
 				'id_field' => 'ListID',
 				'relatives' => array(
@@ -8739,62 +7492,12 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					'salesreceipt' => 'Customer_ListID', 
 					)
 				),
-					/*						
-					"deposit" => array( "id_field" => "TxnID",
-												 "relatives" => array(
-												"deposit_depositline" => "Deposit_TxnID",
-													"dataext" => "Txn_TxnID"
-													)
-												),
-												*/
 					"employee" => array( "id_field" => "ListID",
 												 "relatives" => array(
 														"salesrep" => "SalesRepEntity_ListID"
 													)
 												),
-												/*
-					"estimate" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"estimate_estimateline" => "Estimate_TxnID", 
-												"estimate_estimatelinegroup" => "Estimate_TxnID", 
-												"estimate_estimatelinegroup_estimateline" => "Estimate_TxnID",
-												"invoice_linkedtxn" => "FromTxnID",
-													"dataext" => "Entity_ListID"
-												)
-									),
-									
-					"estimate_estimatelinegroup" => array( "id_field" => "TxnLineID",
-												"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-											),
-											
-					"estimate_estimateline" => array( "id_field" => "TxnLineID",
-												"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-											),
-											
-					"estimate_estimatelinegroup" => array( "id_field" => "TxnLineID",
-												"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-											),
-											
-					"estimate_estimatelinegroup_estimateline" => array( "id_field" => "TxnLineID",
-												"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-											),
-											
-					"inventoryadjustment" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"inventoryadjustment_inventoryadjustmentline" => "InventoryAdjustment_TxnID",
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									*/
-			'invoice' => array( 
+			'invoice' => array(
 				'id_field' => 'TxnID',
 				'relatives' => array(
 					'estimate_linkedtxn' => 'ToTxnID',
@@ -8802,33 +7505,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					'receivepayment_appliedtotxn' => 'ToTxnID', // 'ToTxnID:Type=Invoice', 
 					)
 				),
-								/*	
-					"invoice_invoiceline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-									
-					"invoice_invoicelinegroup" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"invoice_invoicelinegroup_invoiceline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"itemgroup" => array( "id_field" => "ListID",
-										"relatives" => array(
-												"itemgroup_itemgroupline" => "ItemGroup_ListID",
-													"dataext" => "Entity_ListID"
-												)
-									),
-						*/			
 					"iteminventory" => array( "id_field" => "ListID",
 										"relatives" => array(
 													"estimate_estimateline" => "Item_ListID",
@@ -8837,14 +7513,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 													"invoice_invoiceline" => "Item_ListID"
 												)
 									),
-								/*	
-					"iteminventoryassembly" => array( "id_field" => "ListID",
-										"relatives" => array(
-												"iteminventoryassembly_iteminventoryassemblyline" => "ItemInventoryAssembly_ListID",
-													"dataext" => "Txn_TxnID"
-												)
-									),
-							*/		
 					"itemnoninventory" => array( "id_field" => "ListID",
 										"relatives" => array(
 													"estimate_estimateline" => "Item_ListID",
@@ -8889,18 +7557,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 													"invoice_invoiceline" => "Item_ListID"
 												)
 									),
-							/*		
-					"itemreceipt" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"itemreceipt_expenseline" => "ItemReceipt_TxnID",
-												"itemreceipt_itemgroupline" => "ItemReceipt_TxnID",
-												"itemreceipt_itemgroupline_itemline" => "ItemReceipt_TxnID",
-												"itemreceipt_itemline" => "ItemReceipt_TxnID",
-												"itemreceipt_linkedtxn" => "FromTxnID",
-													"dataext" => "Entity_ListID"
-												)
-										),
-								*/		
 					"itemsalestax" => array( "id_field" => "ListID",
 										"relatives" => array(
 												"estimate_estimateline" => "Item_ListID",
@@ -8909,14 +7565,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 													"invoice_invoiceline" => "Item_ListID"
 												)
 										),
-								/*		
-					"itemsalestaxgroup" => array( "id_field" => "ListID",
-										"relatives" => array(
-												"itemsalestaxgroup_itemsalestax" => "ItemSalesTaxGroup_ListID",
-													"dataext" => "Entity_ListID"
-												)
-										),
-							*/			
 					"itemservice" => array( "id_field" => "ListID",
 										"relatives" => array(
 													"estimate_estimateline" => "Item_ListID",
@@ -8934,110 +7582,12 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 													"invoice_invoiceline" => "Item_ListID"
 												)
 										),
-								/*		
-					"journalentry" => array( "id_field" => "TxnID",
-												"relatives" => array(
-												"journalentry_journalcreditline" => "JournalEntry_TxnID",
-												"journalentry_journaldebitline" => "JournalEntry_TxnID",
-													"dataext" => "Entity_ListID"
-												)
-									),
-									
-					"pricelevel" => array( "id_field" => "ListID",
-												"relatives" => array(
-												"pricelevel_pricelevelperitem" => "PriceLevel_ListID"
-												)
-									),
-								*/	
-					"purchaseorder" => array( 
+					"purchaseorder" => array(
 						"id_field" => 'TxnID',
 						"relatives" => array(
-							//"estimate" => "PONumber", 
-							//"salesorder" => "PONumber"
-							'bill_linkedtxn' => 'ToTxnID', 
+							'bill_linkedtxn' => 'ToTxnID',
 						),
 					),
-								/*	
-					"purchaseorder_purchaseorderline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"purchaseorder_purchaseorderlinegroup" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"purchaseorder_purchaseorderlinegroup_purchaseorderline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"receievepayment" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"receivepayment_appliedtotxn" => "FromTxnID",
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salesorder" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"salesorder_salesorderline" => "SalesOrder_TxnID", 
-												"salesorder_salesorderlinegroup" => "SalesOrder_TxnID", 
-												"salesorder_salesorderlinegroup_salesorderline" => "SalesOrder_TxnID",
-												"salesorder_linkedtxn" => "FromTxnID",
-													"dataext" => "Entity_ListID"
-												)
-									),
-									
-					"salesorder_salesorderline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salesorder_salesorderlinegroup" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salesorder_salesorderlinegroup_salesorderline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salesreceipt" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"salesreceipt_salesreceiptline" => "SalesReceipt_TxnID", 
-												"salesreceipt_salesreceiptlinegroup" => "SalesReceipt_TxnID", 
-												"salesreceipt_salesreceiptlinegroup_salesreceiptline" => "SalesReceipt_TxnID",
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salesreceipt_salesreceiptline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salereceipt_salesreceiptlinegroup" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"salesreceipt_salesreceiptlinegroup_salesreceiptline" => array( "id_field" => "TxnLineID",
-										"relatives" => array(
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									*/
 					"salesrep" => array( "id_field" => "ListID",
 										"relatives" => array(
 													"estimate" => "SalesRep_ListID",
@@ -9059,58 +7609,28 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 													"invoice" => "CustomerSalesTaxCode_ListID"
 												)
 									),
-								/*	
-					"unitofmeasureset" => array( "id_field" => "ListID",
-										"relatives" => array(
-												"unitofmeasureset_defaultunit" => "UnitOfMeasureSet_ListID", 
-												"unitofmeasureset_relatedunit" => "UnitOfMeasureSet_ListID"
-												)
-									),
-									*/
 					"vendor" => array( "id_field" => "ListID",
 										"relatives" => array(
 													"purchaseorder" => "Vendor_ListID"
 												)
 									),
-							/*		
-					"vendorcredit" => array( "id_field" => "TxnID",
-										"relatives" => array(
-												"vendorcredit_expenseline" => "VendorCredit_TxnID", 
-												"vendorcredit_itemline" => "VendorCredit_TxnID", 
-												"vendorcredit_itemgroupline" => "VendorCredit_TxnID", 
-												"vendorcredit_itemgroupline_itemline" => "VendorCredit_TxnID",
-												"vendorcredit_linkedtxn" => "FromTxnID",
-													"dataext" => "Txn_TxnID"
-												)
-									),
-									
-					"workerscompcode" => array( "id_field" => "ListID",
-										"relatives" => array(
-												"workerscompcode_ratehistory" => "WorkersCompCode_ListID"
-												)
-									)
-					*/
 				);
 				
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		
 		if (!isset($update_relatives_map[$table]))
 		{
-			//$Driver->log('Record has no RELATIVES...?', null, QUICKBOOKS_LOG_NORMAL);
 			return false;
 		}
 		
 		if (!isset($extra['AddResponse_OldKey']))
 		{
-			//$Driver->log('Missing key for RELATIVE update...?', null, QUICKBOOKS_LOG_NORMAL);
 			return false;
 		}
 			
 		$TxnID_or_ListID = $object->get($update_relatives_map[$table]['id_field']);
 		foreach ($update_relatives_map[$table]['relatives'] as $relative_table => $relative_field)
 		{
-			//$Driver->log('Now updating [' . $relative_table . '] for field [' . $relative_field . '] with value [' . $TxnID_or_ListID . ']', null, QUICKBOOKS_LOG_DEBUG);
-			
 			$multipart = array( $relative_field => $extra['AddResponse_OldKey'] );
 			$tmp = new QuickBooks_SQL_Object($relative_table, null);
 			
@@ -9122,7 +7642,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 	
 	/**
-	 * 
 	 * @todo Make the Boolean TRUE value used in the QUICKBOOKS_DRIVER_SQL_FIELD_DELETED_FLAG field a constant, in case the sql driver used uses something other than 1 and 0.
 	 * @todo Change all ListID and TxnID instances to use the QuickBooks_Utilities::actionToKey function.
 	 */
@@ -9558,9 +8077,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$TxnID_or_ListID = $object->get($delete_children_map[$table]['id_field']);
 			foreach ($delete_children_map[$table]['children'] as $key => $value)
 			{
-				//print('key: '); print_r($key); print("\n");
-				//print('value: '); print_r($value); print("\n");
-				
 				// @todo Fix this wrong delete flag field
 				// If we are actually deleting an entire element, then we need to check the delete mode and if desired, just flag them rather than remove the rows.
 				if ($fullDelete and
@@ -9627,12 +8143,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						}
 					}
 					
-					//print_r($multipart);
-					
-					// 
 					// Get a list of stuff that's going to be deleted
-					// 
-					
 					// These are things that have a permenent TxnID (they've been synced to QB before)
 					$list = $Driver->select(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $key, $multipart, $order );
 					foreach ($list as $arr)
@@ -9664,9 +8175,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						}
 					}
 					
-					//print_r($list);
-					//print("\n\n\n");
-					
 					// This query deletes anything with an existing TxnID (i.e. this was UPDATEing QuickBooks)
 					$Driver->delete(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $key, array( $multipart ));
 					
@@ -9681,22 +8189,14 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				}
 			}
 		}
-		
-		//print_r($deleted);
 	}
 	
 	protected static function _addResponse($type, $List, $requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $callback_config = array())
 	{
 		// Call our hooks here, we just *added* something to QuickBooks
-		
 		return QuickBooks_Callbacks_SQL_Callbacks::_queryResponse($type, $List, $requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $callback_config);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	protected static function _queryResponse($type, $List, $requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $xml, $idents, $callback_config = array())
 	{
 		$type = strtolower($type);
@@ -9721,20 +8221,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$objects = array();
 			QuickBooks_Callbacks_SQL_Callbacks::_transformToSQLObjects('', $Node, $objects);
 			
-			//print_r($objects);
-			//exit;
-			
-			// For each object we created from the XML nodes... 
+			// For each object we created from the XML nodes...
 			// (might have created more than one, e.g. an Invoice, plus 10 InvoiceLines, plus a Invoice_DataExt, etc.)
-			
-			/*
-			if (count($objects) > 1)
-			{
-				print_r($objects);
-				exit;
-			}
-			*/
-			
 			// This keeps track of whether or not we're ignoring this entire batch of UPDATES/INSERTS
 			$ignore_this_and_its_children = false;
 			
@@ -9759,13 +8247,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					$map = array( 'qb_preferences', 'qbsql_external_id' );
 				}
 				
-				//print_r($Object);
-				//print_r($path);
-				//print_r($map);
-				//exit;
-				
-				// 
-				if ($table and 
+				if ($table and
 					count($map) and 
 					$map[0] and 
 					$map[1])
@@ -9807,14 +8289,11 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						$actually_do_update = false;
 						$actually_do_updaterelatives = false;
 						$actually_do_deletechildren = false;
-						
-						
-						
+
 						if (isset($tmp[Quickbooks_Utilities::keyForAction($action)]))
 						{
 							// I have no idea what this does or what this is for....
 							// > EDIT: This keeps track of what the old TxnID or ListID is, so that we can use it to update relative tables
-							
 							$extra['AddResponse_OldKey'] = $tmp[Quickbooks_Utilities::keyForAction($action)];
 							$extra['temporary_TxnID_or_ListID_or_LineID'] = $tmp[Quickbooks_Utilities::keyForAction($action)];
 						}	
@@ -9823,7 +8302,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							Quickbooks_Utilities::keyForAction($action) == 'TxnID' and 
 							isset($tmp['TxnLineID']))
 						{
-							//$extra['AddResponse_OldKey'] = $tmp->get("TxnLineID");
 							$extra['AddResponse_OldKey'] = $tmp['TxnLineID'];
 							$extra['temporary_TxnID_or_ListID_or_LineID'] = $tmp['TxnLineID'];
 						}
@@ -9845,13 +8323,10 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							isset($extra['is_add_response']))
 						{
 							// @TODO There should probably be some conflict handling code below to handle conflicts
-							
 							$actually_do_update = true;
 							$actually_do_deletechildren = true;
 							$actually_do_updaterelatives = true;
 						}
-						
-						//$Driver->log('Diagnostics for incoming: is_query[' . !empty($extra['is_query_response']) . '], is_import[' . !empty($extra['is_import_response']) . '], is_mod[' . !empty($extra['is_mod_response']) . '], is_add[' . !empty($extra['is_add_response']) . '], conflict mode: ' . $callback_config['conflicts'] . '', null, QUICKBOOKS_LOG_DEVELOP);
 						
 						// Conflict handling code
 						// @todo I think this should only apply to query and improt, right? I mean, if it's a mod or add, then 
@@ -9860,7 +8335,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							$callback_config['mode'] != QuickBooks_WebConnector_Server_SQL::MODE_READONLY)
 						{
 							// CONFLICT resolution code
-							
 							switch ($callback_config['conflicts'])
 							{
 								case QuickBooks_WebConnector_Server_SQL::CONFLICT_NEWER:
@@ -9870,25 +8344,18 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 									die($msg);
 								
 								case QuickBooks_WebConnector_Server_SQL::CONFLICT_QUICKBOOKS:
-									
 									// QuickBooks is master, so remove all existing child records of this record, then apply the QuickBooks version update
-									
 									$actually_do_deletechildren = true;
 									$actually_do_update = true;
-										
-									//QuickBooks_Callbacks_SQL_Callbacks::_DeleteChildren($table, $user, $action, $ID, $object, $extra);	
-									//$Driver->update(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table, $object, array( $multipart ));
-									
+
 									break;
 								case QuickBooks_WebConnector_Server_SQL::CONFLICT_CALLBACK:
-									
 									$msg = 'Conflict mode: (callback) ' . $callback_config['conflicts'] . ' is not supported right now.';
 									trigger_error($msg);
 									die($msg);
 									
 									break;
 								case QuickBooks_WebConnector_Server_SQL::CONFLICT_SQL:
-										
 									// The SQL table is the master table, but we have an out-of-date EditSequence value
 									//	In this case, what we want to do is update our record to the latest EditSequence value, 
 									//	and then re-queue the object so that it gets updated the next time the sync runs to 
@@ -9906,19 +8373,16 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 									break;
 								case QuickBooks_WebConnector_Server_SQL::CONFLICT_LOG:
 								default:
-									
 									if (isset($extra['IsModResponse']) or isset($extra['is_mod_response']) or isset($extra['is_add_response']))
 									{
 										// If it's actually a mod response, then this isn't actually a conflict, it's just the mod response happening normally
-										
 										$actually_do_update = true;
 										$actually_do_deletechildren = true;
 										$actually_do_updaterelatives = true;
 									}
 									else
 									{
-										
-										// Log it...? 
+										// Log it...?
 										$Driver->log('Conflict occured at: ' . $table, null, QUICKBOOKS_LOG_NORMAL);
 									}
 									
@@ -9926,10 +8390,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							}
 						}
 						
-						//print_r($object);
-						//print_r($tmp);
-						
-						// If the EditSequence has not changed since the last time this record was updated, 
+						// If the EditSequence has not changed since the last time this record was updated,
 						//	then we can just skip this update because everything should already be up to 
 						//	date. 
 						// 
@@ -9949,8 +8410,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							$actually_do_deletechildren = false;
 							$actually_do_updaterelatives = false;
 							
-							//$Driver->log('Ignoring UPDATE: ' . $table . ': ' . print_r($object, true) . ' due to EditSequence equality.', null, QUICKBOOKS_LOG_DEVELOP);
-							
 							// Make sure we ignore the children too (invoice lines, data exts, etc.)
 							$ignore_this_and_its_children = true;
 						}
@@ -9958,19 +8417,15 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						if ($callback_config['mode'] == QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY)
 						{
 							// In WRITE-ONLY mode, we only write changes to QuickBooks, but never read them back
-							
 							// (but should we update the EditSequence still?)
-							
 							$actually_do_update = false;
 							$actually_do_deletechildren = false;
 							$actually_do_updaterelatives = false;
 						}
 						
-						//$deleted = array();
 						if ($actually_do_deletechildren)
 						{
 							QuickBooks_Callbacks_SQL_Callbacks::_deleteChildren($table, $user, $action, $ID, $object, $extra, $deleted);
-							//$Driver->log('Immediately after deleting: ' . print_r($deleted, true));
 						}
 						
 						if ($actually_do_updaterelatives)
@@ -9983,12 +8438,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							// This handles setting certain special fields (SortOrder, booleans, etc.)
 							QuickBooks_Callbacks_SQL_Callbacks::_massageUpdateRecord($table, $object);
 							
-							//print('applying updates, and with these deletes: ');
-							//print_r($deleted);
-							
 							$object->set(QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY, date('Y-m-d H:i:s'));
 							
-							//$Driver->log('Applying UPDATE: ' . $table . ': ' . print_r($object, true) . ', where: ' . print_r($multipart, true), null, QUICKBOOKS_LOG_DEVELOP);
 							$Driver->update(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table, $object, array( $multipart ));
 							
 							$qbsql_id = null;
@@ -10011,11 +8462,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							$err = null;
 							QuickBooks_Callbacks_SQL_Callbacks::_callHooks($hooks, QuickBooks_SQL::HOOK_SQL_UPDATE, $requestID, $user, $err, $hook_data, $callback_config);
 						}
-						else
-						{
-							//$Driver->log('Skipping UPDATE: ' . $table . ': ' . print_r($object, true) . ', where: ' . print_r($multipart, true), null, QUICKBOOKS_LOG_DEVELOP);
-						}
-						
+
 						if ($actually_do_update and isset($extra['is_add_response']))
 						{
 							// It's an add response, call the hooks
@@ -10066,15 +8513,12 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					else
 					{
 						// The record *DOES NOT* exist in the current table, so just INSERT it
-						
 						if ($callback_config['mode'] != QuickBooks_WebConnector_Server_SQL::MODE_WRITEONLY)
 						{
 							// This handles setting certain special fields (booleans, SortOrder, etc.)
 							QuickBooks_Callbacks_SQL_Callbacks::_massageInsertRecord($table, $object);
 							
-							//$Driver->log('DELETED: ' . print_r($deleted, true) . ', table: [' . $table . ']');
-							
-							// This makes sure that re-inserted child records are re-inserted with the 
+							// This makes sure that re-inserted child records are re-inserted with the
 							//	same qbsql_id values
 							if (isset($deleted[$table][QUICKBOOKS_TXNLINEID][$object->get(QUICKBOOKS_TXNLINEID)][0]))
 							{
@@ -10111,10 +8555,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 								$object->set(QUICKBOOKS_DRIVER_SQL_FIELD_EXTERNAL_ID, null);
 							}
 							
-							//print_r($object);
-							
-							//$Driver->log('Applying INSERT: ' . $table . ': ' . print_r($object, true), null, QUICKBOOKS_LOG_DEVELOP);
-							
 							$object->set(QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY, date('Y-m-d H:i:s'));
 							
 							$Driver->insert(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table, $object);
@@ -10133,10 +8573,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 							$err = null;
 							QuickBooks_Callbacks_SQL_Callbacks::_callHooks($hooks, QuickBooks_SQL::HOOK_SQL_INSERT, $requestID, $user, $err, $hook_data, $callback_config);
 						}
-						else
-						{
-							//$Driver->log('Skipping INSERT: ' . $table . ': ' . print_r($object, true), null, QUICKBOOKS_LOG_DEVELOP);
-						}
 					}
 					
 					// Triggered actions
@@ -10150,7 +8586,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 		// Find out if we need to iterate further to get more results
 		$matches = array();
-		//$iterator_count = ereg('iteratorRemainingCount="([0-9]*)" iteratorID="([^"]*)"', $xml, $matches);
 		$matched_iteratorID = QuickBooks_XML::extractTagAttribute('iteratorID', $xml);
 		$matched_iteratorRemainingCount = QuickBooks_XML::extractTagAttribute('iteratorRemainingCount', $xml);
 		
@@ -10160,40 +8595,23 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		{
 			$extra = array( 'iteratorID' => $matched_iteratorID ); // Set the iteratorID to be used
 			
-			/*
-			// What is this code trying to do...? This doesn't look right... 
-			if ( (int) $matches[1] < QUICKBOOKS_SERVER_SQL_ITERATOR_MAXRETURNED)
-			{
-				$extra['maxReturned'] = (int) $matches[1];
-			}
-			*/
-			
-			// 		queueEnqueue($user, $action, $ident, $replace = true, $priority = 0, $extra = null, $qbxml = null)
 			$Driver->queueEnqueue($user, $action, null, true, QUICKBOOKS_SERVER_SQL_ITERATOR_PRIORITY, $extra);  // Queue up another go!
 		}
 		else
 		{
 			// We're done with this iterator! 
-			
 			// When the current iterator started...
 			$module = __CLASS__;
 			$type = null;
 			$opts = null;
 			
-			// 					configRead($user, $module, $key, &$type, &$opts)
-			$curr_sync_datetime = $Driver->configRead($user, $module, QuickBooks_Callbacks_SQL_Callbacks::_keySyncCurr($action), $type, $opts);	// last sync started... 
-			
-			//print('WRITING: [' . $curr_sync_datetime . '] from /' . $module . '/ {' . QuickBooks_Callbacks_SQL_Callbacks::_keySyncCurr($action) . '}');
+			$curr_sync_datetime = $Driver->configRead($user, $module, QuickBooks_Callbacks_SQL_Callbacks::_keySyncCurr($action), $type, $opts);	// last sync started...
 			
 			// Start of the iteration, update the previous timestamp to NOW
 			$Driver->configWrite($user, $module, QuickBooks_Callbacks_SQL_Callbacks::_keySyncPrev($action), $curr_sync_datetime, null);
 		}
 	}
 	
-	/**
-	 * 
-	 * 
-	 */	
 	protected static function _triggerActions($user, $table, $Object, $action = null)
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -10204,7 +8622,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		//	Invoice_LinkedTxn requests a ReceivePaymentQuery
 		//	ReceivePayment_AppliedToTxn requests an InvoiceQuery
 		//	... wash rinse repeat
-		
 		$priority = 9999;
 		if ($action)
 		{
@@ -10217,9 +8634,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		// CreditMemo.	IsPending, CreditRemaining
 		// Customer.	Balance, TotalBalance, 
 		// Invoice.		IsPending, AppliedAmount, BalanceRemaining, IsPaid
-		
-		//$Driver->log('Running triggered actions for: [' . $table . ']', null, QUICKBOOKS_LOG_DEBUG);
-		
 		switch (strtolower($table))
 		{
 			case 'receivepayment_appliedtotxn':
@@ -10230,7 +8644,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					);
 				
 				// @todo WARNING WARNING WARNING THIS DOES NOT WORK, I DONT KNOW WHY!
-				
 				/*
 				if ($Object->get('TxnType') == 'Invoice' and 
 					$arr = $Driver->get(QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . 'invoice', $where))
@@ -10250,34 +8663,18 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 				break;
 			case 'receivepayment':
 			case 'invoice':
-				
 				// A customer has an updated invoice or payment, so the Customer Balance changed
-				
-				/*
-				$Driver->log('Running triggered actions: derive customer', null, QUICKBOOKS_LOG_DEBUG);
-				
-				$Driver->queueEnqueue($user, QUICKBOOKS_DERIVE_CUSTOMER, null, true, $priority, 
-					array( 'ListID' => $Object->get('Customer_ListID') ) );
-				*/
-				
+
 				break;
 			case 'bill':
 			case 'billpaymentcheck':
 			case 'billpaymentcreditcard':
 				
 				// We paid a bill, so the Vendor Balance has changed
-				
-				
-				
 				break;
 		}
 	}
 	
-	
-	
-	/**
-	 * 
-	 */
 	protected static function _massageUpdateRecord($table, &$object)
 	{
 		$retr = QuickBooks_Callbacks_SQL_Callbacks::_massageInsertRecord($table, $object);
@@ -10309,9 +8706,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			}
 		}
 		
-		//$Driver = QuickBooks_Driver_Singleton::getInstance();
-		//$Driver->log('issets: ' . print_r($isset, true));
-		
 		foreach ($isset as $addrtype => $true)
 		{
 			foreach ($parts as $part)
@@ -10323,8 +8717,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			}
 		}
 		
-		//$Driver->log('object: ' . print_r($object, true));
-		
 		return $retr;
 	}
 	
@@ -10333,9 +8725,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		
 	}
 	
-	/**
-	 * 
-	 */
 	protected static function _massageInsertRecord($table, &$object)
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -10393,9 +8782,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
             'CurrentAppAccessRights_IsAutomaticLoginAllowed', 
             'CurrentAppAccessRights_IsPersonalDataAccessAllowed', 
             'IsAutomaticLogin', 
-			
-			
-			
 			);
 		
 		// Cast QuickBooks booleans (strings, "true" and "false") to database booleans (tinyint 1 and 0)	
@@ -10417,7 +8803,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		}		
 		
 		// Some types of objects need some special custom field handling 
-		
 		$map = array(
 			'invoice_invoiceline' => 'Invoice_TxnID', 
 			'purchaseorder_purchaseorderline' => 'PurchaseOrder_TxnID', 
@@ -10465,17 +8850,12 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}	
 		
 	/** 
-	 * 
-	 * 
 	 * @TODO Clean this up!
 	 */ 	
 	protected static function _transformToSQLObjects($curpath, $Node, &$objects, $current = null, $extra = array())
 	{
 		if ($Node->childCount())
 		{
-			//print('LOOKING AT [' . strtolower(trim(trim($curpath) . ', ' . $Node->name())) . ']' . "\n");
-			
-			//
 			switch (strtolower(trim(trim($curpath) . ' ' . $Node->name())))
 			{
 				case 'accountret':
@@ -10511,9 +8891,7 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 						
 					$extra['Txn_TxnID'] = $extra['TxnID'];
 					$extra['TxnType'] = 'BillPaymentCheck';
-					//$extra['ExchangeRate'] = $Node->getChildDataAt('BillPaymentCheckRet ExchangeRate');
-					//$extra['AmountInHomeCurrency'] = $Node->getChildDataAt('BillPaymentCheckRet AmountInHomeCurrency');
-						
+
 					break;
 				case 'billpaymentcreditcardret':
 						
@@ -10985,29 +9363,29 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					case 'SubscribedServices':
 					case 'TaxLineInfoRet':
 						
-						// * * * WARNING WARNING WARNING * * * 
-						// The next line of code causes problems with some responses 
-						//	because it converts our associative array to turn into a 
-						//	numeric array. This causes objects to get cut into multiple 
+						// * * * WARNING WARNING WARNING * * *
+						// The next line of code causes problems with some responses
+						//	because it converts our associative array to turn into a
+						//	numeric array. This causes objects to get cut into multiple
 						//	pieces:
-						// 
-						// array( 
-						// 	'account' => array( 'Name' => 'test', 'ListID' => 1234' ), 
+						//
+						// array(
+						// 	'account' => array( 'Name' => 'test', 'ListID' => 1234' ),
 						//	0 => array( account_taxlineinforet data here  ),
-						//	1 => array( 'CashFlowClassification' => 'abc' ),		// this is the other half of the Account data from the 'account' associative array key 
+						//	1 => array( 'CashFlowClassification' => 'abc' ),		// this is the other half of the Account data from the 'account' associative array key
 						// )
-						// 
-						// Do not make a change to this code without double checking syncs 
-						//	and talking this over with Keith first please! Thanks! 
-						// 
-						// Previously we were using this line, but it was causing problems: 
+						//
+						// Do not make a change to this code without double checking syncs
+						//	and talking this over with Keith first please! Thanks!
+						//
+						// Previously we were using this line, but it was causing problems:
 						//$others = array_values($objects);
-						
+
 						// This line of code seems to work OK
 						$others = $objects;
-						
-						
-						
+
+
+
 						$objects = array();
 						
 						$merge = true;
@@ -11023,11 +9401,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 					$objects = array_values($objects);
 					$objects = array_merge($others, $objects);
 				}
-				// 
-					
-				//echo '<br />&nbsp;&nbsp;&nbsp;';
-				//print_r($objects);
-				//echo '<br /><br />';
 			}
 		}
 		else
@@ -11036,15 +9409,8 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$others = array();
 			QuickBooks_SQL_Schema::mapToSchema(trim($curpath . ' ' . $Node->name()), QUICKBOOKS_SQL_SCHEMA_MAP_TO_SQL, $map, $others);
 				
-			//Okay so if the first element is a child element that is custom mapped, it'll end up creating the object with an incorrect path.
-			//print('map for: {' . $curpath . ' ' . $Node->name() . "} [" . $map[0] . "]\n");
-			//print_r($map);
-				
 			if ($map[0] and !isset($objects[$map[0]]))
 			{
-				//print('creating new object: ' . $map[0] . "\n");
-				//print_r($objects);
-				
 				$tempMap = array();
 				$tempOthers = array();
 				QuickBooks_SQL_Schema::mapToSchema(trim($curpath), QUICKBOOKS_SQL_SCHEMA_MAP_TO_SQL, $tempMap, $tempOthers);
@@ -11358,8 +9724,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	}
 			
 	/**
-	 * 
-	 *
 	 * @param string $action
 	 * @return string
 	 */
@@ -11397,18 +9761,15 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 	{
 		$Driver = QuickBooks_Driver_Singleton::getInstance();
 		$xml = '';
-		$type = '';
-			
+
 		$key_prev = QuickBooks_Callbacks_SQL_Callbacks::_keySyncPrev($action);
 		$key_curr = QuickBooks_Callbacks_SQL_Callbacks::_keySyncCurr($action);
 			
 		$module = __CLASS__;
 			
-		//$action = null;
 		$type = null;
 		$opts = null;
-		// 					configRead($user, $module, $key, &$type, &$opts)
-		$prev_sync_datetime = $Driver->configRead($user, $module, $key_prev, $type, $opts);	// last sync started... 
+		$prev_sync_datetime = $Driver->configRead($user, $module, $key_prev, $type, $opts);	// last sync started...
 		
 		if (!$prev_sync_datetime)
 		{
@@ -11417,7 +9778,6 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 			$prev_sync_datetime = date('Y-m-d', $timestamp) . 'T' . date('H:i:s', $timestamp);
 			$extra = array();			// If an iterator exists, get rid of it (this should *never* happen... how could it?)
 			
-			//			configWrite($user, $module, $key, $value, $type, $opts
 			$Driver->configWrite($user, $module, $key_prev, $prev_sync_datetime, null);
 		}
 		
@@ -11479,351 +9839,3 @@ public static function InventoryAssemblyLevelsRequest($requestID, $user, $action
 		return $xml;
 	}
 }
-
-/*
-$requestID = null;
-$user = 'quickbooks';
-$action = 'CustomerQuery';
-$ID = '1234';
-$extra = array();
-$err = '';
-$last_action_time = time();
-$last_actionident_time = time();
-//$xml = file_get_contents('/Users/kpalmer/Projects/QuickBooks/docs/responses/CustomerQuery.xml');
-$xml = '';
-$idents = array();
-
-$tmp = QuickBooks_Driver_Singleton::getInstance('pgsql://postgres:password@localhost/quickbooks', array(), array(), QUICKBOOKS_LOG_DEVELOP);
-print(QuickBooks_Callbacks_SQL_Callbacks::CustomerImportRequest($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() ));
-*/
-
-/*
-$xml = '<?xml version="1.0" ?>
-<QBXML>
-<QBXMLMsgsRs>
-<InvoiceQueryRs requestID="SW52b2ljZVF1ZXJ5fGJlZmUwNWJlYjg0NDEyZWU1NjE0MGRhMzMwZjE0ZTdj" statusCode="0" statusSeverity="Info" statusMessage="Status OK" iteratorRemainingCount="0" iteratorID="{6fcbb18b-68cf-4adb-bf40-164ac0bb4ec0}">
-	<InvoiceRet>
-		<TxnID>4-1232328070</TxnID>
-		<TimeCreated>2009-01-18T20:21:10-05:00</TimeCreated>
-		<TimeModified>2009-01-18T20:21:10-05:00</TimeModified>
-		<EditSequence>1232328070</EditSequence>
-		<TxnNumber>2</TxnNumber>
-		<CustomerRef>
-		<ListID>40000-1232328070</ListID>
-		<FullName>Keith Palmer:QuickBooks Integration</FullName>
-		</CustomerRef>
-		<ARAccountRef>
-		<ListID>2A0000-1232328069</ListID>
-		<FullName>Accounts Receivable</FullName>
-		</ARAccountRef>
-		<TemplateRef>
-		<ListID>10000-1232327561</ListID>
-		<FullName>Intuit Product Invoice</FullName>
-		</TemplateRef>
-		<TxnDate>2009-01-18</TxnDate>
-		<BillAddress>
-		<Addr1>Consolibyte Solutions</Addr1>
-		<Addr2>Keith R Palmer</Addr2>
-		</BillAddress>
-		<IsPending>false</IsPending>
-		<IsFinanceCharge>false</IsFinanceCharge>
-		<TermsRef>
-		<ListID>20000-1232327614</ListID>
-		<FullName>Net 30</FullName>
-		</TermsRef>
-		<DueDate>2009-01-18</DueDate>
-		<SalesRepRef>
-		<ListID>10000-1232327936</ListID>
-		<FullName>SBD</FullName>
-		</SalesRepRef>
-		<ShipDate>2009-01-18</ShipDate>
-		<Subtotal>100.00</Subtotal>
-		<SalesTaxPercentage>0.00</SalesTaxPercentage>
-		<SalesTaxTotal>0.00</SalesTaxTotal>
-		<AppliedAmount>-55.00</AppliedAmount>
-		<BalanceRemaining>45.00</BalanceRemaining>
-		<Memo>Opening balance</Memo>
-		<IsPaid>false</IsPaid>
-		<IsToBePrinted>false</IsToBePrinted>
-		<CustomerSalesTaxCodeRef>
-		<ListID>10000-1232327562</ListID>
-		<FullName>Tax</FullName>
-		</CustomerSalesTaxCodeRef>
-		
-		<LinkedTxn>
-			<TxnID>10-1232328309</TxnID>
-			<TxnType>ReceivePayment</TxnType>
-			<TxnDate>2009-01-18</TxnDate>
-			<RefNumber>123</RefNumber>
-			<LinkType>AMTTYPE</LinkType>
-			<Amount>-55.00</Amount>
-		</LinkedTxn>
-		
-		<InvoiceLineRet>
-			<TxnLineID>6-1232328070</TxnLineID>
-			<Desc>Opening balance</Desc>
-			<Rate>100</Rate>
-			<Amount>100.00</Amount>
-		</InvoiceLineRet>
-		
-	</InvoiceRet>
-	<InvoiceRet>
-		<TxnID>7-1232328243</TxnID>
-		<TimeCreated>2009-01-18T20:24:03-05:00</TimeCreated>
-		<TimeModified>2009-01-18T20:24:03-05:00</TimeModified>
-		<EditSequence>1232328243</EditSequence>
-		<TxnNumber>3</TxnNumber>
-		<CustomerRef>
-		<ListID>40000-1232328070</ListID>
-		<FullName>Keith Palmer:QuickBooks Integration</FullName>
-		</CustomerRef>
-		<ARAccountRef>
-		<ListID>2A0000-1232328069</ListID>
-		<FullName>Accounts Receivable</FullName>
-		</ARAccountRef>
-		<TemplateRef>
-		<ListID>10000-1232327561</ListID>
-		<FullName>Intuit Product Invoice</FullName>
-		</TemplateRef>
-		<TxnDate>2009-01-18</TxnDate>
-		<RefNumber>1</RefNumber>
-		<BillAddress>
-		<Addr1>Consolibyte Solutions</Addr1>
-		<Addr2>Keith R Palmer</Addr2>
-		</BillAddress>
-		<IsPending>false</IsPending>
-		<IsFinanceCharge>false</IsFinanceCharge>
-		<TermsRef>
-		<ListID>20000-1232327614</ListID>
-		<FullName>Net 30</FullName>
-		</TermsRef>
-		<DueDate>2009-02-17</DueDate>
-		<SalesRepRef>
-		<ListID>10000-1232327936</ListID>
-		<FullName>SBD</FullName>
-		</SalesRepRef>
-		<ShipDate>2009-01-18</ShipDate>
-		<Subtotal>183.00</Subtotal>
-		<ItemSalesTaxRef>
-		<ListID>20000-1232327975</ListID>
-		<FullName>CT State Tax</FullName>
-		</ItemSalesTaxRef>
-		<SalesTaxPercentage>6.00</SalesTaxPercentage>
-		<SalesTaxTotal>10.98</SalesTaxTotal>
-		<AppliedAmount>0.00</AppliedAmount>
-		<BalanceRemaining>193.98</BalanceRemaining>
-		<Memo>Test Memo</Memo>
-		<IsPaid>false</IsPaid>
-		<CustomerMsgRef>
-		<ListID>30000-1232327614</ListID>
-		<FullName>All work is complete!</FullName>
-		</CustomerMsgRef>
-		<IsToBePrinted>true</IsToBePrinted>
-		<CustomerSalesTaxCodeRef>
-		<ListID>10000-1232327562</ListID>
-		<FullName>Tax</FullName>
-		</CustomerSalesTaxCodeRef>
-			
-		<InvoiceLineRet>
-			<TxnLineID>9-1232328243</TxnLineID>
-			<ItemRef>
-			<ListID>30000-1232328157</ListID>
-			<FullName>Test Service Item 1</FullName>
-			</ItemRef>
-			<Desc>Test Service Item Description</Desc>
-			<Quantity>1</Quantity>
-			<Rate>39.00</Rate>
-			<Amount>39.00</Amount>
-			<SalesTaxCodeRef>
-			<ListID>10000-1232327562</ListID>
-			<FullName>Tax</FullName>
-			</SalesTaxCodeRef>
-		</InvoiceLineRet>
-			
-		<InvoiceLineRet>
-			<TxnLineID>A-1232328243</TxnLineID>
-			<ItemRef>
-			<ListID>40000-1232328225</ListID>
-			<FullName>Test Inventory Part 2</FullName>
-			</ItemRef>
-			<Desc>Test inventory part.</Desc>
-			<Quantity>2</Quantity>
-			<Rate>72.00</Rate>
-			<Amount>144.00</Amount>
-			<SalesTaxCodeRef>
-			<ListID>10000-1232327562</ListID>
-			<FullName>Tax</FullName>
-			</SalesTaxCodeRef>
-		</InvoiceLineRet>
-		
-	</InvoiceRet>
-</InvoiceQueryRs>
-</QBXMLMsgsRs>
-</QBXML>';
-*/
-
-/*
-$requestID = 'Q3VzdG9tZXJBZGR8Mw==';
-$user = 'quickbooks';
-$action = QUICKBOOKS_ADD_CUSTOMER;
-$ID = 3;
-$extra = array();
-$err = '';
-$last_action_time = time();
-$last_actionident_time = time();
-//$xml = file_get_contents('/Users/kpalmer/Projects/QuickBooks/docs/responses/CustomerQuery.xml');
-$xml = '<?xml version="1.0" ?>
-<QBXML>
-	<QBXMLMsgsRs>
-		<CustomerAddRs requestID="' . $requestID . '" statusCode="3180" statusSeverity="Error" statusMessage="There was an error when saving a Customer list, element &quot;Newcastle Tenants Federation&quot;. QuickBooks error message: This list has been modified by another user." />
-	</QBXMLMsgsRs>
-</QBXML>';
-$idents = array();
-
-$tmp = QuickBooks_Driver_Singleton::getInstance('mysql://root:root@localhost/quickbooks_sql', array(), array(), QUICKBOOKS_LOG_DEVELOP);
-//print(QuickBooks_Callbacks_SQL_Callbacks::CustomerAddResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() ));
-
-$errnum = 3180;
-$errmsg = 'There was an error when saving a Customer list, element &quot;Newcastle Tenants Federation&quot;. QuickBooks error message: This record has an error in it.';
-$config = array();
-
-print(QuickBooks_Callbacks_SQL_Errors::catchall($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config));
-*/
-
-/*
-$requestID = 'Q3VzdG9tZXJBZGR8Mw==';
-$user = 'quickbooks';
-$action = QUICKBOOKS_MOD_CUSTOMER;
-$ID = 4;
-$extra = array();
-$err = '';
-$last_action_time = time();
-$last_actionident_time = time();
-$xml = '';
-$idents = array();
-
-$tmp = QuickBooks_Driver_Singleton::getInstance('mysql://root:root@localhost/quickbooks_sql', array(), array(), QUICKBOOKS_LOG_DEVELOP);
-print(QuickBooks_Callbacks_SQL_Callbacks::CustomerModRequest($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() ));
-*/
-
-/*
-$requestID = '38';
-$user = 'quickbooks';
-$action = QUICKBOOKS_ADD_INVENTORYADJUSTMENT;
-$ID = 1;
-$extra = array();
-$err = '';
-$last_action_time = time();
-$last_actionident_time = time();
-$xml = '';
-$idents = array();
-
-$tmp = QuickBooks_Driver_Singleton::getInstance('mysql://root:Fuirseet1@localhost/saas_329_bizelo_qbus_557', array(), array(), QUICKBOOKS_LOG_DEVELOP);
-print(QuickBooks_Callbacks_SQL_Callbacks::InventoryAdjustmentAddRequest($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() ));
-*/
-
-
-/*
-$requestID = 'Q3VzdG9tZXJBZGR8Mw==';
-$user = 'quickbooks';
-$action = QUICKBOOKS_ADD_CUSTOMER;
-$ID = 11;
-$extra = array();
-$err = '';
-$last_action_time = time();
-$last_actionident_time = time();
-$xml = '<?xml version="1.0" ?>
-<QBXML>
-<QBXMLMsgsRs>
-<GeneralSummaryReportQueryRs statusCode="0" statusSeverity="Info" statusMessage="Status OK">
-<ReportRet>
-<ReportTitle>Inventory Stock Status by Item</ReportTitle>
-<ReportSubtitle>February 1 - 7, 2011</ReportSubtitle>
-<ReportBasis>Accrual</ReportBasis>
-<NumRows>6</NumRows>
-<NumColumns>9</NumColumns>
-<NumColTitleRows>1</NumColTitleRows>
-<ColDesc colID="1" dataType="STRTYPE">
-<ColTitle titleRow="1" />
-<ColType>Blank</ColType>
-</ColDesc>
-<ColDesc colID="2" dataType="STRTYPE">
-<ColTitle titleRow="1" value="Item Description" />
-<ColType>ItemDesc</ColType>
-</ColDesc>
-<ColDesc colID="3" dataType="STRTYPE">
-<ColTitle titleRow="1" value="Pref Vendor" />
-<ColType>ItemVendor</ColType>
-</ColDesc>
-<ColDesc colID="4" dataType="QUANTYPE">
-<ColTitle titleRow="1" value="Reorder Pt" />
-<ColType>ReorderPoint</ColType>
-</ColDesc>
-<ColDesc colID="5" dataType="QUANTYPE">
-<ColTitle titleRow="1" value="On Hand" />
-<ColType>QuantityOnHand</ColType>
-</ColDesc>
-<ColDesc colID="6" dataType="BOOLTYPE">
-<ColTitle titleRow="1" value="Order" />
-<ColType>SuggestedReorder</ColType>
-</ColDesc>
-<ColDesc colID="7" dataType="QUANTYPE">
-<ColTitle titleRow="1" value="On PO" />
-<ColType>QuantityOnOrder</ColType>
-</ColDesc>
-<ColDesc colID="8" dataType="DATETYPE">
-<ColTitle titleRow="1" value="Next Deliv" />
-<ColType>EarliestReceiptDate</ColType>
-</ColDesc>
-<ColDesc colID="9" dataType="QUANTYPE">
-<ColTitle titleRow="1" value="Sales/Week" />
-<ColType>SalesPerWeek</ColType>
-</ColDesc>
-<ReportData>
-<TextRow rowNumber="1" value="Inventory" />
-<DataRow rowNumber="2">
-<RowData rowType="item" value="another inventory" />
-<ColData colID="1" value="another inventory" />
-<ColData colID="4" value="5" />
-<ColData colID="5" value="35" />
-<ColData colID="6" value="false" />
-<ColData colID="7" value="0" />
-<ColData colID="9" value="0" />
-</DataRow>
-<TextRow rowNumber="3" value="test inventory part" />
-<DataRow rowNumber="4">
-<RowData rowType="item" value="test inventory part:test sub product" />
-<ColData colID="1" value="test sub product" />
-<ColData colID="5" value="5" />
-<ColData colID="6" value="false" />
-<ColData colID="7" value="0" />
-<ColData colID="9" value="0" />
-</DataRow>
-<DataRow rowNumber="5">
-<RowData rowType="item" value="test inventory part" />
-<ColData colID="1" value="test inventory part - Other" />
-<ColData colID="4" value="5" />
-<ColData colID="5" value="12" />
-<ColData colID="6" value="false" />
-<ColData colID="7" value="5" />
-<ColData colID="8" value="2010-09-27" />
-<ColData colID="9" value="0" />
-</DataRow>
-<SubtotalRow rowNumber="6">
-<RowData rowType="item" value="test inventory part" />
-<ColData colID="1" value="Total test inventory part" />
-<ColData colID="5" value="17" />
-<ColData colID="7" value="5" />
-<ColData colID="9" value="0" />
-</SubtotalRow>
-</ReportData>
-</ReportRet>
-</GeneralSummaryReportQueryRs>
-</QBXMLMsgsRs>
-</QBXML>';
-$idents = array();
-
-$tmp = QuickBooks_Driver_Singleton::getInstance('mysql://root:root@localhost/quickbooks_sql', array(), array(), QUICKBOOKS_LOG_DEVELOP);
-print(QuickBooks_Callbacks_SQL_Callbacks::InventoryLevelsResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents, $config = array() ));
-*/
-

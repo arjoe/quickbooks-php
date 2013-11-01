@@ -21,17 +21,19 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_WebConnector_Request_GetLastError extends QuickBooks_WebConnector_Request
 {
-	public $ticket;
+    /**
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     */
+    public $ticket;
 	
 	public function __construct($ticket = null)
 	{
 		$this->ticket = $ticket;
 	}
+
+    public function getTicket() {
+        return $this->ticket;
+    }
 }

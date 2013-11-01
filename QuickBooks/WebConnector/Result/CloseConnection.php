@@ -36,7 +36,7 @@ class QuickBooks_WebConnector_Result_CloseConnection extends QuickBooks_WebConne
 	/**
 	 * Create a new result object
 	 * 
-	 * @param string $resp		A message indicating the connection has been closed
+	 * @param string $result		A message indicating the connection has been closed
 	 */
 	public function __construct($result)
 	{

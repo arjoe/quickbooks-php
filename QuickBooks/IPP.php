@@ -37,11 +37,6 @@ QuickBooks_Loader::load('/QuickBooks/IPP/IDS.php');
 // Import all IDS service classes
 QuickBooks_Loader::import('/QuickBooks/IPP/Service');
 
-/**
- * 
- * 
- *
- */
 class QuickBooks_IPP
 {
 	const API_ADDRECORD = 'API_AddRecord';
@@ -86,7 +81,7 @@ class QuickBooks_IPP
 	
 	/**
 	 * 
-	 * @var unknown_type
+	 * @var string
 	 */
 	const COOKIE = 'ippfedcookie';
 	
@@ -101,31 +96,6 @@ class QuickBooks_IPP
 	 * @var string
 	 */
 	const REQUEST_IDS = 'ids';
-	
-	/**
-	 * An IDS request to add an object
-	 * @deprecated
-	 */
-	//const IDS_ADD = 'ids-add';
-	
-	/**
-	 * An IDS request to modify an object
-	 * @deprecated
-	 */
-	//const IDS_MOD = 'ids-mod';
-	
-	/**
-	 * An IDS request to search/query for an object
-	 * @deprecated
-	 */
-	//const IDS_QUERY = 'ids-query';
-	
-	/**
-	 * An IDS request to get a report
-	 * @deprecated
-	 * @var unknown_type
-	 */
-	//const IDS_REPORT = 'ids-report';
 	
 	/**
 	 * No error occurred
@@ -169,10 +139,6 @@ class QuickBooks_IPP
 	 */
 	const ERROR_SSL = -1095;
 	
-	/**
-	 * 
-	 * 
-	 */
 	const ERROR_HTTP = -1096;
 	
 	protected $_test;
@@ -311,9 +277,6 @@ class QuickBooks_IPP
 		
 		// Encryption key (used for database storage)
 		$this->_key = $encryption_key;
-		
-		// Default to QuickBooks desktop
-		//$this->flavor(QuickBooks_IPP_IDS::FLAVOR_DESKTOP);
 	}
 	
 	/**
@@ -1097,10 +1060,11 @@ class QuickBooks_IPP
 	 * Make an IDS request (Intuit Data Services) to the remote server
 	 *
 	 * @param QuickBooks_IPP_Context $Context		The context (token and ticket) to use
-	 * @param integer $realmID						The realm to query against
+	 * @param integer $realm						The realm to query against
 	 * @param string $resource						A QuickBooks_IDS::RESOURCE_* constant
 	 * @param string $optype
-	 * @param string $xml	
+	 * @param string $xml
+     * @param string|integer $ID
 	 * @return QuickBooks_IPP_Object										
 	 */
 	public function IDS($Context, $realm, $resource, $optype, $xml = '', $ID = null)
@@ -1219,10 +1183,10 @@ class QuickBooks_IPP
      * Make an Intuit Data Services v3 request to the remote server.
      *
      * @param QuickBooks_IPP_Context    $Context        The context (token and ticket) to use.
-     * @param integer                   $realm          The realm to operate on
+     * @param integer                   $realmID        The realm to operate on
      * @param string                    $resource       The name of the resource to operate on
      * @param string                    $optype         The operation to be performed
-     * @param string                    $xml_or_query   Raw XML or the query to execute (based on operation type)
+     * @param string                    $xml            Raw XML or the query to execute (based on operation type)
      * @param                           $ID             unused?
      *
      * @return array|bool|mixed|QuickBooks_IPP_Object_Report|string
@@ -1286,8 +1250,6 @@ class QuickBooks_IPP
 			$post = false;
 			$xml = '';
 		}
-		
-		//$url = 'https://services.intuit.com/sb/' . strtolower($resource) . '/' . $this->_ids_version . '/' . $realmID;
 		
 		if ($this->flavor() == QuickBooks_IPP_IDS::FLAVOR_ONLINE)
 		{
@@ -1411,7 +1373,6 @@ class QuickBooks_IPP
 		
 		foreach ($lines as $line)
 		{
-			// Set-Cookie: qbn.ticket=V1-47-U2v1RYBuM02GHgOYfulVmQ; expires=Tue, 19-Jan-2038 00:00:00 GMT; path=/; domain=.intuit.com; secure; HttpOnly
 			$line = substr($line, 12);
 			
 			if (substr($line, 0, strlen($name)) == $name and 
@@ -1435,9 +1396,6 @@ class QuickBooks_IPP
 		return $Parser;
 	}
 	
-	/**
-	 * 
-	 */
 	protected function _hasErrors($response)
 	{
 		// @todo This should first check for HTTP errors
@@ -1510,12 +1468,13 @@ class QuickBooks_IPP
 	
 
 	/**
-	 * 
-	 * 
-	 * 
-	 * @param string $message
-	 * @param integer $level
-	 * @return boolean
+	 * Logs the specified message at the indicated level.
+	 *
+	 * @param string    $message    The message to be logged
+	 * @param integer   $level      The level of the message
+
+     * @return boolean  returns true if successfully logged.
+     * @deprecated Use public method instead.
 	 */
 	protected function _log($message, $level = QUICKBOOKS_LOG_NORMAL)
 	{
@@ -1531,19 +1490,12 @@ class QuickBooks_IPP
 		
 		if ($this->_driver)
 		{
-			//die('logging to driver: [' . $level . ']');
-			// Send it to the driver to be logged 
 			$this->_driver->log($message, null, $level);
 		}
 		
 		return true;
 	}
 	
-	/**
-	 * Log a message 
-	 *
-	 *
-	 */
 	public function log($message, $level = QUICKBOOKS_LOG_NORMAL)
 	{
 		return $this->_log($message, $level);
@@ -1723,7 +1675,7 @@ class QuickBooks_IPP
 	 * Get the last raw XML response that was received
 	 * 
 	 * @return string
-     * @deprecated
+     * @deprecated  Replaced by getLastResponse instead.
 	 */
 	public function lastResponse()
 	{
@@ -1743,7 +1695,7 @@ class QuickBooks_IPP
 	 * Get the last raw XML request that was sent
 	 *
 	 * @return string
-     * @deprecated
+     * @deprecated  Replaced by getLastRequest
 	 */
 	public function lastRequest()
 	{
@@ -1761,16 +1713,30 @@ class QuickBooks_IPP
 
 
     /**
-     * @return string
-     * @deprecated
+     * Returns the last debug message.
+     *
+     * @return string   The last debug message
+     * @deprecated  Replaced by getLastDebugMessage
+     * @see getLastDebugMessage
      */
     public function lastDebug()
 	{
-		return $this->_last_debug;
+		return $this->getLastDebugMessage();
 	}
+
+    /**
+     * Returns the last debug message.
+     *
+     * @return string   The last debug message
+     * @deprecated  Replaced by getLastDebugMessage
+     * @see getLastDebugMessage
+     */
+    public function getLastDebugMessage() {
+        return $this->_last_debug;
+    }
 	
 	/**
-	 * Get the error number of the last error that occured
+	 * Get the error number of the last error that occurred
 	 * 
 	 * @return mixed		The error number (or error code, some QuickBooks error codes are hex strings)
 	 */
@@ -1830,8 +1796,9 @@ class QuickBooks_IPP
 	/**
 	 * Set an error message
 	 * 
-	 * @param integer $errnum	The error number/code
-	 * @param string $errmsg	The text error message
+	 * @param integer $errcode	The error number/code
+	 * @param string $errtext	The text error message
+     * @param string $errdetail Details of the error.
 	 * @return void
 	 */
 	protected function _setError($errcode, $errtext = '', $errdetail = '')

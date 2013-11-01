@@ -16,19 +16,10 @@
  * @subpackage Encryption
  */
 
-/**
- * 
- */
 QuickBooks_Loader::load('/QuickBooks/Encryption.php');
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_Encryption_Factory
 {
-	// , $iv = null, $mode = null
 	static public function create($encrypt)
 	{
 		$class = 'QuickBooks_Encryption_' . ucfirst(strtolower($encrypt));
@@ -40,8 +31,6 @@ class QuickBooks_Encryption_Factory
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @param string $encrypted
 	 * @return string
 	 */

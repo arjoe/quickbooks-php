@@ -21,16 +21,23 @@
  */
 QuickBooks_Loader::load('/QuickBooks/WebConnector/Request.php');
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_WebConnector_Request_ConnectionError extends QuickBooks_WebConnector_Request
 {
-	public $ticket;
-	public $hresult;
-	public $message;
+    /**
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     */
+    public $ticket;
+
+    /**
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     * @todo Determine what hresult actually is
+     */
+    public $hresult;
+
+    /**
+     * @deprecated To become protected in next release. Use accessor methods instead.
+     */
+    public $message;
 	
 	public function __construct($ticket = null, $hresult = null, $message = null)
 	{
@@ -38,4 +45,16 @@ class QuickBooks_WebConnector_Request_ConnectionError extends QuickBooks_WebConn
 		$this->hresult = $hresult;
 		$this->message = $message;
 	}
+
+    public function getHResult() {
+        return $this->hresult;
+    }
+
+    public function getMessage() {
+        return $this->message;
+    }
+
+    public function getTicket() {
+        return $this->ticket;
+    }
 }

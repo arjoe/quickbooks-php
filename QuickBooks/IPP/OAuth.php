@@ -29,9 +29,6 @@ class QuickBooks_IPP_OAuth
 	protected $_signature = null;
 	protected $_keyfile;
 
-	/**
-	 * 
-	 */
 	const NONCE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 	const METHOD_POST = 'POST';
@@ -60,8 +57,6 @@ class QuickBooks_IPP_OAuth
 	
 	/**
 	 * Set the signature method
-	 * 
-	 * 
 	 */
 	public function signature($method, $keyfile = null)
 	{
@@ -71,17 +66,9 @@ class QuickBooks_IPP_OAuth
 	
 	/**
 	 * Sign an OAuth request and return the signing data (auth string, URL, etc.)
-	 *
-	 * 
 	 */
 	public function sign($method, $url, $oauth_token = null, $oauth_token_secret = null, $params = array()) 
 	{
-		/*
-		print('got in: [' . $method . '], ' . $url);
-		print_r($params);
-		print('<br /><br /><br />');
-		*/
-		
 		if (!is_array($params))
 		{
 			$params = array();
@@ -111,20 +98,8 @@ class QuickBooks_IPP_OAuth
 		
 		$params['oauth_signature'] = $signature_and_basestring[1];
 		
-		/*
-		print('<pre>');
-		print('BASE STRING IS [' . $signature_and_basestring[0] . ']' . "\n\n");
-		print('SIGNATURE IS: [' . $params['oauth_signature'] . ']');
-		print('</pre>');
-		*/
-		
 		$normalized = $this->_normalize($params);
 		
-		/*
-		print('NORMALIZE 1 [' . $normalized . ']' . "\n");
-		print('NORMZLIZE 2 [' . $this->_normalize2($params) . ']' . "\n");
-		*/
-
 		if (false !== ($pos = strpos($url, '?')))
 		{
 			$url = substr($url, 0, $pos);
@@ -142,9 +117,7 @@ class QuickBooks_IPP_OAuth
 
 	protected function _generateHeader($params, $normalized) 
 	{
-		// oauth_signature="' . $this->_escape($params['oauth_signature']) . '", 
-
-		$str = 'OAuth realm="", 
+		$str = 'OAuth realm="",
 			oauth_signature_method="' . $params['oauth_signature_method'] . '", 
 			oauth_signature="' . $this->_escape($params['oauth_signature']) . '", 			
 			oauth_nonce="' . $params['oauth_nonce'] . '", 
@@ -161,11 +134,7 @@ class QuickBooks_IPP_OAuth
 		return str_replace(array('  ', '   '), ' ', str_replace(array("\r", "\n", "\t"), ' ', $str));
 	}
 
-	/**
-	 * 
-	 * 
-	 */
-	protected function _escape($str) 
+	protected function _escape($str)
 	{
 		if ($str === false)
 		{
@@ -179,20 +148,14 @@ class QuickBooks_IPP_OAuth
 	
 	protected function _timestamp()
 	{
-		//return 1326976195;
-		
-		//return 1318622958;
 		return time();
 	}
 
 	protected function _nonce($len = 5) 
 	{
-		//return '1234';
-		
 		$tmp = str_split(QuickBooks_IPP_OAuth::NONCE);
 		shuffle($tmp);
 		
-		//return 'kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg';
 		return substr(implode('', $tmp), 0, $len);
 	}
 		
@@ -227,27 +190,6 @@ class QuickBooks_IPP_OAuth
 
 	protected function _generateSignature($signature, $method, $url, $params = array()) 
 	{
-		/*
-		print('<pre>params for signing');
-		print_r($params);
-		print('</pre>');
-		*/
-		
-		//if (false !== strpos($url, 'get_access'))
-		/*if (true)
-		{
-			print($url . '<br />' . "\r\n\r\n");
-			die('NORMALIZE MINE [' . $this->_normalize($params) . ']');
-		}*/
-		
-		/*
-		print('<pre>');
-		print('NORMALIZING [' . "\n");
-		print($this->_normalize($params) . "]\n\n\n");
-		print('SECRET KEY FOR SIGNING [' . $secret . ']' . "\n");
-		print('</pre>');
-		*/
-		
 		if (false !== ($pos = strpos($url, '?')))
 		{
 			$tmp = array();
@@ -258,14 +200,9 @@ class QuickBooks_IPP_OAuth
 			$url = substr($url, 0, $pos);
 		}
 
-		//print('url [' . $url . ']' . "\n");
-		//print_r($params);
-
 		$sbs = $this->_escape($method) . '&' . $this->_escape($url) . '&' . $this->_escape($this->_normalize($params));
 		
-		//print('sbs [' . $sbs . ']' . "\n");
-
-		// Which signature method? 
+		// Which signature method?
 		switch ($signature)
 		{
 			case QuickBooks_IPP_OAuth::SIGNATURE_HMAC:
@@ -277,33 +214,9 @@ class QuickBooks_IPP_OAuth
 		return false;
 	}
 	
-
-	/*
-		// Pull the private key ID from the certificate
-		$privatekeyid = openssl_get_privatekey($cert);
-		
-		// Sign using the key
-		$sig = false;
-		$ok  = openssl_sign($base_string, $sig, $privatekeyid);   
-		
-		// Release the key resource
-		openssl_free_key($privatekeyid);
-		
-		base64_encode($sig)
-	*/
-		
-	
 	protected function _generateSignature_RSA($sbs, $method, $url, $params = array())
 	{
-		// $res = ... 
 		$res = openssl_pkey_get_private('file://' . $this->_keyfile);
-		
-		/*
-		print('key id is: [');
-		print_r($res);
-		print(']');
-		print("\n\n\n");
-		*/
 		
 		$signature = null;
 		$retr = openssl_sign($sbs, $signature, $res);
@@ -315,14 +228,7 @@ class QuickBooks_IPP_OAuth
 			1 => base64_encode($signature), 
 			);
 	}
-		
-		
-		
-	/*
-	$key = $request->urlencode($consumer_secret).'&'.$request->urlencode($token_secret);
-	$signature = base64_encode(hash_hmac("sha1", $base_string, $key, true));
-	*/	
-		
+
 	protected function _generateSignature_HMAC($sbs, $method, $url, $params = array())
 	{
 		$secret = $this->_escape($this->_oauth_consumer_secret);
@@ -334,8 +240,6 @@ class QuickBooks_IPP_OAuth
 			$secret .= $this->_escape($params['oauth_secret']);
 		}
 
-		//print('generating signature from [' . $secret . ']' . "\n\n");
-		
 		return array(
 			0 => $sbs, 
 			1 => base64_encode(hash_hmac('sha1', $sbs, $secret, true)), 

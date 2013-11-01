@@ -22,8 +22,6 @@ QuickBooks_Loader::load('/QuickBooks/XML/Node.php');
 
 /**
  * QuickBooks XML document container
- * 
- * 
  */
 class QuickBooks_XML_Document
 {
@@ -65,7 +63,10 @@ class QuickBooks_XML_Document
 	
 	/**
 	 * Return the XML object as an XML string
-	 * 
+	 *
+     * @param bool   $todo_for_empty_elements
+     * @param string $indent
+     *
 	 * @return string
 	 */
 	public function asXML($todo_for_empty_elements = true, $indent = "\t")

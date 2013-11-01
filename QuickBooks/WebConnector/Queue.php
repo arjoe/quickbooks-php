@@ -65,11 +65,11 @@ class QuickBooks_WebConnector_Queue
 	 * Create a new QuickBooks queue instance
 	 * 
 	 * @param mixed $dsn_or_conn	A DSN-style connection string (i.e.: mysq://root:pass@locahost/database) or a database connection (if you wish to re-use an existing database connection)
+     * @param string $user
 	 * @param array $config			Configuration array for the driver
 	 */
 	public function __construct($dsn_or_conn, $user = null, $config = array())
 	{
-		//$this->_driver = QuickBooks_Utilities::driverFactory($dsn_or_conn, $config);
 		$this->_driver = QuickBooks_Driver_Factory::create($dsn_or_conn, $config);
 		
 		// No default username was provided, fetch the default from the driver
@@ -115,13 +115,6 @@ class QuickBooks_WebConnector_Queue
 			shuffle($tmp);
 			$random = substr(implode('', $tmp), 0, 8);
 			
-			/*
-			if (!$user)
-			{
-				$user = $this->_driver->authDefault();
-			}
-			*/
-			
 			if (!$user)
 			{
 				$user = $this->_user;
@@ -152,7 +145,9 @@ class QuickBooks_WebConnector_Queue
 	 * @param integer $priority		The priority of the action (higher priorities run first)
 	 * @param mixed $extra			Any extra data to include for the request handler
 	 * @param string $user			The username of the QuickBooks Web Connector user this event should be registered for
+     * @param string $qbxml
 	 * @param boolean $replace		Whether or not this should replace any other recurring events with this action/ident
+     *
 	 * @return boolean 
 	 */
 	public function recurring($run_every, $action, $ident = null, $priority = 0, $extra = null, $user = null, $qbxml = null, $replace = true)
@@ -168,13 +163,6 @@ class QuickBooks_WebConnector_Queue
 		
 		if ($this->_driver)
 		{
-			/*
-			if (!$user)
-			{
-				$user = $this->_driver->authDefault();
-			}
-			*/
-			
 			// Use the default user (provided in __construct) if none is given
 			if (!$user)
 			{
@@ -201,16 +189,17 @@ class QuickBooks_WebConnector_Queue
 	 * @param mixed $ident			A unique identifier (if required) for a record being operated on (i.e. if you're doing a "CustomerAdd", you'd probaly put a unique customer ID number here, so you're SOAP handler function knows which customer it is supposed to add)
 	 * @param integer $priority		The priority of the update (higher priority actions will be pushed to QuickBooks before lower priority actions)
 	 * @param array $extra			If you need to make additional bits of data available to your request/response functions, you can pass an array of extra data here
-	 * @param string $user			The username of the QuickBooks Web Connector user this item should be queued for 
-	 * @param boolean $replace		Whether or not to replace any other currently queued entries with the same action/ident
-	 * @return boolean
+     * @param string $user          The username of the QuickBooks Web Connector user this item should be queued for
+     * @param string $qbxml
+     * @param boolean $replace		Whether or not to replace any other currently queued entries with the same action/ident
+	 *
+*@return boolean
 	 */	
 	public function enqueue($action, $ident = null, $priority = 0, $extra = null, $user = null, $qbxml = null, $replace = true)
 	{
 		if (!strlen($ident))
 		{
 			// If they didn't provide an $ident, generate a random, unique one
-			
 			$tmp = array_merge(range('a', 'z'), range(0, 9));
 			shuffle($tmp);
 			$ident = substr(implode('', $tmp), 0, 8);
@@ -218,13 +207,6 @@ class QuickBooks_WebConnector_Queue
 		
 		if ($this->_driver)
 		{
-			/*
-			if (!$user)
-			{
-				$user = $this->_driver->authDefault();
-			}
-			*/
-			
 			// Use the default user (provided in __construct) if none is given
 			if (!$user)
 			{
@@ -309,37 +291,6 @@ class QuickBooks_WebConnector_Queue
 		
 		return null;
 	}
-	
-	/*public function identifier($type, $ident, $user = null)
-	{
-		$types = QuickBooks_Utilities::listObjects();
-		//if (
-		
-		if ($this->_driver)
-		{
-			//if (!$user)
-			//{
-			//	$user = $this->_driver->authDefault();
-			//}
-			
-			// Use the default user (provided in __construct) if none is given
-			if (!$user)
-			{
-				$user = $this->_user;
-			}			
-			
-			$editseq = '';
-			return $this->_driver->identFetch($user, $type, $ident, $editseq);
-		}
-		
-		return null;
-	}
-	
-	public function sequence($type, $ident, $user = null)
-	{
-		
-	}
-	*/
 	
 	/**
 	 * Get debugging information from the queue

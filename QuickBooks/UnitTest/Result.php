@@ -54,4 +54,3 @@ class QuickBooks_UnitTest_Result
 	}
 }
 
-?>

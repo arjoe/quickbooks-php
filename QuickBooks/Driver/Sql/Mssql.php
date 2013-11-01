@@ -25,24 +25,19 @@
  */
 
 /**
- * Base QuickBooks constants
- */
-require_once 'QuickBooks.php';
-
-/**
  * QuickBooks driver base class
  */
-require_once 'QuickBooks/Driver.php';
+QuickBooks_Loader::load('/QuickBooks/Driver.php');
 
 /**
  * QuickBooks driver SQL base class
  */
-require_once 'QuickBooks/Driver/Sql.php';
+QuickBooks_Loader::load('/QuickBooks/Driver/Sql.php', false);
 
 /**
  * QuickBooks utilities class
  */
-require_once 'QuickBooks/Utilities.php';
+QuickBooks_Loader::load('/QuickBooks/Utilities.php');
 
 if (!defined('QUICKBOOKS_DRIVER_SQL_MSSQL_SALT'))
 {
@@ -202,8 +197,8 @@ class QuickBooks_Driver_Sql_Mssql extends QuickBooks_Driver_Sql
 	/**
 	 * Create a new Microsoft SQL Server back-end driver
 	 * 
-	 * @param string $dsn		A DSN-style connection string (i.e.: "mysql://your-mysql-username:your-mysql-password@your-mysql-host:port/your-mysql-database")
-	 * @param array $config		Configuration options for the driver (not currently supported)
+	 * @param string    $dsn_or_conn	A DSN-style connection string (i.e.: "mysql://your-mysql-username:your-mysql-password@your-mysql-host:port/your-mysql-database")
+	 * @param array     $config		    Configuration options for the driver (not currently supported)
 	 */
 	public function __construct($dsn_or_conn, $config)
 	{
@@ -256,15 +251,12 @@ class QuickBooks_Driver_Sql_Mssql extends QuickBooks_Driver_Sql
 	protected function _initialized()
 	{
 		$required = array(
-			//$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_IDENTTABLE) => false, 
-			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) => false, 
+			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) => false,
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_LOGTABLE) => false, 
 			$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) => false, 
-			//$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_NOTIFYTABLE) => false, 
-			//$this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONNECTIONTABLE) => false, 
 			);
 		
 		$errnum = 0;
@@ -348,24 +340,20 @@ class QuickBooks_Driver_Sql_Mssql extends QuickBooks_Driver_Sql
 	/**
 	 * Query the database
 	 * 
-	 * @param string $sql
+	 * @param string    $sql
+     * @param integer   $errnum
+     * @param string    $errmsg
+     * @param integer   $offset
+     * @param integer   $limit
+     *
 	 * @return resource
+     * @todo Add offset support
 	 */
 	protected function _query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null)
 	{
 		if ($limit)
 		{
 			$sql = str_replace(array( "SELECT ", "SELECT\n", "SELECT\r" ), 'SELECT TOP ' . (int) $limit . ' ' . "\n", $sql);
-			
-			/*
-select * from (
- select top 10 emp_id,lname,fname from (
-    select top 30 emp_id,lname,fname
-    from employee
-   order by lname asc
- ) as newtbl order by lname desc
-) as newtbl2 order by lname asc			
-			*/
 			
 			if ($offset)
 			{
@@ -388,28 +376,13 @@ select * from (
 			$errnum = 1;
 			$errmsg = mssql_get_last_message();
 			
-			//print($sql);
-			
 			trigger_error('Error: ' . $errmsg . "\n" . 'SQL: ' . $sql, E_USER_ERROR);
 			return false;
 		}
 		
 		return $res;
 	}
-	
-	/**
-	 * Issue a query to the SQL server
-	 * 
-	 * @param string $sql
-	 * @param integer $errnum
-	 * @param string $errmsg
-	 * @return resource
-	 */
-	/*public function query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null)
-	{
-		return $this->_query($sql, $errnum, $errmsg, $offset, $limit);
-	}*/
-	
+
 	/**
 	 * Tell the number of rows the last run query affected
 	 * 
@@ -429,7 +402,7 @@ select * from (
 	{
 		$errnum = 0;
 		$errmsg = null;
-		if ($res = $this->_query("SELECT SCOPE_IDENTITY() AS last_insert_id"))
+		if ($res = $this->_query("SELECT SCOPE_IDENTITY() AS last_insert_id", $errnum, $errmsg))
 		{
 			$arr = $this->_fetch($res);
 			return $arr['last_insert_id'];
@@ -517,7 +490,7 @@ select * from (
 	 * 
 	 * The Microsoft SQL Server PHP module is retarded, and for some reason 
 	 * decides to cast anything as DEFAULT NULL unless you specify them just as 
-	 * NULL. Specifying DEFAULT NULL doesn't work. This is contrary to the 
+	 * NULL. Specifying DEFAULT NULL doesn't work. This is contrary to the
 	 * actual SQL Server Studio tool, which actually works like it should. 
 	 * 
 	 * WTF? Seriously, I just wasted like 4 hours trying to figure out what I 
@@ -529,7 +502,6 @@ select * from (
 	 */
 	protected function _generateFieldSchema($name, $def)
 	{
-		$sql = '';
 		switch ($def[0])
 		{
 			case QUICKBOOKS_DRIVER_SQL_SERIAL:
@@ -561,12 +533,6 @@ select * from (
 				return $sql;
 			case QUICKBOOKS_DRIVER_SQL_VARCHAR:
 				$sql = $name . ' VARCHAR';
-				
-				/*if ($name == 'ListID')
-				{
-					print('LIST ID:');
-					print_r($def);
-				}*/
 				
 				if (!empty($def[1]))
 				{
@@ -676,28 +642,8 @@ select * from (
 				}
 				
 				return $sql;
-			/*case QUICKBOOKS_DRIVER_SQL_INTEGER:
-				$sql = $name . ' int(10) unsigned ';
-				
-				if (isset($def[2]))
-				{
-					if (strtolower($def[2]) == 'null')
-					{
-						$sql .= ' DEFAULT NULL ';
-					}
-					else
-					{
-						$sql .= ' DEFAULT ' . (int) $def[2];
-					}
-				}
-				else
-				{
-					$sql .= ' NOT NULL ';
-				}
-				
-				return $sql;*/
+
 			default:
-				
 				return parent::_generateFieldSchema($name, $def);
 		}
 	}

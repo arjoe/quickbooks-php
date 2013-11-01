@@ -361,14 +361,6 @@ class QuickBooks_HTTP
 		$this->_errmsg = $errmsg;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 * @param string $message
-	 * @param integer $level
-	 * @return boolean
-	 */
 	protected function _log($message)
 	{
 		if ($this->_masking)
@@ -381,7 +373,6 @@ class QuickBooks_HTTP
 			print($message . QUICKBOOKS_CRLF);
 		}
 		
-		// 
 		$this->_log .= $message . QUICKBOOKS_CRLF;
 		
 		return true;
@@ -549,13 +540,6 @@ class QuickBooks_HTTP
 		curl_setopt_array($ch, $params);
 		$response = curl_exec($ch);
 		
-		//print('[[request ' . $request . ']]' . "\n\n\n");
-		//print('[[resonse ' . $response . ']]' . "\n\n\n\n\n");
-		
-		//print_r($params);
-		//print_r(curl_getinfo($ch));
-		//print_r($headers);
-
 		$this->_last_response = $response;
 		$this->_log('HTTP response: ' . substr($response, 0, 500) . '...', QUICKBOOKS_LOG_VERBOSE);
 		
@@ -583,68 +567,3 @@ class QuickBooks_HTTP
 		return false;
 	}
 }
-
-/*
-		$ch = curl_init(); 
-	
-		$header[] = 'Content-Type: application/x-qbxml'; 
-		$header[] = 'Content-Length: ' . strlen($xml); 
-		
-		//$this->_certificate = '/Users/kpalmer/Projects/QuickBooks/QuickBooks/dev/test_qboe.pem';
-		
-		$params = array();
-		$params[CURLOPT_HTTPHEADER] = $header; 
-		$params[CURLOPT_POST] = true; 
-		$params[CURLOPT_RETURNTRANSFER] = true; 
-		$params[CURLOPT_URL] = $this->_gateway(); 
-		$params[CURLOPT_TIMEOUT] = 30; 
-		$params[CURLOPT_POSTFIELDS] = $xml; 
-		$params[CURLOPT_VERBOSE] = $this->_debug; 
-		$params[CURLOPT_HEADER] = true;
-		
-		if (file_exists($this->_certificate))
-		{
-			$params[CURLOPT_SSL_VERIFYPEER] = false; 
-			$params[CURLOPT_SSLCERT] = $this->_certificate; 
-		}
-		
-		// Some Windows servers will fail with SSL errors unless we turn this off
-		$params[CURLOPT_SSL_VERIFYPEER] = false;
-		$params[CURLOPT_SSL_VERIFYHOST] = 0;		
-		
-		// Diagnostic information: https://merchantaccount.quickbooks.com/j/diag/http
-		// curl_setopt($ch, CURLOPT_INTERFACE, '<myipaddress>');
-		
-		$ch = curl_init();
-		curl_setopt_array($ch, $params);
-		$response = curl_exec($ch);
-		
-		$this->_log('CURL options: ' . print_r($params, true), QUICKBOOKS_LOG_DEBUG);
-		
-		// @todo Strip credit card numbers from logged XML... (or should this be within the _log() method?)
-		
-		$this->_setLastRequest($xml);
-		$this->_log('Outgoing QBOE request: ' . $xml, QUICKBOOKS_LOG_DEBUG);	// Set as DEBUG so that no one accidentally logs all the credit card numbers...
-		
-		$this->_setLastResponse($response);
-		$this->_log('Incoming QBOE response: ' . $response, QUICKBOOKS_LOG_VERBOSE);
-		
-		if (curl_errno($ch)) 
-		{
-			$errnum = curl_errno($ch);
-			$errmsg = curl_error($ch);
-			
-			$this->_log('CURL error: ' . $errnum . ': ' . $errmsg, QUICKBOOKS_LOG_NORMAL);
-			
-			return false;
-		} 
-		
-		// Close the connection 
-		@curl_close($ch);
-		
-		// Remove the HTTP headers from the response
-		$pos = strpos($response, "\r\n\r\n");
-		$response = ltrim(substr($response, $pos));
-		
-		return $response;		
-*/

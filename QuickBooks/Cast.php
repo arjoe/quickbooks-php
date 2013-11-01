@@ -28,96 +28,7 @@ class QuickBooks_Cast
 		
 	}
 	
-	/**
-	 * Make sure all characters are ASCII (and thus will work with UTF-8)
-	 * 
-	 * We have a lot of content that gets pasted in from Microsoft Word, which 
-	 * often generates some very wierd characters, which seem to not always 
-	 * convert correctly to UTF-8 and then get rejected by the QuickBooks Web 
-	 * Connector. This method tries to make sure that everything that should 
-	 * get converted gets converted, and gets converted cleanly. 
-	 * 
-	 * There is probably a better way to do this...  
-	 *  
-	 * @param string $str	The string to convert to ASCII
-	 * @return string
-	 */
-	/*
-	static protected function _castCharset($str)
-	{
-		// These extended ASCII characters get mapped to things in the normal ASCII character set
-		$replace = array(
-			chr(129) => 'u', 
-			chr(130) => 'e', 
-			chr(131) => 'a', 
-			chr(132) => 'a', 
-			chr(133) => 'a',
-			chr(134) => 'a',
-			chr(136) => 'e', 
-			chr(137) => 'e', 
-			chr(138) => 'e', 
-			chr(139) => 'i', 
-			chr(140) => 'i', 
-			chr(141) => 'i', 
-			chr(142) => 'A', 
-			chr(143) => 'A', 
-			chr(144) => 'E', 
-			chr(145) => 'ae', 
-			chr(146) => 'AE', 
-			chr(147) => 'o', 
-			chr(148) => 'o', 
-			chr(149) => 'o', 
-			chr(150) => 'u', 
-			chr(151) => 'u', 
-			chr(152) => '_', 
-			chr(153) => 'O', 
-			chr(154) => 'U', 
-			chr(158) => '_', 
-			chr(160) => 'a', 
-			chr(161) => 'i', 
-			chr(162) => 'o', 
-			chr(163) => 'u', 
-			chr(164) => 'n', 
-			chr(165) => 'N', 
-			chr(173) => 'i', 
-			chr(174) => '<', 
-			chr(175) => '>', 
-			chr(179) => '|', 
-			chr(196) => '-', 
-			chr(242) => '>=', 
-			chr(243) => '<=', 
-			chr(246) => '/', 
-			chr(247) => '~', 
-			chr(249) => '.', 
-			chr(250) => '.', 
-			chr(252) => '_', 
-			);
-		
-		$count = strlen($str);
-		for ($i = 0; $i < $count; $i++)
-		{
-			$ord = ord($str{$i});
-			
-			if ($ord != ord("\t") and 
-				$ord != ord("\n") and 
-				$ord != ord("\r") and 
-				($ord < 32 or $ord > 126)) 
-			{
-				if (isset($replace[$ord]))
-				{
-					$str{$i} = $replace[$ord];
-				}
-				else
-				{
-					$str{$i} = ' ';
-				}
-			}
-		}
-		
-		return $str;
-	}
-	*/
-	
+
 	/**
 	 * Convert certain strings to their abbreviations
 	 * 
@@ -237,8 +148,8 @@ class QuickBooks_Cast
 	 * etc.) so this method provides an easy way to cast the data type and data 
 	 * length of a value to the correct type and length for a specific field.
 	 * 
-	 * @param string $object_type	The QuickBooks object type (Customer, Invoice, etc.)
-	 * @param string $field_name	The QuickBooks field name (these correspond to the qbXML field names: Addr1, Name, CompanyName, etc.)
+	 * @param string $type_or_action	The QuickBooks object type (Customer, Invoice, etc.)
+	 * @param string $field	The QuickBooks field name (these correspond to the qbXML field names: Addr1, Name, CompanyName, etc.)
 	 * @param mixed $value			The value you want to cast
 	 * @param boolean $use_abbrevs	There are a lot of strings which can be abbreviated to shorten lengths, this is whether or not you want to use those abbrevaitions ("University" to "Univ.", "Incorporated" to "Inc.", etc.)
 	 * @param boolean $htmlspecialchars
@@ -265,27 +176,6 @@ class QuickBooks_Cast
 			
 			sort($files);
 		}
-		
-		/*
-		if ($htmlspecialchars)
-		{			
-			$entities = array(
-				'&' => '&amp;', 
-				'<' => '&lt;', 
-				'>' => '&gt;',
-				//'\'' => '&apos;', 
-				'"' => '&quot;', 
-				);
-			
-			// First, *unreplace* things so that we don't double escape them
-			$value = str_replace(array_values($entities), array_keys($entities), $value);
-			
-			// Then, replace XML entities
-			$value = str_replace(array_keys($entities), array_values($entities), $value);
-			
-			//$value = htmlspecialchars($value, ENT_QUOTES, null, false);
-		}		
-		*/
 		
 		$types = array();
 		$types3 = array();
@@ -316,13 +206,6 @@ class QuickBooks_Cast
 			}
 		}
 		
-		/*
-		print('	looking for schema: ' . $type_or_action . "\n");
-		print_r($types);
-		print_r($types3);
-		print_r($types5);
-		*/
-		
 		$class = null;
 		$schema = null;
 		
@@ -344,13 +227,7 @@ class QuickBooks_Cast
 			$class = 'QuickBooks_QBXML_Schema_Object_' . $types5[$type_or_action];
 			$schema = new $class();
 		}
-		//else
-		//{
-		//	return $value;
-		//}
-		
-		//print('	casting using schema: ' . get_class($schema) . "\n");
-		
+
 		if ($class and $schema)
 		{
 			if (!$schema->exists($field) and false !== strpos($field, '_'))
@@ -365,9 +242,6 @@ class QuickBooks_Cast
 					case QUICKBOOKS_DATATYPE_STRING:
 						
 						$maxlength = $schema->maxLength($field);
-						
-						// Use only ASCII characters
-						//$value = QuickBooks_Cast::_castCharset($value);
 						
 						// Make sure it'll fit in the allocated field length
 						if (is_int($maxlength) and $maxlength > 0)
@@ -416,27 +290,6 @@ class QuickBooks_Cast
 			}
 		}
 			
-		/*
-		if ($htmlspecialchars)
-		{			
-			$entities = array(
-				'&' => '&amp;', 
-				'<' => '&lt;', 
-				'>' => '&gt;',
-				//'\'' => '&apos;', 
-				'"' => '&quot;', 
-				);
-			
-			// First, *unreplace* things so that we don't double escape them
-			$value = str_replace(array_values($entities), array_keys($entities), $value);
-			
-			// Then, replace XML entities
-			$value = str_replace(array_keys($entities), array_values($entities), $value);
-			
-			//$value = htmlspecialchars($value, ENT_QUOTES, null, false);
-		}
-		*/
-		
 		if ($htmlspecialchars)
 		{
 			//print("DECODING");
@@ -455,14 +308,8 @@ class QuickBooks_Cast
 			// Then, replace XML entities
 			$value = str_replace(array_keys($entities), array_values($entities), $value);
 			
-			//$value = htmlspecialchars($value, ENT_QUOTES, null, false);
-			
-			//print($value . "\n\n\n");
-			
 			// UTF8 character handling, decode UTF8 to character decimal codes
 			$value = QuickBooks_Cast::_decodeUTF8($value);
-			
-			//die($value . "\n\n");
 		}
 		
 		return $value;
@@ -504,8 +351,7 @@ class QuickBooks_Cast
 		}
 		
 		$string = preg_replace("/&#([0-9]+);/e", "QuickBooks_Cast_unicodetoutf8('\\1')", $string);
-		// $string=preg_replace("/&#[xX]([0-9A-F]+);/e","unicodetoutf8(hexdec('\\1'))",$string);
-		
+
 		return $string;
 	}
 	

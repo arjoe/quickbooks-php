@@ -15,11 +15,6 @@
  * @subpackage IPP
  */
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_IPP_IDS
 {
 	const FLAVOR_DESKTOP = 'QBD';
@@ -38,6 +33,8 @@ class QuickBooks_IPP_IDS
 	
 	/**
 	 * This is not a real operation type in IDS terms, but is neccessary to distinguish between queries and findById in QuickBooks Online in IDS v2.
+     *
+     * @var string
 	 */
 	const OPTYPE_FINDBYID = '_findById_';
 	
@@ -59,6 +56,8 @@ class QuickBooks_IPP_IDS
 	
 	/**
 	 * Default BASEURL for QuickBooks Desktop (QuickBooks Online requires you to fetch a specific BASEURL)
+     *
+     * @var string
 	 */
 	const BASEURL_DESKTOP = 'https://services.intuit.com/sb';
 	
@@ -147,12 +146,16 @@ class QuickBooks_IPP_IDS
 	
 	/**
 	 * IDS v2 - QuickBooks Desktop
+     *
+     * @var string
 	 */
 	const RESOURCE_TERM = 'Term';
 	
 	/**
-	 * IDS v2 - QuickBooks Online 
-	 */
+     * IDS v2 - QuickBooks Online
+     *
+     * @var string
+     */
 	const RESOURCE_SALESTERM = 'Sales-Term';
 	
 	const RESOURCE_UOM = 'UOM';
@@ -162,11 +165,6 @@ class QuickBooks_IPP_IDS
 	
 	const RESOURCE_VENDORCREDIT = 'VendorCredit';
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
 	static public function resourceToKeyType($resource)
 	{
 		$txns = array(

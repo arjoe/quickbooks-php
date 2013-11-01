@@ -15,16 +15,8 @@
  * @package QuickBooks
  */
 
-/**
- * 
- * 
- * 
- */
 class QuickBooks_ErrorHandler
 {
-	/**
-	 * 
-	 */
 	static public function handle($errno, $errstr, $errfile, $errline)
 	{
 		print('

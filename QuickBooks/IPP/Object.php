@@ -25,30 +25,25 @@ class QuickBooks_IPP_Object
 	 * @var array
 	 */
 	protected $_data;
-	
-	/**
-	 * Create a new object
-	 * 
-	 *
-	 */
-	public function __construct($data = array())
+
+    /**
+     * Initializes a new instance of the {@link QuickBooks_IPP_Object} class.
+     *
+     * @param array $data
+     */
+    public function __construct($data = array())
 	{
 		$this->_data = $data;
 	}
 	
 	/**
-	 *
-	 * 
-	 * NOTE: This only works for SimpleXML... should probably be changed so 
+	 * NOTE: This only works for SimpleXML... should probably be changed so
 	 * that this calls the QuickBooks_XML_Node class and then calls an XPath
 	 * method within that... *sigh* 
-	 *
-	 */ 
+	 */
 	public function getXPath($xpath)
 	{
 		$str = $this->asXML();
-		
-		//print('[[' . $str . ']]');
 		
 		$XML = new SimpleXMLElement($str);
 		
@@ -75,13 +70,6 @@ class QuickBooks_IPP_Object
 	
 	public function get($field)
 	{
-		/*
-		if (isset($this->_data[$field]))
-		{
-			return $this->_data[$field];
-		}
-		*/
-		
 		$args = func_get_args();
 		array_shift($args);
 		
@@ -90,8 +78,6 @@ class QuickBooks_IPP_Object
 	
 	public function set($field, $value)
 	{
-		//$this->_data[$field] = $value;
-		
 		return $this->__call('set' . $field, array( $value ));
 	}
 	
@@ -132,8 +118,6 @@ class QuickBooks_IPP_Object
 	{
 		if (substr($name, 0, 3) == 'set')
 		{
-			//print('called: ' . $name . ' with args: ' . print_r($args, true) . "\n");
-			
 			$field = substr($name, 3);
 			
 			$tmp = null;
@@ -153,8 +137,6 @@ class QuickBooks_IPP_Object
 		{
 			$field = substr($name, 3);
 			
-			//print('getting field: [' . $field . ']' . "\n");
-
 			if (isset($this->_data[$field]))
 			{
 				if (isset($args[0]) and 
@@ -251,19 +233,11 @@ class QuickBooks_IPP_Object
 		return end($split);
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	protected function _defaults()
 	{
 		return array();
 	}
 	
-	/**
-	 * 
-	 * 
-	 */
 	protected function _order()
 	{
 		return array();
@@ -302,9 +276,6 @@ class QuickBooks_IPP_Object
 	 */
 	public function walk($callback)
 	{
-		//print_r($this->_data);
-		//exit;
-		
 		foreach ($this->_data as $key => $value)
 		{
 			if (is_object($value))
@@ -374,20 +345,12 @@ class QuickBooks_IPP_Object
 			{
 				foreach ($value as $skey => $svalue)
 				{
-					//print('converting array: [' . $key . ' >> ' . $skey . ']');
-					
 					if (is_object($svalue))
 					{
 						$xml .= $svalue->_asXML_v3($indent + 1, $key, null, $flavor);
 					}
 					else
 					{
-						//$for_qbxml = false;
-						//
-						//$xml .= str_repeat("\t", $indent + 1) . '<' . $key . '>';
-						//$xml .= QuickBooks_XML::encode($value, $for_qbxml);
-						//$xml .= '</' . $key . '>' . QUICKBOOKS_CRLF;
-						
 						if (substr($key, -3, 3) == 'Ref' and $svalue{0} == '{')
 						{
 							$svalue = trim($svalue, '{}-');
@@ -483,8 +446,6 @@ class QuickBooks_IPP_Object
 			{
 				foreach ($value as $skey => $svalue)
 				{
-					//print('converting array: [' . $key . ' >> ' . $skey . ']');
-					
 					if (is_object($svalue))
 					{
 						$xml .= $svalue->asIDSXML($indent + 1, $key, null, $flavor);
@@ -509,12 +470,6 @@ class QuickBooks_IPP_Object
 					}
 					else
 					{
-						//$for_qbxml = false;
-						//
-						//$xml .= str_repeat("\t", $indent + 1) . '<' . $key . '>';
-						//$xml .= QuickBooks_XML::encode($value, $for_qbxml);
-						//$xml .= '</' . $key . '>' . QUICKBOOKS_CRLF;
-						
 						$xml .= str_repeat("\t", $indent + 1) . '<' . $key . '>' . QuickBooks_XML::encode($svalue, false) . '</' . $key . '>' . QUICKBOOKS_CRLF;
 					}
 				}
