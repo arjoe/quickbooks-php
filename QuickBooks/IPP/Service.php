@@ -18,7 +18,7 @@ abstract class QuickBooks_IPP_Service
 {
 
     /**
-     * @var QuickBooks_IPP_Context
+     * @var \QuickBooks_IPP_Context
      */
     protected $_context;
 
@@ -36,7 +36,7 @@ abstract class QuickBooks_IPP_Service
 	
 	/**
 	 * 
-	 * @var unknown_type
+	 * @var string
 	 */
 	protected $_last_debug;
 	
@@ -59,8 +59,13 @@ abstract class QuickBooks_IPP_Service
 	 * @var string
 	 */
 	protected $_errdetail;
-	
-	public function __construct($context = null)
+
+    /**
+     * Initializes a new instance of the {@link QuickBooks_IPP_Service} class.
+     *
+     * @param \QuickBooks_IPP_Context $context
+     */
+    public function __construct(\QuickBooks_IPP_Context $context = null)
 	{
 		$this->_errcode = QuickBooks_IPP::ERROR_OK;
 		
@@ -72,14 +77,14 @@ abstract class QuickBooks_IPP_Service
         $this->_context = $context;
 	}
 	
-	public function useIDSParser($Context, $true_or_false)
+	public function useIDSParser(\QuickBooks_IPP_Context $Context, $true_or_false)
 	{
 		$IPP = $Context->IPP();
 		
 		return $IPP->useIDSParser((boolean) $true_or_false);
 	}
 	
-	protected function _syncStatus($Context, $realmID, $resource, $IDType)
+	protected function _syncStatus(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType)
 	{
 		$IPP = $Context->IPP();	
 
@@ -90,7 +95,7 @@ abstract class QuickBooks_IPP_Service
 		}
 	}
 
-	protected function _syncStatus_v2($Context, $realmID, $resource, $IDType)
+	protected function _syncStatus_v2(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType)
 	{
 		$IPP = $Context->IPP();
 
@@ -116,7 +121,7 @@ abstract class QuickBooks_IPP_Service
 		return $return;
 	}
 
-	protected function _report($Context, $realmID, $resource, $xml = '')
+	protected function _report(\QuickBooks_IPP_Context $Context, $realmID, $resource, $xml = '')
 	{
 		$IPP = $Context->IPP();
 		
@@ -134,7 +139,7 @@ abstract class QuickBooks_IPP_Service
 		return $return;
 	}
 	
-	protected function _delete($Context, $realmID, $resource, $IDType, $xml = '')
+	protected function _delete(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType, $xml = '')
 	{
 		$IPP = $Context->IPP();
 		
@@ -169,7 +174,7 @@ abstract class QuickBooks_IPP_Service
 		return end($tmp);
 	}
 	
-	public function rawQuery($Context, $realmID, $xml, $resource = null)
+	public function rawQuery(\QuickBooks_IPP_Context $Context, $realmID, $xml, $resource = null)
 	{
 		if (!$resource)
 		{
@@ -179,7 +184,7 @@ abstract class QuickBooks_IPP_Service
 		return $this->_findAll($Context, $realmID, $resource, null, null, null, null, $xml);
 	}
 	
-	public function rawAdd($Context, $realmID, $xml, $resource = null)
+	public function rawAdd(\QuickBooks_IPP_Context $Context, $realmID, $xml, $resource = null)
 	{
 		$IPP = $Context->IPP();
 		
@@ -233,7 +238,7 @@ abstract class QuickBooks_IPP_Service
 	 *   Supported array keys for QuickBooks Online are:
 	 *     (none yet)
 	 */
-	protected function _findAll($Context, $realmID, $resource, $query = null, $sort = null, $page = 1, $size = 50, $xml = '', $options = array())
+	protected function _findAll(\QuickBooks_IPP_Context $Context, $realmID, $resource, $query = null, $sort = null, $page = 1, $size = 50, $xml = '', $options = array())
 	{
 		$IPP = $Context->IPP();
 		$flavor = $IPP->flavor();
@@ -317,7 +322,7 @@ abstract class QuickBooks_IPP_Service
 	 * @param string                 $xml
 	 * @return QuickBooks_IPP_Object
 	 */
-	protected function _findByName($Context, $realmID, $resource, $name, $xml = '')
+	protected function _findByName(\QuickBooks_IPP_Context $Context, $realmID, $resource, $name, $xml = '')
 	{
 		$IPP = $Context->IPP();
 		
@@ -363,7 +368,7 @@ abstract class QuickBooks_IPP_Service
 	 * @param object $Object
 	 * @return integer
 	 */
-	protected function _add($Context, $realmID, $resource, $Object)
+	protected function _add(\QuickBooks_IPP_Context $Context, $realmID, $resource, $Object)
 	{
         if ($Context == null) {
             $Context = $this->_context;
@@ -384,7 +389,7 @@ abstract class QuickBooks_IPP_Service
 		}
 	}
 
-	protected function _add_v3($Context, $realmID, $resource, $Object)
+	protected function _add_v3(\QuickBooks_IPP_Context $Context, $realmID, $resource, $Object)
 	{
 		$IPP = $Context->IPP();
 
@@ -418,7 +423,7 @@ abstract class QuickBooks_IPP_Service
 		return $return;
 	}
 
-	protected function _add_v2($Context, $realmID, $resource, $Object)
+	protected function _add_v2(\QuickBooks_IPP_Context $Context, $realmID, $resource, $Object)
 	{
 		$IPP = $Context->IPP();
 	
@@ -482,7 +487,7 @@ abstract class QuickBooks_IPP_Service
 	/**
 	 * @deprecated 			Use _update() instead
 	 */
-	protected function _modify($Context, $realmID, $resource, $Object, $ID)
+	protected function _modify(\QuickBooks_IPP_Context $Context, $realmID, $resource, $Object, $ID)
 	{
 		return $this->_update($Context, $realmID, $resource, $Object, $ID);
 	}
@@ -498,7 +503,7 @@ abstract class QuickBooks_IPP_Service
      *
 	 * @return boolean
 	 */
-	protected function _update($Context, $realmID, $resource, $Object, $ID)
+	protected function _update(\QuickBooks_IPP_Context $Context, $realmID, $resource, $Object, $ID)
 	{
 		$IPP = $Context->IPP();
 		
@@ -571,7 +576,7 @@ abstract class QuickBooks_IPP_Service
      *
      * @return null
      */
-    protected function _findById($Context, $realmID, $resource, $IDType, $xml_or_IDType = '', $query = null)
+    protected function _findById(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType, $xml_or_IDType = '', $query = null)
 	{
 		$IPP = $Context->IPP();
 		
@@ -627,7 +632,7 @@ abstract class QuickBooks_IPP_Service
      *
      * @return bool|\Array
      */
-    protected function _query($Context, $realmID, $query)
+    protected function _query(\QuickBooks_IPP_Context $Context, $realmID, $query)
 	{
 		$IPP = $Context->IPP();
 	
@@ -673,7 +678,7 @@ abstract class QuickBooks_IPP_Service
 	 * @param object $Context		
 	 * @return string
 	 */
-	public function lastRequest($Context = null)
+	public function lastRequest(\QuickBooks_IPP_Context $Context = null)
 	{
 		if ($Context)
 		{
@@ -686,10 +691,10 @@ abstract class QuickBooks_IPP_Service
 	/**
 	 * Get the last raw XML response that was returned
 	 *
-	 * @param object $Context		If you provide a specific context, this will return the last response using that particular context, otherwise it will return the last response from this service
+	 * @param \QuickBooks_IPP_Context $Context		If you provide a specific context, this will return the last response using that particular context, otherwise it will return the last response from this service
 	 * @return string				The last raw XML response
 	 */
-	public function lastResponse($Context = null)
+	public function lastResponse(\QuickBooks_IPP_Context $Context = null)
 	{
 		if ($Context)
 		{
@@ -699,7 +704,7 @@ abstract class QuickBooks_IPP_Service
 		return $this->_last_response;
 	}
 	
-	public function lastError($Context = null)
+	public function lastError(\QuickBooks_IPP_Context $Context = null)
 	{
 		if ($Context)
 		{
@@ -709,7 +714,7 @@ abstract class QuickBooks_IPP_Service
 		return $this->_errcode . ': [' . $this->_errtext . ', ' . $this->_errdetail . ']';
 	}
 	
-	public function lastDebug($Context = null)
+	public function lastDebug(\QuickBooks_IPP_Context $Context = null)
 	{
 		if ($Context)
 		{
