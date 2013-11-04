@@ -1,6 +1,5 @@
 <?php
 
-
 $url      = 'http://dev.chargeover.com/signup/admin/?stage=QBWC/qbwc';
 $username = 'c787ef1210bd3c7da7d817923817d7d3';
 $password = '1299c41e';
@@ -36,9 +35,7 @@ $ticket = substr($return, $pos + 12, 36); // FOR UUID TICKETS
 
 print("\n\n" . date('Y-m-d H:i:s: ') . 'TICKET IS: [[' . $ticket . ']]' . "\n\n");
 
-
 //exit;
-
 
 $max = 1;
 for ($i = 0; $i < $max; $i++) {
@@ -61,12 +58,12 @@ print('REUQEST ID IS [' . $requestID . ']' . "\n");
 //exit;
 
 $response = '<?xml version="1.0" encoding="utf-8"?>
-	<?qbposxml version="3.0"?>
-	<QBPOSXML>
-	  <QBPOSXMLMsgsRs>
-	        <ItemInventoryQueryRs requestID="' . $requestID . '">
+    <?qbposxml version="3.0"?>
+    <QBPOSXML>
+      <QBPOSXMLMsgsRs>
+            <ItemInventoryQueryRs requestID="' . $requestID . '">
 
-		     <ItemInventoryRet> <!-- optional, may repeat -->
+             <ItemInventoryRet> <!-- optional, may repeat -->
 <ListID>IDTYPE</ListID> <!-- optional -->
 <TimeCreated>DATETIMETYPE</TimeCreated> <!-- optional -->
 <TimeModified>DATETIMETYPE</TimeModified> <!-- optional -->
@@ -238,9 +235,9 @@ $response = '<?xml version="1.0" encoding="utf-8"?>
 </DataExtRet>
 </ItemInventoryRet>
 
-	        </ItemInventoryQueryRs>
-		</QBPOSXMLMsgsRs>
-	</QBPOSXML>';
+            </ItemInventoryQueryRs>
+        </QBPOSXMLMsgsRs>
+    </QBPOSXML>';
 
 print('Sending response...' . "\n");
 
@@ -253,7 +250,6 @@ fwrite($fp, $DATA);
 fclose($fp);
 
 exit;
-
 
 exit;
 
@@ -273,10 +269,10 @@ function tester($url, $username_or_ticket, $password, $method, $data = null)
  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
  SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-	<SOAP-ENV:Body>
-		<fetchVersion xmlns="http://developer.intuit.com/">
-		</fetchVersion>
-	</SOAP-ENV:Body>
+    <SOAP-ENV:Body>
+        <fetchVersion xmlns="http://developer.intuit.com/">
+        </fetchVersion>
+    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>';
             break;
         case 'authenticate':
@@ -287,43 +283,43 @@ function tester($url, $username_or_ticket, $password, $method, $data = null)
  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
  SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-	<SOAP-ENV:Body>
-		<authenticate xmlns="http://developer.intuit.com/">
-			<strUserName xsi:type="xsd:string">' . $username_or_ticket . '</strUserName>
-			<strPassword xsi:type="xsd:string">' . $password . '</strPassword>
-		</authenticate>
-	</SOAP-ENV:Body>
+    <SOAP-ENV:Body>
+        <authenticate xmlns="http://developer.intuit.com/">
+            <strUserName xsi:type="xsd:string">' . $username_or_ticket . '</strUserName>
+            <strPassword xsi:type="xsd:string">' . $password . '</strPassword>
+        </authenticate>
+    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>';
             break;
         case 'sendRequestXML':
             $soap = '<?xml version="1.0" encoding="UTF-8"?>
-	<SOAP-ENV:Envelope 
-	 xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-	 xmlns:ns1="http://developer.intuit.com/">
-		<SOAP-ENV:Body>
-			<ns1:sendRequestXML>
-				<ns1:ticket>' . $username_or_ticket . '</ns1:ticket>
-				<ns1:strHCPResponse></ns1:strHCPResponse>
-				<ns1:strCompanyFileName></ns1:strCompanyFileName>
-				<ns1:qbXMLCountry>US</ns1:qbXMLCountry>
-				<ns1:qbXMLMajorVers>6</ns1:qbXMLMajorVers>
-				<ns1:qbXMLMinorVers>0</ns1:qbXMLMinorVers>
-			</ns1:sendRequestXML>
-		</SOAP-ENV:Body>
-	</SOAP-ENV:Envelope>';
+    <SOAP-ENV:Envelope
+     xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+     xmlns:ns1="http://developer.intuit.com/">
+        <SOAP-ENV:Body>
+            <ns1:sendRequestXML>
+                <ns1:ticket>' . $username_or_ticket . '</ns1:ticket>
+                <ns1:strHCPResponse></ns1:strHCPResponse>
+                <ns1:strCompanyFileName></ns1:strCompanyFileName>
+                <ns1:qbXMLCountry>US</ns1:qbXMLCountry>
+                <ns1:qbXMLMajorVers>6</ns1:qbXMLMajorVers>
+                <ns1:qbXMLMinorVers>0</ns1:qbXMLMinorVers>
+            </ns1:sendRequestXML>
+        </SOAP-ENV:Body>
+    </SOAP-ENV:Envelope>';
             break;
         case 'receiveResponseXML':
             $soap = '<?xml version="1.0" encoding="utf-8"?>
-			<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-				<soap:Body>
-					<receiveResponseXML xmlns="http://developer.intuit.com/">
-						<ticket>' . $username_or_ticket . '</ticket>
-						<response>' . htmlspecialchars($data, ENT_QUOTES) . '</response>
-						<hresult />
-						<message />
-					</receiveResponseXML>
-				</soap:Body>
-			</soap:Envelope>';
+            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                <soap:Body>
+                    <receiveResponseXML xmlns="http://developer.intuit.com/">
+                        <ticket>' . $username_or_ticket . '</ticket>
+                        <response>' . htmlspecialchars($data, ENT_QUOTES) . '</response>
+                        <hresult />
+                        <message />
+                    </receiveResponseXML>
+                </soap:Body>
+            </soap:Envelope>';
             break;
     }
 
@@ -337,7 +333,6 @@ function tester($url, $username_or_ticket, $password, $method, $data = null)
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
 
         curl_setopt($curl, CURLOPT_POSTFIELDS, $soap);
 

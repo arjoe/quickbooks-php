@@ -150,4 +150,3 @@ class QuickBooks_QBXML_Schema_Object_DataExtModRq extends QuickBooks_QBXML_Schem
         return $paths;
     }
 }
-

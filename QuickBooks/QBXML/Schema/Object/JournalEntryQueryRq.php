@@ -234,4 +234,3 @@ class QuickBooks_QBXML_Schema_Object_JournalEntryQueryRq extends QuickBooks_QBXM
         return $paths;
     }
 }
-

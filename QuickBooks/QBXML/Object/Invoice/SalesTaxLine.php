@@ -106,7 +106,6 @@ class QuickBooks_QBXML_Object_Invoice_SalesTaxLine extends QuickBooks_QBXML_Obje
     {
         $this->_cleanup();
 
-
         return parent::asQBXML($request, $todo_for_empty_elements, $indent, $root);
     }
 

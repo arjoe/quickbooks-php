@@ -97,7 +97,6 @@ class QuickBooks_QBXML_Object_BillPaymentCheck extends QuickBooks_QBXML_Object
         return $this->set('PayeeEntityRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_VENDOR, QUICKBOOKS_LISTID, $value));
     }
 
-
     public function getPayeeEntityApplicationID()
     {
         return $this->get('PayeeEntityRef ' . QUICKBOOKS_API_APPLICATIONID);

@@ -24,14 +24,14 @@ class QuickBooks_Loader
      * Indicates whether auto loading should be used.
      * @var bool
      */
-    static private $autoLoadEnabled = true;
+    private static $autoLoadEnabled = true;
 
     /**
      * Returns the value of the auto load enabled flag
      *
      * @return bool true if auto loading is enabled
      */
-    static public function isAutoLoadEnabled()
+    public static function isAutoLoadEnabled()
     {
         return self::$autoLoadEnabled;
     }
@@ -43,7 +43,7 @@ class QuickBooks_Loader
      *
      * @return bool the previous value of auto load enabled flag
      */
-    static public function setAutoLoadEnabled($autoLoadEnabled)
+    public static function setAutoLoadEnabled($autoLoadEnabled)
     {
         $previousValue = self::isAutoLoadEnabled();
 
@@ -60,7 +60,7 @@ class QuickBooks_Loader
      *
      * @return bool always true.
      */
-    static public function load($file, $autoload = true)
+    public static function load($file, $autoload = true)
     {
         if ($autoload and
             self::registerAutoloader()
@@ -86,7 +86,7 @@ class QuickBooks_Loader
      *
      * @return bool true if successful, false otherwise
      */
-    static protected function registerAutoloader()
+    protected static function registerAutoloader()
     {
         if (self::$autoLoadEnabled) {
             return false;
@@ -116,7 +116,7 @@ class QuickBooks_Loader
      *
      * @param string $name The file to be loaded.
      */
-    static public function __autoload($name)
+    public static function __autoload($name)
     {
         if (substr($name, 0, 10) == 'QuickBooks') {
             $file = '/' . str_replace('_', DIRECTORY_SEPARATOR, $name) . '.php';
@@ -140,7 +140,7 @@ class QuickBooks_Loader
      *
      * @return bool     true is successful, false otherwise.
      */
-    static public function import($dir, $autoload = true)
+    public static function import($dir, $autoload = true)
     {
         $dh = opendir(QUICKBOOKS_BASEDIR . $dir);
         if ($dh) {

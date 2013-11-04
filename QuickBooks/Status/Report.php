@@ -235,11 +235,11 @@ class QuickBooks_Status_Report
                 !empty($table_and_field[1])
             ) {
                 $sql = "
-					SELECT 
-						*
-					FROM 
-						" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . " 
-					WHERE ";
+                    SELECT
+                        *
+                    FROM
+                        " . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . "
+                    WHERE ";
 
                 if ($mode == QuickBooks_Status_Report::MODE_MIRROR_ERRORS) {
                     $sql .= " LENGTH(" . QUICKBOOKS_DRIVER_SQL_FIELD_ERROR_NUMBER . ") > 0 ";
@@ -446,7 +446,7 @@ class QuickBooks_Status_Report
     /**
      * @todo Make this better for error codes that get thrown for more than one different type of error.
      */
-    static public function describe($errcode, $errmsg)
+    public static function describe($errcode, $errmsg)
     {
         static $errs = array(
             3100 => array(

@@ -297,7 +297,7 @@ class QuickBooks_MerchantService_Transaction
         );
     }
 
-    static public function fromArray($arr)
+    public static function fromArray($arr)
     {
         static $defaults = array(
             'Type'                                                            => null,
@@ -450,7 +450,7 @@ class QuickBooks_MerchantService_Transaction
      *
      * @return QuickBooks_MerchantService_Transaction
      */
-    static public function fromXML($xml)
+    public static function fromXML($xml)
     {
         $errnum = 0;
         $errmsg = '';
@@ -477,7 +477,7 @@ class QuickBooks_MerchantService_Transaction
         return serialize($this->toArray());
     }
 
-    static public function unserialize($str)
+    public static function unserialize($str)
     {
         return QuickBooks_MerchantService_Transaction::fromArray(unserialize($str));
     }

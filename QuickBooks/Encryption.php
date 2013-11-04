@@ -45,7 +45,7 @@ abstract class QuickBooks_Encryption
      *
      * @return string
      */
-    static function salt()
+    public static function salt()
     {
         $tmp = array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9));
         shuffle($tmp);
@@ -55,4 +55,3 @@ abstract class QuickBooks_Encryption
         return $salt;
     }
 }
-

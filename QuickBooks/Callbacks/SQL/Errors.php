@@ -21,7 +21,7 @@ class QuickBooks_Callbacks_SQL_Errors
     /**
      * @TODO Change this to return false by default, and only catch the specific errors we're concerned with.
      */
-    static public function catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         $Driver = QuickBooks_Driver_Singleton::getInstance();
 
@@ -159,12 +159,12 @@ class QuickBooks_Callbacks_SQL_Errors
                     $db_errmsg = null;
 
                     $Driver->query("
-						UPDATE 
-							" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . "receivepayment_appliedtotxn 
-						SET 
-							qbsql_to_skip = 1 
-						WHERE 
-							ReceivePayment_TxnID = '%s' ",
+                        UPDATE
+                            " . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . "receivepayment_appliedtotxn
+                        SET
+                            qbsql_to_skip = 1
+                        WHERE
+                            ReceivePayment_TxnID = '%s' ",
                         $db_errnum,
                         $db_errmsg,
                         null,

@@ -34,7 +34,6 @@ print("\n\n");
 $Customer = new QuickBooks_IPP_Object_Customer();
 $Customer->setFamilyName('Palmer');
 
-
 $Customer->setName('ConsoliBYTE & Ryke Labs');
 
 $Customer->setShowAs('Show As');
@@ -67,9 +66,7 @@ $Address2->setTag(QuickBooks_IPP_Object_Address::TAG_SHIPPING);
 
 $Customer->addAddress($Address2);
 
-
 $Customer->setGivenName('Keith');
-
 
 //print($Customer->asXML());
 

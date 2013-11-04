@@ -427,7 +427,6 @@ class QuickBooks_QBXML_Object_Check extends QuickBooks_QBXML_Object
                 break;
             case 'CheckModRq':
 
-
                 break;
         }
 
@@ -521,4 +520,3 @@ class QuickBooks_QBXML_Object_Check extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_CHECK;
     }
 }
-

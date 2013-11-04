@@ -17,6 +17,8 @@
  */
 class MyDemo extends CI_Controller
 {
+    protected $your_customer_id;
+
     public function __construct()
     {
         parent::__construct();
@@ -54,7 +56,7 @@ class MyDemo extends CI_Controller
         // $this->db->insert('your_table', $data);
         // $your_customer_id = $this->db->insert_id();
 
-        $this->quickbooks->enqueue(QUICKBOOKS_ADD_CUSTOMER, $your_customer_id);
+        $this->quickbooks->enqueue(QUICKBOOKS_ADD_CUSTOMER, $this->your_customer_id);
         // $this->load->view('some_other_view');
     }
 }

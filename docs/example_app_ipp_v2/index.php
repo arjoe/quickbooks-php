@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/views/header.tpl.php';
             QuickBooks connection status:
 
             <?php if ($quickbooks_is_connected): ?>
+        </p>
 
         <div style="border: 2px solid green; text-align: center; padding: 8px; color: green;">
             CONNECTED!<br>
@@ -41,11 +42,8 @@ require_once dirname(__FILE__) . '/views/header.tpl.php';
         <?php
         endif;
         ?>
-
-        </p>
     </div>
 
 <?php
 
 require_once dirname(__FILE__) . '/views/footer.tpl.php';
-

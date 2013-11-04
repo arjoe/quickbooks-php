@@ -84,4 +84,3 @@ class QuickBooks_QBXML_Schema_Object_Template extends QuickBooks_QBXML_Schema_Ob
         return $paths;
     }
 }
-

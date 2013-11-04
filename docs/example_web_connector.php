@@ -35,7 +35,7 @@
  * @subpackage Documentation
  */
 
-// I always program in E_STRICT error mode... 
+// I always program in E_STRICT error mode...
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', 1);
 
@@ -46,11 +46,11 @@ if (function_exists('date_default_timezone_set')) {
     date_default_timezone_set('America/New_York');
 }
 
-// There are some constants you can define to override some default... 
+// There are some constants you can define to override some default...
 //define('QUICKBOOKS_DRIVER_SQL_MYSQL_PREFIX', 'myqb_');
 //define('QUICKBOOKS_DRIVER_SQL_MYSQLI_PREFIX', 'myqb_');
 
-// If you're having trouble with performance or memory usage, you can tell the 
+// If you're having trouble with performance or memory usage, you can tell the
 //	framework to only include certain chunks of itself:
 //require_once 'QuickBooks/Frameworks.php';
 //define('QUICKBOOKS_FRAMEWORKS', QUICKBOOKS_FRAMEWORK_WEBCONNECTOR);
@@ -58,36 +58,36 @@ if (function_exists('date_default_timezone_set')) {
 // Require the framework
 require_once '../QuickBooks.php';
 
-// A username and password you'll use in: 
+// A username and password you'll use in:
 //	a) Your .QWC file
 //	b) The Web Connector
 //	c) The QuickBooks framework
 //
-// 	NOTE: This has *no relationship* with QuickBooks usernames, Windows usernames, etc. 
-// 		It is *only* used for the Web Connector and SOAP server! 
+// 	NOTE: This has *no relationship* with QuickBooks usernames, Windows usernames, etc.
+// 		It is *only* used for the Web Connector and SOAP server!
 $user = 'quickbooks';
 $pass = 'password';
 
-// The next three parameters, $map, $errmap, and $hooks, are callbacks which 
-//	will be called when certain actions/events/requests/responses occur within 
-//	the framework. The examples below show how to register callback 
-//	*functions*, but you can actually register any of the following, using 
+// The next three parameters, $map, $errmap, and $hooks, are callbacks which
+//	will be called when certain actions/events/requests/responses occur within
+//	the framework. The examples below show how to register callback
+//	*functions*, but you can actually register any of the following, using
 //	these formats:
 
 /*
 // Callback functions
 
 $map = array(
-	QUICKBOOKS_ADD_CUSTOMER => array( 'my_function_name_for_requests', 'my_function_name_for_responses' ), 
-	);
+    QUICKBOOKS_ADD_CUSTOMER => array( 'my_function_name_for_requests', 'my_function_name_for_responses' ),
+    );
 
 $errmap = array(
-	500 => 'my_function_name_for_handling_500_errors', 
-	);
+    500 => 'my_function_name_for_handling_500_errors',
+    );
 
 $hooks = array(
-	QuickBooks_WebConnector_Handlers::HOOK_LOGINSUCCESS => 'my_function_name_for_when_a_login_succeeds', 
-	);
+    QuickBooks_WebConnector_Handlers::HOOK_LOGINSUCCESS => 'my_function_name_for_when_a_login_succeeds',
+    );
 
 function my_function_name_for_requests() { ... }
 function my_function_name_for_handling_500_errors() { ... }
@@ -96,37 +96,37 @@ function my_function_name_for_when_a_login_succeeds() { ... }
 
 /*
 // Callback static methods
-//	Remember that your methods *must be static methods* and thus can't use 
+//	Remember that your methods *must be static methods* and thus can't use
 //	$this->... or other non-static methods.
 
 $map = array(
-	QUICKBOOKS_ADD_CUSTOMER => array( 'My_Class_Name::my_method_name_for_requests', 'My_ClassName::my_method_name_for_responses' ), 
-	);
+    QUICKBOOKS_ADD_CUSTOMER => array( 'My_Class_Name::my_method_name_for_requests', 'My_ClassName::my_method_name_for_responses' ),
+    );
 
 $errmap = array(
-	500 => 'My_Class_Name::my_method_name_for_handling_500_errors', 
-	);
-	
+    500 => 'My_Class_Name::my_method_name_for_handling_500_errors',
+    );
+
 $hooks = array(
-	QuickBooks_WebConnector_Handlers::HOOK_LOGINSUCCESS => 'My_Class_Name::my_method_name_for_when_a_login_succeeds', 
-	);
-	
+    QuickBooks_WebConnector_Handlers::HOOK_LOGINSUCCESS => 'My_Class_Name::my_method_name_for_when_a_login_succeeds',
+    );
+
 class My_Class_Name
 {
-	static public function my_method_name_for_requests() { ... }
-	static public function my_method_name_for_responses() { ... }
-	static public function my_method_name_for_handling_500_errors() { ... }
-	static public function my_method_name_for_when_a_login_succeeds() { ... }
+    public static function my_method_name_for_requests() { ... }
+    public static function my_method_name_for_responses() { ... }
+    public static function my_method_name_for_handling_500_errors() { ... }
+    public static function my_method_name_for_when_a_login_succeeds() { ... }
 }
 */
 
 /*
 // Callback object instance methods
-//  Important! If you're using this method, remember that QuickBooks requests 
-//	and responses happen during *different* HTTP connections! So, you won't be 
-//	able to preserve instance variables from a request handler to a response 
-//	handler without writing it to a database or file or something. 
-//	
+//  Important! If you're using this method, remember that QuickBooks requests
+//	and responses happen during *different* HTTP connections! So, you won't be
+//	able to preserve instance variables from a request handler to a response
+//	handler without writing it to a database or file or something.
+//
 //	example:
 //		HTTP connect
 //			ask for request
@@ -142,28 +142,28 @@ class My_Class_Name
 $obj = new My_Class_Name();
 
 $map = array(
-	QUICKBOOKS_ADD_CUSTOMER => array( array( $obj, 'my_method_name_for_requests' ), array( $obj, 'my_method_name_for_responses' ) ), 
-	);
+    QUICKBOOKS_ADD_CUSTOMER => array( array( $obj, 'my_method_name_for_requests' ), array( $obj, 'my_method_name_for_responses' ) ),
+    );
 
 $errmap = array(
-	500 => array( $obj, 'my_method_name_for_handling_500_errors' ), 
-	);
+    500 => array( $obj, 'my_method_name_for_handling_500_errors' ),
+    );
 
 $hooks = array(
-	QuickBooks_WebConnector_Handlers::HOOK_LOGINSUCCESS => array( $obj, 'my_method_name_for_when_a_login_succeeds' ), 
-	);
-	
+    QuickBooks_WebConnector_Handlers::HOOK_LOGINSUCCESS => array( $obj, 'my_method_name_for_when_a_login_succeeds' ),
+    );
+
 class My_Class_Name
 {
-	public function __construct(...)
-	{
-		... 
-	}
-	
-	public function my_method_name_for_requests() { ... }
-	public function my_method_name_for_responses() { ... }
-	public function my_method_name_for_handling_500_errors() { ... }
-	public function my_method_name_for_when_a_login_succeeds() { ... }
+    public function __construct(...)
+    {
+        ...
+    }
+
+    public function my_method_name_for_requests() { ... }
+    public function my_method_name_for_responses() { ... }
+    public function my_method_name_for_handling_500_errors() { ... }
+    public function my_method_name_for_when_a_login_succeeds() { ... }
 }
 */
 
@@ -191,7 +191,7 @@ $hooks = array( // There are many hooks defined which allow you to run your own 
 /*
 function _quickbooks_hook_loginsuccess($requestID, $user, $hook, &$err, $hook_data, $callback_config)
 {
-	// Do something whenever a successful login occurs...
+    // Do something whenever a successful login occurs...
 }
 */
 
@@ -201,7 +201,7 @@ function _quickbooks_hook_loginsuccess($requestID, $user, $hook, &$err, $hook_da
 $log_level = QUICKBOOKS_LOG_DEBUG;
 //$log_level = QUICKBOOKS_LOG_DEVELOP;		// Use this level until you're sure everything works!!!
 
-// What SOAP server you're using 
+// What SOAP server you're using
 //$soapserver = QUICKBOOKS_SOAPSERVER_PHP;			// The PHP SOAP extension, see: www.php.net/soap
 $soapserver = QUICKBOOKS_SOAPSERVER_BUILTIN; // A pure-PHP SOAP server (no PHP ext/soap extension required, also makes debugging easier)
 
@@ -224,17 +224,17 @@ $driver_options = array( // See the comments in the QuickBooks/Driver/<YOUR DRIV
 $callback_options = array();
 
 // * MAKE SURE YOU CHANGE THE DATABASE CONNECTION STRING BELOW TO A VALID MYSQL USERNAME/PASSWORD/HOSTNAME *
-// 
+//
 // This assumes that:
 //	- You are connecting to MySQL with the username 'root'
 //	- You are connecting to MySQL with an empty password
 //	- Your MySQL server is located on the same machine as the script ( i.e.: 'localhost', if it were on another machine, you might use 'other-machines-hostname.com', or '192.168.1.5', or ... etc. )
-//	- Your MySQL database name containing the QuickBooks tables is named 'quickbooks' (if the tables don't exist, they'll be created for you) 
+//	- Your MySQL database name containing the QuickBooks tables is named 'quickbooks' (if the tables don't exist, they'll be created for you)
 $dsn = 'mysql://root:root@localhost/quickbooks_server';
 //$dsn = 'mysql://root:password@localhost/your_database';				// Connect to a MySQL database with user 'root' and password 'password'
 //$dsn = 'mysqli://root:@localhost/quickbooks_mysqli';					// Connect to a MySQL database using the PHP MySQLi extension
 //$dsn = 'mssql://kpalmer:password@192.168.18.128/your_database';		// Connect to MS SQL Server database
-//$dsn = 'pgsql://pgsql:password@localhost/your_database';				// Connect to a PostgreSQL database 
+//$dsn = 'pgsql://pgsql:password@localhost/your_database';				// Connect to a PostgreSQL database
 //$dsn = 'pearmdb2.mysql://root:password@localhost/your_database';		// Connect to MySQL using the PEAR MDB2 database abstraction library
 //$dsn = 'sqlite://example.sqlite';										// Connect to an SQLite database
 //$dsn = 'sqlite:///Users/keithpalmerjr/Projects/QuickBooks/docs/example.sqlite';	// Connect to an SQLite database
@@ -401,32 +401,32 @@ function _quickbooks_customer_add_request($requestID, $user, $action, $ID, $extr
     // But we're just testing, so we'll just use a static test request:
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="2.0"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<CustomerAddRq requestID="' . $requestID . '">
-					<CustomerAdd>
-						<Name>ConsoliBYTE, LLC (' . mt_rand() . ')</Name>
-						<CompanyName>ConsoliBYTE, LLC</CompanyName>
-						<FirstName>Keith</FirstName>
-						<LastName>Palmer</LastName>
-						<BillAddress>
-							<Addr1>ConsoliBYTE, LLC</Addr1>
-							<Addr2>134 Stonemill Road</Addr2>
-							<City>Mansfield</City>
-							<State>CT</State>
-							<PostalCode>06268</PostalCode>
-							<Country>United States</Country>
-						</BillAddress>
-						<Phone>860-634-1602</Phone>
-						<AltPhone>860-429-0021</AltPhone>
-						<Fax>860-429-5183</Fax>
-						<Email>Keith@ConsoliBYTE.com</Email>
-						<Contact>Keith Palmer</Contact>
-					</CustomerAdd>
-				</CustomerAddRq>
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="2.0"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <CustomerAddRq requestID="' . $requestID . '">
+                    <CustomerAdd>
+                        <Name>ConsoliBYTE, LLC (' . mt_rand() . ')</Name>
+                        <CompanyName>ConsoliBYTE, LLC</CompanyName>
+                        <FirstName>Keith</FirstName>
+                        <LastName>Palmer</LastName>
+                        <BillAddress>
+                            <Addr1>ConsoliBYTE, LLC</Addr1>
+                            <Addr2>134 Stonemill Road</Addr2>
+                            <City>Mansfield</City>
+                            <State>CT</State>
+                            <PostalCode>06268</PostalCode>
+                            <Country>United States</Country>
+                        </BillAddress>
+                        <Phone>860-634-1602</Phone>
+                        <AltPhone>860-429-0021</AltPhone>
+                        <Fax>860-429-5183</Fax>
+                        <Email>Keith@ConsoliBYTE.com</Email>
+                        <Contact>Keith Palmer</Contact>
+                    </CustomerAdd>
+                </CustomerAddRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }
@@ -484,49 +484,49 @@ function _quickbooks_salesreceipt_add_request($requestID, $user, $action, $ID, $
     */
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="2.0"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<SalesReceiptAddRq requestID="' . $requestID . '">
-					<SalesReceiptAdd>
-						<CustomerRef>
-							<FullName>Keith Palmer Jr.</FullName>
-						</CustomerRef>
-						<TxnDate>2009-01-09</TxnDate>
-						<RefNumber>16466</RefNumber>
-						<BillAddress>
-							<Addr1>Keith Palmer Jr.</Addr1>
-							<Addr3>134 Stonemill Road</Addr3>
-							<City>Storrs-Mansfield</City>
-							<State>CT</State>
-							<PostalCode>06268</PostalCode>
-							<Country>United States</Country>
-						</BillAddres>
-						<SalesReceiptLineAdd>
-							<ItemRef>
-								<FullName>Gift Certificate</FullName>
-							</ItemRef>
-							<Desc>$25.00 gift certificate</Desc>
-							<Quantity>1</Quantity>
-							<Rate>25.00</Rate>
-							<SalesTaxCodeRef>
-								<FullName>NON</FullName>
-							</SalesTaxCodeRef>
-						</SalesReceiptLineAdd>
-						<SalesReceiptLineAdd>
-							<ItemRef>
-								<FullName>Book</FullName>
-							</ItemRef>
-							<Desc>The Hitchhiker\'s Guide to the Galaxy</Desc>
-							<Amount>19.95</Amount>
-							<SalesTaxCodeRef>
-								<FullName>TAX</FullName>
-							</SalesTaxCodeRef>
-						</SalesReceiptLineAdd>
-					</SalesReceiptAdd>
-				</SalesReceiptAddRq>
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="2.0"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <SalesReceiptAddRq requestID="' . $requestID . '">
+                    <SalesReceiptAdd>
+                        <CustomerRef>
+                            <FullName>Keith Palmer Jr.</FullName>
+                        </CustomerRef>
+                        <TxnDate>2009-01-09</TxnDate>
+                        <RefNumber>16466</RefNumber>
+                        <BillAddress>
+                            <Addr1>Keith Palmer Jr.</Addr1>
+                            <Addr3>134 Stonemill Road</Addr3>
+                            <City>Storrs-Mansfield</City>
+                            <State>CT</State>
+                            <PostalCode>06268</PostalCode>
+                            <Country>United States</Country>
+                        </BillAddres>
+                        <SalesReceiptLineAdd>
+                            <ItemRef>
+                                <FullName>Gift Certificate</FullName>
+                            </ItemRef>
+                            <Desc>$25.00 gift certificate</Desc>
+                            <Quantity>1</Quantity>
+                            <Rate>25.00</Rate>
+                            <SalesTaxCodeRef>
+                                <FullName>NON</FullName>
+                            </SalesTaxCodeRef>
+                        </SalesReceiptLineAdd>
+                        <SalesReceiptLineAdd>
+                            <ItemRef>
+                                <FullName>Book</FullName>
+                            </ItemRef>
+                            <Desc>The Hitchhiker\'s Guide to the Galaxy</Desc>
+                            <Amount>19.95</Amount>
+                            <SalesTaxCodeRef>
+                                <FullName>TAX</FullName>
+                            </SalesTaxCodeRef>
+                        </SalesReceiptLineAdd>
+                    </SalesReceiptAdd>
+                </SalesReceiptAddRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }

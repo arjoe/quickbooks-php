@@ -162,4 +162,3 @@ class QuickBooks_QBXML_Schema_Object_ItemGroupQueryRq extends QuickBooks_QBXML_S
         return $paths;
     }
 }
-

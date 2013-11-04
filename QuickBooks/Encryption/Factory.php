@@ -20,7 +20,7 @@ QuickBooks_Loader::load('/QuickBooks/Encryption.php');
 
 class QuickBooks_Encryption_Factory
 {
-    static public function create($encrypt)
+    public static function create($encrypt)
     {
         $class = 'QuickBooks_Encryption_' . ucfirst(strtolower($encrypt));
         $file  = '/QuickBooks/Encryption/' . ucfirst(strtolower($encrypt)) . '.php';
@@ -35,7 +35,7 @@ class QuickBooks_Encryption_Factory
      *
      * @return string
      */
-    static public function determine(&$encrypted)
+    public static function determine(&$encrypted)
     {
         if ($encrypted[0] == '{' and
             false !== ($end = strpos($encrypted, ':'))

@@ -16,7 +16,7 @@
  * @subpackage Documentation
  */
 
-// I always program in E_STRICT error mode... 
+// I always program in E_STRICT error mode...
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', true);
 
@@ -29,7 +29,7 @@ if (function_exists('date_default_timezone_set')) {
 // Require the framework
 require_once '../QuickBooks.php';
 
-// A username and password you'll use in: 
+// A username and password you'll use in:
 //	a) Your .QWC file
 //	b) The Web Connector
 //	c) The QuickBooks framework
@@ -80,32 +80,32 @@ function _quickbooks_customer_add_request($requestID, $user, $action, $ID, $extr
     // We're just testing, so we'll just use a static test request:
 
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="2.0"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<CustomerAddRq requestID="' . $requestID . '">
-					<CustomerAdd>
-						<Name>ConsoliBYTE, LLC (' . mt_rand() . ')</Name>
-						<CompanyName>ConsoliBYTE, LLC</CompanyName>
-						<FirstName>Keith</FirstName>
-						<LastName>Palmer</LastName>
-						<BillAddress>
-							<Addr1>ConsoliBYTE, LLC</Addr1>
-							<Addr2>134 Stonemill Road</Addr2>
-							<City>Mansfield</City>
-							<State>CT</State>
-							<PostalCode>06268</PostalCode>
-							<Country>United States</Country>
-						</BillAddress>
-						<Phone>860-634-1602</Phone>
-						<AltPhone>860-429-0021</AltPhone>
-						<Fax>860-429-5183</Fax>
-						<Email>Keith@ConsoliBYTE.com</Email>
-						<Contact>Keith Palmer</Contact>
-					</CustomerAdd>
-				</CustomerAddRq>
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="2.0"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <CustomerAddRq requestID="' . $requestID . '">
+                    <CustomerAdd>
+                        <Name>ConsoliBYTE, LLC (' . mt_rand() . ')</Name>
+                        <CompanyName>ConsoliBYTE, LLC</CompanyName>
+                        <FirstName>Keith</FirstName>
+                        <LastName>Palmer</LastName>
+                        <BillAddress>
+                            <Addr1>ConsoliBYTE, LLC</Addr1>
+                            <Addr2>134 Stonemill Road</Addr2>
+                            <City>Mansfield</City>
+                            <State>CT</State>
+                            <PostalCode>06268</PostalCode>
+                            <Country>United States</Country>
+                        </BillAddress>
+                        <Phone>860-634-1602</Phone>
+                        <AltPhone>860-429-0021</AltPhone>
+                        <Fax>860-429-5183</Fax>
+                        <Email>Keith@ConsoliBYTE.com</Email>
+                        <Contact>Keith Palmer</Contact>
+                    </CustomerAdd>
+                </CustomerAddRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }

@@ -23,36 +23,36 @@ if (function_exists('date_default_timezone_set')) {
     date_default_timezone_set('America/New_York');
 }
 
-// I always program in E_STRICT error mode... 
+// I always program in E_STRICT error mode...
 error_reporting(E_ALL | E_STRICT);
 
-// There are some constants you can define to override some default... 
+// There are some constants you can define to override some default...
 //define('QUICKBOOKS_DRIVER_SQL_MYSQL_PREFIX', 'myqb_');
 //define('QUICKBOOKS_DRIVER_SQL_MYSQLI_PREFIX', 'myqb_');
 
 // Require the framework
 require_once '../QuickBooks.php';
 
-// A username and password you'll use in: 
+// A username and password you'll use in:
 //	a) Your .QWC file
 //	b) The Web Connector
 //	c) The QuickBooks framework
 //
-// 	NOTE: This has *no relationship* with QuickBooks usernames, Windows usernames, etc. 
-// 		It is *only* used for the Web Connector and SOAP server! 
+// 	NOTE: This has *no relationship* with QuickBooks usernames, Windows usernames, etc.
+// 		It is *only* used for the Web Connector and SOAP server!
 $user = 'quickbooks';
 $pass = 'password';
 
-// The next three parameters, $map, $errmap, and $hooks, are callbacks which 
-//	will be called when certain actions/events/requests/responses occur within 
-//	the framework. 
+// The next three parameters, $map, $errmap, and $hooks, are callbacks which
+//	will be called when certain actions/events/requests/responses occur within
+//	the framework.
 
 // Callback object instance methods
-//  Important! If you're using this method, remember that QuickBooks requests 
-//	and responses happen during *different* HTTP connections! So, you won't be 
-//	able to preserve instance variables from a request handler to a response 
-//	handler without writing it to a database or file or something. 
-// 
+//  Important! If you're using this method, remember that QuickBooks requests
+//	and responses happen during *different* HTTP connections! So, you won't be
+//	able to preserve instance variables from a request handler to a response
+//	handler without writing it to a database or file or something.
+//
 //	example:
 //		HTTP connect
 //			ask for request
@@ -160,32 +160,32 @@ class My_Class_Name
         // But we're just testing, so we'll just use a static test request:
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>
-			<?qbxml version="2.0"?>
-			<QBXML>
-				<QBXMLMsgsRq onError="stopOnError">
-					<CustomerAddRq>
-						<CustomerAdd>
-							<Name>ConsoliBYTE Solutions (' . mt_rand() . ')</Name>
-							<CompanyName>ConsoliBYTE Solutions</CompanyName>
-							<FirstName>Keith</FirstName>
-							<LastName>Palmer</LastName>
-							<BillAddress>
-								<Addr1>ConsoliBYTE Solutions</Addr1>
-								<Addr2>134 Stonemill Road</Addr2>
-								<City>Mansfield</City>
-								<State>CT</State>
-								<PostalCode>06268</PostalCode>
-								<Country>United States</Country>
-							</BillAddress>
-							<Phone>860-634-1602</Phone>
-							<AltPhone>860-429-0021</AltPhone>
-							<Fax>860-429-5183</Fax>
-							<Email>Keith@ConsoliBYTE.com</Email>
-							<Contact>Keith Palmer</Contact>
-						</CustomerAdd>
-					</CustomerAddRq>
-				</QBXMLMsgsRq>
-			</QBXML>';
+            <?qbxml version="2.0"?>
+            <QBXML>
+                <QBXMLMsgsRq onError="stopOnError">
+                    <CustomerAddRq>
+                        <CustomerAdd>
+                            <Name>ConsoliBYTE Solutions (' . mt_rand() . ')</Name>
+                            <CompanyName>ConsoliBYTE Solutions</CompanyName>
+                            <FirstName>Keith</FirstName>
+                            <LastName>Palmer</LastName>
+                            <BillAddress>
+                                <Addr1>ConsoliBYTE Solutions</Addr1>
+                                <Addr2>134 Stonemill Road</Addr2>
+                                <City>Mansfield</City>
+                                <State>CT</State>
+                                <PostalCode>06268</PostalCode>
+                                <Country>United States</Country>
+                            </BillAddress>
+                            <Phone>860-634-1602</Phone>
+                            <AltPhone>860-429-0021</AltPhone>
+                            <Fax>860-429-5183</Fax>
+                            <Email>Keith@ConsoliBYTE.com</Email>
+                            <Contact>Keith Palmer</Contact>
+                        </CustomerAdd>
+                    </CustomerAddRq>
+                </QBXMLMsgsRq>
+            </QBXML>';
 
         return $xml;
     }
@@ -271,10 +271,10 @@ class My_Class_Name
 // Logging level
 //$log_level = QUICKBOOKS_LOG_NORMAL;
 //$log_level = QUICKBOOKS_LOG_VERBOSE;
-//$log_level = QUICKBOOKS_LOG_DEBUG;				
+//$log_level = QUICKBOOKS_LOG_DEBUG;
 $log_level = QUICKBOOKS_LOG_DEVELOP; // Use this level until you're sure everything works!!!
 
-// What SOAP server you're using 
+// What SOAP server you're using
 //$soapserver = QUICKBOOKS_SOAPSERVER_PHP;			// The PHP SOAP extension, see: www.php.net/soap
 $soapserver = QUICKBOOKS_SOAPSERVER_BUILTIN; // A pure-PHP SOAP server (no PHP ext/soap extension required, also makes debugging easier)
 
@@ -296,17 +296,17 @@ $driver_options = array( // See the comments in the QuickBooks/Driver/<YOUR DRIV
 $callback_options = array();
 
 // * MAKE SURE YOU CHANGE THE DATABASE CONNECTION STRING BELOW TO A VALID MYSQL USERNAME/PASSWORD/HOSTNAME *
-// 
+//
 // This assumes that:
 //	- You are connecting to MySQL with the username 'root'
 //	- You are connecting to MySQL with an empty password
 //	- Your MySQL server is located on the same machine as the script ( i.e.: 'localhost', if it were on another machine, you might use 'other-machines-hostname.com', or '192.168.1.5', or ... etc. )
-//	- Your MySQL database name containing the QuickBooks tables is named 'quickbooks' (if the tables don't exist, they'll be created for you) 
+//	- Your MySQL database name containing the QuickBooks tables is named 'quickbooks' (if the tables don't exist, they'll be created for you)
 $dsn = 'mysql://root:root@localhost/quickbooks';
 //$dsn = 'mysql://root:password@localhost/your_database';				// Connect to a MySQL database with user 'root' and password 'password'
 //$dsn = 'mysqli://root:@localhost/quickbooks_mysqli';					// Connect to a MySQL database using the PHP MySQLi extension
 //$dsn = 'mssql://kpalmer:password@192.168.18.128/test4';					// Connect to MS SQL Server database
-//$dsn = 'pgsql://pgsql:password@localhost/your_database';				// Connect to a PostgreSQL database 
+//$dsn = 'pgsql://pgsql:password@localhost/your_database';				// Connect to a PostgreSQL database
 //$dsn = 'pearmdb2.mysql://root:password@localhost/your_database';		// Connect to MySQL using the PEAR MDB2 database abstraction library
 //$dsn = 'sqlite://filename';											// Connect to an SQLite database
 

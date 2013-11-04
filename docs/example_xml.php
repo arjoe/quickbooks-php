@@ -30,12 +30,12 @@ $start = microtime(true);
 
 // Our test XML tag
 $xml = '
-	<Tag1>
-		<NestedTag age="25" gender="male" 
-			note="Keith &quot;Worminator&quot; Palmer">
-			<AnotherTag>Keith</AnotherTag>
-		</NestedTag>
-	</Tag1>';
+    <Tag1>
+        <NestedTag age="25" gender="male"
+            note="Keith &quot;Worminator&quot; Palmer">
+            <AnotherTag>Keith</AnotherTag>
+        </NestedTag>
+    </Tag1>';
 
 $use_parser = null; // Auto-detect the best choice
 //$use_parser = QuickBooks_XML::PARSER_BUILTIN;		// Use the built in XML parser
@@ -71,24 +71,24 @@ if ($Parser->validate($errnum, $errmsg)) {
 }
 
 $xml2 = '
-	<Animals>
-		<Animal id="1"
-			age="1" >
-			<Name>Yamaguchi</Name>
-			<Type>Rooster</Type>
-		</Animal>
-		<Animal id="2"
-			age="2">
-			<Name>Agnus</Name>
-			<Type>Hen</Type>
-		</Animal>
-		<Animal id="3"
-			age="3">
-			<Name>Wasabi</Name>
-			<Type>Hen</Type>
-			<Note>Wasabi &amp; Yamaguchi are in *loooovvvveee*</Note>
-		</Animal>
-	</Animals>';
+    <Animals>
+        <Animal id="1"
+            age="1" >
+            <Name>Yamaguchi</Name>
+            <Type>Rooster</Type>
+        </Animal>
+        <Animal id="2"
+            age="2">
+            <Name>Agnus</Name>
+            <Type>Hen</Type>
+        </Animal>
+        <Animal id="3"
+            age="3">
+            <Name>Wasabi</Name>
+            <Type>Hen</Type>
+            <Note>Wasabi &amp; Yamaguchi are in *loooovvvveee*</Note>
+        </Animal>
+    </Animals>';
 
 print("\n");
 print('List of animal names: ' . "\n");
@@ -124,16 +124,16 @@ print("\n");
 // CDATA test
 $xml_cdata = '<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>
 <foxydata>
-	<transactions>
-		<transaction>
-			<id><![CDATA[792498]]></id>
-			<store_id><![CDATA[1575]]></store_id>
-			<transaction_date><![CDATA[2009-12-16 01:01:14]]></transaction_date>
-			<processor_response><![CDATA[Paypal Reference <VTJA4D1B8414 & test]]></processor_response>
-			<customer_id><![CDATA[161976]]></customer_id>
-			<is_anonymous><![CDATA[1]]></is_anonymous>
-		</transaction>
-	</transactions>
+    <transactions>
+        <transaction>
+            <id><![CDATA[792498]]></id>
+            <store_id><![CDATA[1575]]></store_id>
+            <transaction_date><![CDATA[2009-12-16 01:01:14]]></transaction_date>
+            <processor_response><![CDATA[Paypal Reference <VTJA4D1B8414 & test]]></processor_response>
+            <customer_id><![CDATA[161976]]></customer_id>
+            <is_anonymous><![CDATA[1]]></is_anonymous>
+        </transaction>
+    </transactions>
 </foxydata>';
 
 $errnum = 0;

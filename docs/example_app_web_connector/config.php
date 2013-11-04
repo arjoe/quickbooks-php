@@ -19,7 +19,7 @@ if (function_exists('date_default_timezone_set')) {
     date_default_timezone_set('America/New_York');
 }
 
-// I always program in E_STRICT error mode... 
+// I always program in E_STRICT error mode...
 error_reporting(E_ALL | E_STRICT);
 
 // Require the framework
@@ -41,14 +41,14 @@ if (!QuickBooks_Utilities::initialized($dsn)) {
 
     // Create our test table
     mysql_query("CREATE TABLE my_customer_table (
-	  id int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  name varchar(64) NOT NULL,
-	  fname varchar(64) NOT NULL,
-	  lname varchar(64) NOT NULL,
-	  quickbooks_listid varchar(255) DEFAULT NULL,
-	  quickbooks_editsequence varchar(255) DEFAULT NULL,
-	  quickbooks_errnum varchar(255) DEFAULT NULL,
-	  quickbooks_errmsg varchar(255) DEFAULT NULL,
-	  PRIMARY KEY (id)
-	) ENGINE=MyISAM");
+      id int(10) unsigned NOT NULL AUTO_INCREMENT,
+      name varchar(64) NOT NULL,
+      fname varchar(64) NOT NULL,
+      lname varchar(64) NOT NULL,
+      quickbooks_listid varchar(255) DEFAULT NULL,
+      quickbooks_editsequence varchar(255) DEFAULT NULL,
+      quickbooks_errnum varchar(255) DEFAULT NULL,
+      quickbooks_errmsg varchar(255) DEFAULT NULL,
+      PRIMARY KEY (id)
+    ) ENGINE=MyISAM");
 }

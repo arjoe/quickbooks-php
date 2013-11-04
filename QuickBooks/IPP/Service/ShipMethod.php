@@ -16,7 +16,6 @@
  * @subpackage IPP
  */
 
-
 QuickBooks_Loader::load('/QuickBooks/IPP/Service.php');
 
 class QuickBooks_IPP_Service_ShipMethod extends QuickBooks_IPP_Service

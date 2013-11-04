@@ -45,7 +45,7 @@ $user = 'user';
 $pass = 'pass';
 $dsn  = 'mysql://root:root@localhost/quickbooks';
 
-// How many customer records should be grabbed per chunk (we have to chunk up 
+// How many customer records should be grabbed per chunk (we have to chunk up
 //	the result set, or the Web Connector will barf if there's too much data)
 define('QB_QUICKBOOKS_MAX_RETURNED', 30);
 
@@ -73,7 +73,7 @@ $hooks = array(
 
 $log_level = QUICKBOOKS_LOG_DEVELOP;
 
-// What SOAP server you're using 
+// What SOAP server you're using
 $soapserver = QUICKBOOKS_SOAPSERVER_BUILTIN; // A pure-PHP SOAP server (no extensions required)
 
 // Some other options
@@ -129,50 +129,50 @@ function _quickbooks_customer_import_request($requestID, $user, $action, $ID, $e
 
     // Build the request
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="' . $version . '"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<CustomerQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . '>
-					<MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
-					<FromModifiedDate>' . QB_QUICKBOOKS_BEGINNING_OF_TIME . '</FromModifiedDate>
-					
-					<!-- You can use the <IncludeRetElement> tag to limit the 
-					        data you get back from QuickBooks. This is often 
-					        helpful to improve performance by reducing the 
-					        amount of data transferred over the wire. 
-					        
-					        Be careful! These are case sensitive, so make sure 
-					        that you use the correct tag names! -->
-					        
-					<IncludeRetElement>ListID</IncludeRetElement>
-					<IncludeRetElement>EditSequence</IncludeRetElement>
-					<IncludeRetElement>FullName</IncludeRetElement>
-					<IncludeRetElement>FirstName</IncludeRetElement>
-					<IncludeRetElement>LastName</IncludeRetElement>
-					
-					<!-- Note that you can NOT specify child nodes here. i.e 
-					        You can\'t indicate that you just want the City tag. 
-					        You\'d have to indicate that you want the ShipAddress 
-					        tag and then parse the City tag out of that in the 
-					        response. For example: -->
-					        
-					<!-- This is WRONG, there is no root level City tag! -->
-					<!-- <IncludeRetElement>City</IncludeRetElement> -->
-					
-					<!-- This is RIGHT, you\'ll get back the entire ShipAddress, 
-					        and you can then grab the City tag within that. -->
-					<IncludeRetElement>ShipAddress</IncludeRetElement>
-					        
-					<!-- This is the tag that contains the custom fields. -->
-					<IncludeRetElement>DataExtRet</IncludeRetElement>
-					
-					<!-- Make sure you set OwnerID to 0 (zero) in the query!
-					        If you don\'t, you won\'t get back any custom fields! -->
-					<OwnerID>0</OwnerID>
-					
-				</CustomerQueryRq>	
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="' . $version . '"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <CustomerQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . '>
+                    <MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
+                    <FromModifiedDate>' . QB_QUICKBOOKS_BEGINNING_OF_TIME . '</FromModifiedDate>
+
+                    <!-- You can use the <IncludeRetElement> tag to limit the
+                            data you get back from QuickBooks. This is often
+                            helpful to improve performance by reducing the
+                            amount of data transferred over the wire.
+
+                            Be careful! These are case sensitive, so make sure
+                            that you use the correct tag names! -->
+
+                    <IncludeRetElement>ListID</IncludeRetElement>
+                    <IncludeRetElement>EditSequence</IncludeRetElement>
+                    <IncludeRetElement>FullName</IncludeRetElement>
+                    <IncludeRetElement>FirstName</IncludeRetElement>
+                    <IncludeRetElement>LastName</IncludeRetElement>
+
+                    <!-- Note that you can NOT specify child nodes here. i.e
+                            You can\'t indicate that you just want the City tag.
+                            You\'d have to indicate that you want the ShipAddress
+                            tag and then parse the City tag out of that in the
+                            response. For example: -->
+
+                    <!-- This is WRONG, there is no root level City tag! -->
+                    <!-- <IncludeRetElement>City</IncludeRetElement> -->
+
+                    <!-- This is RIGHT, you\'ll get back the entire ShipAddress,
+                            and you can then grab the City tag within that. -->
+                    <IncludeRetElement>ShipAddress</IncludeRetElement>
+
+                    <!-- This is the tag that contains the custom fields. -->
+                    <IncludeRetElement>DataExtRet</IncludeRetElement>
+
+                    <!-- Make sure you set OwnerID to 0 (zero) in the query!
+                            If you don\'t, you won\'t get back any custom fields! -->
+                    <OwnerID>0</OwnerID>
+
+                </CustomerQueryRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }
@@ -227,7 +227,6 @@ function _quickbooks_customer_import_response($requestID, $user, $action, $ID, $
 
     return true;
 }
-
 
 /**
  * Handle a 500 not found error from QuickBooks

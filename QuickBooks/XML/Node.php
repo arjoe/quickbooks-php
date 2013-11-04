@@ -386,7 +386,7 @@ class QuickBooks_XML_Node
      *
      * @return boolean
      */
-    static protected function _fnmatch($pattern, $str)
+    protected static function _fnmatch($pattern, $str)
     {
         $arr = array(
             '\*' => '.*',

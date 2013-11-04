@@ -238,7 +238,7 @@ class QuickBooks_WebConnector_QWC
      *
      * @return string
      */
-    static public function fileID($surround = true)
+    public static function fileID($surround = true)
     {
         return QuickBooks_WebConnector_QWC::_guid($surround);
     }
@@ -250,7 +250,7 @@ class QuickBooks_WebConnector_QWC
      *
      * @return string
      */
-    static public function GUID($surround = true)
+    public static function GUID($surround = true)
     {
         return QuickBooks_WebConnector_QWC::_guid($surround);
     }
@@ -264,7 +264,7 @@ class QuickBooks_WebConnector_QWC
      *
      * @return string
      */
-    static protected function _guid($surround = true)
+    protected static function _guid($surround = true)
     {
         $guid = sprintf('%04x%04x-%04x-%03x4-%04x-%04x%04x%04x',
             mt_rand(0, 65535), mt_rand(0, 65535),
@@ -289,7 +289,7 @@ class QuickBooks_WebConnector_QWC
      *
      * @return string
      */
-    static public function ownerID($surround = true)
+    public static function ownerID($surround = true)
     {
         return QuickBooks_WebConnector_QWC::_guid($surround);
     }

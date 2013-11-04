@@ -575,4 +575,3 @@ class QuickBooks_QBXML_Object_Check_ItemLine extends QuickBooks_QBXML_Object
         return 'ItemLine';
     }
 }
-

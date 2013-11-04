@@ -29,7 +29,7 @@ ini_set('display_errors', true);
 // Require the framework
 require_once '../QuickBooks.php';
 
-// A username and password you'll use in: 
+// A username and password you'll use in:
 //	a) Your .QWC file
 //	b) The Web Connector
 //	c) The QuickBooks framework
@@ -51,10 +51,10 @@ $hooks = array();
 // Logging level
 //$log_level = QUICKBOOKS_LOG_NORMAL;
 //$log_level = QUICKBOOKS_LOG_VERBOSE;
-//$log_level = QUICKBOOKS_LOG_DEBUG;				
+//$log_level = QUICKBOOKS_LOG_DEBUG;
 $log_level = QUICKBOOKS_LOG_DEVELOP; // Use this level until you're sure everything works!!!
 
-// What SOAP server you're using 
+// What SOAP server you're using
 //$soapserver = QUICKBOOKS_SOAPSERVER_PHP;			// The PHP SOAP extension, see: www.php.net/soap
 $soapserver = QUICKBOOKS_SOAPSERVER_BUILTIN; // A pure-PHP SOAP server (no PHP ext/soap extension required, also makes debugging easier)
 
@@ -100,36 +100,36 @@ function _quickbooks_pos_customer_add_request($requestID, $user, $action, $ID, $
 {
     // We're just testing, so we'll just use a static test request:
     $xml = '
-		<?xml version="1.0" encoding="utf-8"?>
-		<?qbposxml version="3.0"?>
-		<QBPOSXML>
-			<QBPOSXMLMsgsRq onError="stopOnError">
-				<CustomerAddRq>
-					<CustomerAdd>
-						<CompanyName>ConsoliBYTE, LLC</CompanyName>
-						<EMail>support@ConsoliBYTE.com</EMail>
-						<FirstName>Keith</FirstName>
-						<LastName>Palmer Jr.</LastName>
-						<Phone>860-341-1464</Phone>
-						<Salutation>Mr.</Salutation>
-						<BillAddress>
-							<City>Willington</City>
-							<Country>USA</Country>
-							<PostalCode>06279</PostalCode>
-							<State>CT</State>
-							<Street>56 Cowles Road</Street>
-						</BillAddress>
-						<ShipAddress>
-							<City>Willington</City>
-							<Country>USA</Country>
-							<PostalCode>06279</PostalCode>
-							<State>CT</State>
-							<Street>56 Cowles Road</Street>
-						</ShipAddress>
-					</CustomerAdd>
-				</CustomerAddRq>
-			</QBPOSXMLMsgsRq>
-		</QBPOSXML>';
+        <?xml version="1.0" encoding="utf-8"?>
+        <?qbposxml version="3.0"?>
+        <QBPOSXML>
+            <QBPOSXMLMsgsRq onError="stopOnError">
+                <CustomerAddRq>
+                    <CustomerAdd>
+                        <CompanyName>ConsoliBYTE, LLC</CompanyName>
+                        <EMail>support@ConsoliBYTE.com</EMail>
+                        <FirstName>Keith</FirstName>
+                        <LastName>Palmer Jr.</LastName>
+                        <Phone>860-341-1464</Phone>
+                        <Salutation>Mr.</Salutation>
+                        <BillAddress>
+                            <City>Willington</City>
+                            <Country>USA</Country>
+                            <PostalCode>06279</PostalCode>
+                            <State>CT</State>
+                            <Street>56 Cowles Road</Street>
+                        </BillAddress>
+                        <ShipAddress>
+                            <City>Willington</City>
+                            <Country>USA</Country>
+                            <PostalCode>06279</PostalCode>
+                            <State>CT</State>
+                            <Street>56 Cowles Road</Street>
+                        </ShipAddress>
+                    </CustomerAdd>
+                </CustomerAddRq>
+            </QBPOSXMLMsgsRq>
+        </QBPOSXML>';
 
     return $xml;
 }
@@ -151,4 +151,3 @@ function _quickbooks_pos_customer_add_response($requestID, $user, $action, $ID, 
     mysql_query("UPDATE your_customer_table SET quickbooks_listid = '" . mysql_escape_string($idents['ListID']) . "' WHERE your_customer_ID_field = " . (int) $ID);
     */
 }
-

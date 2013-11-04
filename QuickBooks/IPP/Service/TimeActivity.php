@@ -16,7 +16,6 @@
  * @subpackage IPP
  */
 
-
 QuickBooks_Loader::load('/QuickBooks/IPP/Service.php');
 
 class QuickBooks_IPP_Service_TimeActivity extends QuickBooks_IPP_Service

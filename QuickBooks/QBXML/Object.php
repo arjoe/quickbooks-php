@@ -668,7 +668,7 @@ abstract class QuickBooks_QBXML_Object
         return $arr;
     }
 
-    static protected function _fromXMLHelper($class, $XML)
+    protected static function _fromXMLHelper($class, $XML)
     {
         if (is_object($XML)) {
             $paths = $XML->asArray(QuickBooks_XML::ARRAY_PATHS);
@@ -692,7 +692,7 @@ abstract class QuickBooks_QBXML_Object
      *
      * @return QuickBooks_Object
      */
-    static public function fromXML($XML, $action_or_object = null)
+    public static function fromXML($XML, $action_or_object = null)
     {
         if (!$action_or_object or $action_or_object == QUICKBOOKS_QUERY_ITEM) {
             $action_or_object = $XML->name();
@@ -829,7 +829,7 @@ abstract class QuickBooks_QBXML_Object
      *
      * @return QuickBooks_Object
      */
-    static public function fromQBXML($qbxml, $action_or_object = null)
+    public static function fromQBXML($qbxml, $action_or_object = null)
     {
         $errnum = null;
         $errmsg = null;

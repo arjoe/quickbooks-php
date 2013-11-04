@@ -592,4 +592,3 @@ class QuickBooks_QBXML_Object_InventoryAdjustment extends QuickBooks_QBXML_Objec
         return QUICKBOOKS_OBJECT_INVENTORYADJUSTMENT;
     }
 }
-

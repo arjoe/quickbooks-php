@@ -44,4 +44,3 @@ class QuickBooks_WebConnector_Request_ClientVersion extends QuickBooks_WebConnec
         return $this->strVersion;
     }
 }
-

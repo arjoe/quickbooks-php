@@ -113,17 +113,17 @@ class QuickBooks_SOAP_Server
             }
 
             $soap = '<?xml version="1.0" encoding="UTF-8"?>
-			<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" 
-			 xmlns:ns1="http://developer.intuit.com/">
-				<SOAP-ENV:Body><ns1:' . $method . 'Response>';
+            <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+             xmlns:ns1="http://developer.intuit.com/">
+                <SOAP-ENV:Body><ns1:' . $method . 'Response>';
 
             $vars = get_object_vars($Response);
 
             $soap .= $this->_serialize($vars);
 
             $soap .= '</ns1:' . $method . 'Response>
-			</SOAP-ENV:Body>
-			</SOAP-ENV:Envelope>';
+            </SOAP-ENV:Body>
+            </SOAP-ENV:Envelope>';
 
             print($soap);
 

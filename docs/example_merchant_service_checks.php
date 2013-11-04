@@ -15,7 +15,7 @@
 // Plain text output
 header('Content-Type: text/plain');
 
-// Show some errors... 
+// Show some errors...
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', true);
 
@@ -34,14 +34,14 @@ $application_login = 'qbms.consolibyte.com';
 //$connection_ticket = 'TGT-152-LWGj1YQUufTAlSW8DK1c6A';
 $connection_ticket = 'TGT-157-p3PyZPoH3DtieLSh4ykp6Q';
 
-// Create an instance of the MerchantService object 
+// Create an instance of the MerchantService object
 $MS = new QuickBooks_MerchantService(
     $dsn,
     $path_to_private_key_and_certificate,
     $application_login,
     $connection_ticket);
 
-// If you're using a Intuit QBMS development account, you must set this to true! 
+// If you're using a Intuit QBMS development account, you must set this to true!
 $MS->useTestEnvironment(true);
 
 // If you want to see the full XML input/output, you can turn on debug mode
@@ -76,5 +76,3 @@ if ($Transaction = $MS->debitCheck($Check, $amount, QuickBooks_MerchantService::
 } else {
     print('An error occured during refund: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
 }
-
-

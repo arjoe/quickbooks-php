@@ -15,7 +15,7 @@
  * @subpackage Documentation
  */
 
-// I always program in E_STRICT error mode with error reporting turned on... 
+// I always program in E_STRICT error mode with error reporting turned on...
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', 1);
 
@@ -33,16 +33,16 @@ $password = 'password';
 
 // Database connection string
 //
-// You *MUST* start with a fresh database! If the database you use has any 
-//	quickbooks_* or qb_* related tables in it, then the schema *WILL NOT* build 
-//	correctly! 
-// 	
-// 	Currently, only MySQL and PostgreSQL are supported/tested. 
+// You *MUST* start with a fresh database! If the database you use has any
+//	quickbooks_* or qb_* related tables in it, then the schema *WILL NOT* build
+//	correctly!
+//
+// 	Currently, only MySQL and PostgreSQL are supported/tested.
 //$dsn = 'pgsql://postgres:password@localhost/quickbooks';
 //$dsn = 'pgsql://postgres:password@localhost/quickbooks.diffschema';		// Example of using a different schema than the default schema
 $dsn = 'pgsql://postgres:password@localhost/quickbooks.qb';
 
-// If the database has not been initialized, we need to initialize it (create 
+// If the database has not been initialized, we need to initialize it (create
 //	schema and set up the username/password, etc.)
 if (!QuickBooks_Utilities::initialized($dsn)) {
     header('Content-Type: text/plain');
@@ -62,7 +62,7 @@ if (!QuickBooks_Utilities::initialized($dsn)) {
     exit;
 }
 
-// What mode do we want to run the mirror in? 
+// What mode do we want to run the mirror in?
 //$mode = QUICKBOOKS_SERVER_SQL_MODE_READONLY;		// Read from QuickBooks only (no data will be pushed back to QuickBooks)
 //$mode = QUICKBOOKS_SERVER_SQL_MODE_WRITEONLY;		// Write to QuickBooks only (no data will be copied into the SQL database)
 $mode = QuickBooks_WebConnector_Server_SQL::MODE_READWRITE; // Keep both QuickBooks and the database in sync, reading and writing changes back and forth)
@@ -70,7 +70,7 @@ $mode = QuickBooks_WebConnector_Server_SQL::MODE_READWRITE; // Keep both QuickBo
 // What should we do if a conflict is found? (a record has been changed by another user or process that we're trying to update)
 $conflicts = QuickBooks_WebConnector_Server_SQL::CONFLICT_LOG;
 
-// What should we do with records deleted from QuickBooks? 
+// What should we do with records deleted from QuickBooks?
 $delete = QuickBooks_WebConnector_Server_SQL::DELETE_REMOVE; // Delete the record from the database too
 //$delete = QUICKBOOKS_SERVER_SQL_DELETE_FLAG; 		// Just flag it as deleted
 
@@ -95,16 +95,16 @@ $hooks = array( // Register a hook which occurs when we perform an INSERT into t
     //	'http://localhost:8888/your_script.php'),
 );
 
-// 
+//
 $soap_options = array();
 
-// 
+//
 $handler_options = array();
 
-// 
+//
 $driver_options = array();
 
-// 
+//
 $sql_options = array(
     'only_import' => array(
         //QUICKBOOKS_OBJECT_ESTIMATE,
@@ -141,10 +141,10 @@ $sql_options = array(
     ),
 );
 
-// 
+//
 $callback_options = array();
 
-// $dsn_or_conn, $how_often, $mode, $conflicts, $users = null, 
+// $dsn_or_conn, $how_often, $mode, $conflicts, $users = null,
 //	$map = array(), $onerror = array(), $hooks = array(), $log_level, $soap = QUICKBOOKS_SOAPSERVER_BUILTIN, $wsdl = QUICKBOOKS_WSDL, $soap_options = array(), $handler_options = array(), $driver_options = array()
 $Server = new QuickBooks_WebConnector_Server_SQL(
     $dsn,
@@ -165,4 +165,3 @@ $Server = new QuickBooks_WebConnector_Server_SQL(
     $sql_options,
     $callback_options);
 $Server->handle(true, true);
-

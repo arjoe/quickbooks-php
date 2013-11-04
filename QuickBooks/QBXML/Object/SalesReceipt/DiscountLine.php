@@ -105,7 +105,6 @@ class QuickBooks_QBXML_Object_SalesReceipt_DiscountLine extends QuickBooks_QBXML
     {
         $this->_cleanup();
 
-
         return parent::asQBXML($request, $todo_for_empty_elements, $indent, $root);
     }
 

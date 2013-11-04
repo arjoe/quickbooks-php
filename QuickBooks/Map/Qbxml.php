@@ -120,12 +120,12 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
                 $errmsg = null;
 
                 return $Driver->fetch($Driver->query("
-					SELECT 
-						* 
-					FROM 
-						" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . "
-					WHERE 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_ID . " = " . (int)$ID, $errnum, $errmsg));
+                    SELECT
+                        *
+                    FROM
+                        " . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . "
+                    WHERE
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_ID . " = " . (int)$ID, $errnum, $errmsg));
             }
         }
 
@@ -195,18 +195,18 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
                 }
 
                 $sql = "
-					SELECT 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_ID . ", 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_ERROR_NUMBER . " " . $extras . "
-					FROM 
-						" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . " 
-					WHERE 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY . " IS NOT NULL AND 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_RESYNC . " IS NULL AND 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_TO_SKIP . " != 1 AND 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_TO_DELETE . " != 1 AND 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_FLAG_DELETED . " != 1 AND 
-						" . QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY . " <= '" . $NOW . "' ";
+                    SELECT
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_ID . ",
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_ERROR_NUMBER . " " . $extras . "
+                    FROM
+                        " . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . "
+                    WHERE
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY . " IS NOT NULL AND
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_RESYNC . " IS NULL AND
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_TO_SKIP . " != 1 AND
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_TO_DELETE . " != 1 AND
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_FLAG_DELETED . " != 1 AND
+                        " . QUICKBOOKS_DRIVER_SQL_FIELD_MODIFY . " <= '" . $NOW . "' ";
 
                 $errnum = 0;
                 $errmsg = '';
@@ -240,12 +240,12 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
                         $errnum = 0;
                         $errmsg = '';
                         $Driver->query("
-							UPDATE 
-								" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . " 
-							SET 
-								" . QUICKBOOKS_DRIVER_SQL_FIELD_ENQUEUE_TIME . " = '" . date('Y-m-d H:i:s') . "'
-							WHERE 
-								" . QUICKBOOKS_DRIVER_SQL_FIELD_ID . " = " . $arr[QUICKBOOKS_DRIVER_SQL_FIELD_ID], $errnum, $errmsg);
+                            UPDATE
+                                " . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $table_and_field[0] . "
+                            SET
+                                " . QUICKBOOKS_DRIVER_SQL_FIELD_ENQUEUE_TIME . " = '" . date('Y-m-d H:i:s') . "'
+                            WHERE
+                                " . QUICKBOOKS_DRIVER_SQL_FIELD_ID . " = " . $arr[QUICKBOOKS_DRIVER_SQL_FIELD_ID], $errnum, $errmsg);
                     }
 
                     if ($limit > 0 and
@@ -356,12 +356,12 @@ class QuickBooks_Map_QBXML extends QuickBooks_Map
             $errnum = null;
             $errmsg = null;
             $sql    = "
-				UPDATE 
-					" . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $relative_table . " 
-				SET
-					" . $relative_field . " = '%s' 
-				WHERE
-					" . $relative_field . " = '%s' " . $where;
+                UPDATE
+                    " . QUICKBOOKS_DRIVER_SQL_PREFIX_SQL . $relative_table . "
+                SET
+                    " . $relative_field . " = '%s'
+                WHERE
+                    " . $relative_field . " = '%s' " . $where;
 
             $Driver->query($sql, $errnum, $errmsg, null, null, array(
                 $TxnID_or_ListID,

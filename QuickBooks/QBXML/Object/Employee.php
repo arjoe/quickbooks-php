@@ -353,7 +353,6 @@ class QuickBooks_QBXML_Object_Employee extends QuickBooks_QBXML_Object
         return $this->getDateType('BirthDate', $format);
     }
 
-
     /**
      *
      *
@@ -361,7 +360,6 @@ class QuickBooks_QBXML_Object_Employee extends QuickBooks_QBXML_Object
      */
     protected function _cleanup()
     {
-
 
         return true;
     }
@@ -403,4 +401,3 @@ class QuickBooks_QBXML_Object_Employee extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_EMPLOYEE;
     }
 }
-

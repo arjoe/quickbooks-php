@@ -158,7 +158,6 @@ class QuickBooks_QBXML_Object_UnitOfMeasureSet extends QuickBooks_QBXML_Object
         return $this->get('BaseUnit Abbreviation');
     }
 
-
     public function addRelatedUnit($obj)
     {
         return $this->addListItem('RelatedUnit', $obj);
@@ -174,7 +173,6 @@ class QuickBooks_QBXML_Object_UnitOfMeasureSet extends QuickBooks_QBXML_Object
         return $this->getList('RelatedUnit');
     }
 
-
     public function addDefaultUnit($obj)
     {
         return $this->addListItem('DefaultUnit', $obj);
@@ -189,7 +187,6 @@ class QuickBooks_QBXML_Object_UnitOfMeasureSet extends QuickBooks_QBXML_Object
     {
         return $this->getList('DefaultUnit');
     }
-
 
     /**
      * Tell what type of object this is

@@ -36,7 +36,7 @@ QuickBooks_Loader::load('/QuickBooks/Server/Integrator.php');
  */
 class QuickBooks_Callbacks_Integrator_Callbacks
 {
-    static public function onAuthenticate($requestID, $user, $hook, &$err, $hook_data, $callback_config)
+    public static function onAuthenticate($requestID, $user, $hook, &$err, $hook_data, $callback_config)
     {
         // Get an API instance
         $API        = QuickBooks_API_Singleton::getInstance();
@@ -85,7 +85,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      *
      * @return boolean
      */
-    static protected function _integrate($last_datetime, $first_datetime, $first_time_running)
+    protected static function _integrate($last_datetime, $first_datetime, $first_time_running)
     {
         // Integrator instance
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -124,7 +124,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         QuickBooks_Callbacks_Integrator_Callbacks::_pullNewUnitOfMeasureSets($last_datetime, $first_datetime, $first_time_running);
     }
 
-    static protected function _pullNewAccounts($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewAccounts($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -140,7 +140,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listAccountsModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listAccountsModifiedAfter');
     }
 
-    static protected function _pullNewClasses($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewClasses($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -156,7 +156,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listClassesModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listClassesModifiedAfter');
     }
 
-    static protected function _pullNewPaymentMethods($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewPaymentMethods($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -172,7 +172,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listPaymentMethodsModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listPaymentMethodsModifiedAfter');
     }
 
-    static protected function _pullNewSalesTaxItems($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewSalesTaxItems($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -188,7 +188,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listSalesTaxItemsModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listSalesTaxItemsModifiedAfter');
     }
 
-    static protected function _pullNewSalesTaxGroupItems($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewSalesTaxGroupItems($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -204,7 +204,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listSalesTaxGroupItemsModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listSalesTaxGroupItemsModifiedAfter');
     }
 
-    static protected function _pullNewShipMethods($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewShipMethods($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -220,7 +220,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listShipMethodsModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listShipMethodsModifiedAfter');
     }
 
-    static protected function _pullNewCustomerTypes($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewCustomerTypes($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -236,7 +236,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listCustomerTypesModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listCustomerTypesModifiedAfter');
     }
 
-    static protected function _pullNewUnitOfMeasureSets($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewUnitOfMeasureSets($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -252,7 +252,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return $API->listUnitOfMeasureSetsModifiedAfter($datetime, 'QuickBooks_Callbacks_Integrator_Callbacks::listUnitOfMeasureSetsModifiedAfter');
     }
 
-    static protected function _pullNewSalesTaxCodes($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewSalesTaxCodes($datetime, $first_datetime, $first_time_running)
     {
         // Get the API instance
         $API = QuickBooks_API_Singleton::getInstance();
@@ -276,7 +276,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      * @return boolean
      * @todo Investigate why this method is empty
      */
-    static protected function _pullNewEstimates($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewEstimates($datetime, $first_datetime, $first_time_running)
     {
         /*
         if ($this->_integrator_config['pull_estimates'])
@@ -302,7 +302,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      * @return bool
      * @todo Investigate why this method is empty
      */
-    static protected function _pullNewOrders($datetime, $first_datetime, $first_time_running)
+    protected static function _pullNewOrders($datetime, $first_datetime, $first_time_running)
     {
         /*
         if ($this->_integrator_config['pull_orders'])
@@ -320,7 +320,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static protected function _integrateNewCustomers($customers)
+    protected static function _integrateNewCustomers($customers)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -347,7 +347,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      *
      * @return boolean
      */
-    static protected function _integrateNewEstimates($estimates)
+    protected static function _integrateNewEstimates($estimates)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -412,7 +412,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static protected function _integrateNewOrders($orders)
+    protected static function _integrateNewOrders($orders)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -497,7 +497,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
     /**
      * @deprecated
      */
-    static protected function _integrateHandling($Handling)
+    protected static function _integrateHandling($Handling)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -506,7 +506,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return QuickBooks_Callbacks_Integrator::_integrateProduct($Handling, QUICKBOOKS_INTEGRATOR_HANDLING_ID);
     }
 
-    static protected function _integrateShipping($Shipping)
+    protected static function _integrateShipping($Shipping)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -515,7 +515,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return QuickBooks_Callbacks_Integrator_Callbacks::_integrateProduct($Shipping, QUICKBOOKS_INTEGRATOR_SHIPPING_ID);
     }
 
-    static protected function _integrateCoupons($Coupon)
+    protected static function _integrateCoupons($Coupon)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -524,7 +524,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return QuickBooks_Callbacks_Integrator_Callbacks::_integrateProduct($Coupon, QUICKBOOKS_INTEGRATOR_COUPON_ID);
     }
 
-    static protected function _integrateDiscounts($Discount)
+    protected static function _integrateDiscounts($Discount)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -533,7 +533,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return QuickBooks_Callbacks_Integrator_Callbacks::_integrateProduct($Discount, QUICKBOOKS_INTEGRATOR_DISCOUNT_ID);
     }
 
-    static protected function _integrateOrder($Order, $OrderID)
+    protected static function _integrateOrder($Order, $OrderID)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -562,7 +562,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static protected function _integrateEstimate($Estimate, $EstimateID)
+    protected static function _integrateEstimate($Estimate, $EstimateID)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -577,7 +577,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      *
      * @return boolean
      */
-    static protected function _integratePayment($Payment, $OrderID)
+    protected static function _integratePayment($Payment, $OrderID)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -592,7 +592,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      *
      * @return boolean
      */
-    static protected function _integrateProduct($Product, $ProductID)
+    protected static function _integrateProduct($Product, $ProductID)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -617,50 +617,50 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static protected function _integrateSalesReceipt()
+    protected static function _integrateSalesReceipt()
     {
     }
 
-    static protected function _integrateSalesOrder()
+    protected static function _integrateSalesOrder()
     {
     }
 
-    static protected function _integrateInventoryItem()
+    protected static function _integrateInventoryItem()
     {
     }
 
-    static protected function _integrateNonInventoryItem()
+    protected static function _integrateNonInventoryItem()
     {
     }
 
-    static protected function _integrateServiceItem()
+    protected static function _integrateServiceItem()
     {
     }
 
-    static protected function _integrateDiscountItem()
+    protected static function _integrateDiscountItem()
     {
     }
 
-    static protected function _integrateSalesTaxItem()
+    protected static function _integrateSalesTaxItem()
     {
     }
 
-    static public function integrateQueryCustomer($CustomerID)
+    public static function integrateQueryCustomer($CustomerID)
     {
         return QuickBooks_Callbacks_Integrator_Callbacks::integrateCustomer($CustomerID, false, true);
     }
 
-    static public function integrateAddCustomer($CustomerID)
+    public static function integrateAddCustomer($CustomerID)
     {
         return QuickBooks_Callbacks_Integrator_Callbacks::integrateCustomer($CustomerID, false);
     }
 
-    static public function integrateModCustomer($CustomerID)
+    public static function integrateModCustomer($CustomerID)
     {
         return QuickBooks_Callbacks_Integrator_Callbacks::integrateCustomer($CustomerID, true);
     }
 
-    static public function integrateCustomer($CustomerID, $modify = false, $query = false)
+    public static function integrateCustomer($CustomerID, $modify = false, $query = false)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -726,7 +726,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      *
      * @return boolean
      */
-    static public function getCustomerByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getCustomerByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -747,11 +747,11 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return false;
     }
 
-    static public function getInvoiceByRefNumber($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getInvoiceByRefNumber($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getProductByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getProductByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -795,31 +795,31 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return false;
     }
 
-    static public function getServiceItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getServiceItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getInventoryItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getInventoryItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getNonInventoryItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getNonInventoryItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getDiscountItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getDiscountItemByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getClassByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getClassByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getAccountByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getAccountByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
     }
 
-    static public function getShipMethodByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getShipMethodByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -852,7 +852,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
      *
      * @return boolean
      */
-    static public function getPaymentMethodByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function getPaymentMethodByName($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -874,7 +874,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return false;
     }
 
-    static public function listInvoicesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listInvoicesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         while ($Invoice = $Iterator->next()) {
             return false;
@@ -883,7 +883,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listSalesTaxItemsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listSalesTaxItemsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -895,7 +895,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listSalesTaxGroupItemsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listSalesTaxGroupItemsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -907,7 +907,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listAccountsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listAccountsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -919,7 +919,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listClassesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listClassesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -931,7 +931,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listPaymentMethodsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listPaymentMethodsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -943,7 +943,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listCustomerTypesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listCustomerTypesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -955,7 +955,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listShipMethodsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listShipMethodsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -967,7 +967,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listSalesTaxCodesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listSalesTaxCodesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -979,7 +979,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listUnitOfMeasureSetsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listUnitOfMeasureSetsModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
 
@@ -991,7 +991,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function listEstimatesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
+    public static function listEstimatesModifiedAfter($method, $action, $ID, $err, $qbxml, $Iterator, $qbres)
     {
         $API        = QuickBooks_API_Singleton::getInstance();
         $Integrator = QuickBooks_Integrator_Singleton::getInstance();
@@ -1018,15 +1018,15 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         return true;
     }
 
-    static public function addPaymentMethod()
+    public static function addPaymentMethod()
     {
     }
 
-    static public function addShipMethod()
+    public static function addShipMethod()
     {
     }
 
-    static public function addServiceItem($method, $action, $ID, &$err, $qbxml, $ServiceItem, $qbres)
+    public static function addServiceItem($method, $action, $ID, &$err, $qbxml, $ServiceItem, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -1040,7 +1040,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static public function addInventoryItem($method, $action, $ID, &$err, $qbxml, $InventoryItem, $qbres)
+    public static function addInventoryItem($method, $action, $ID, &$err, $qbxml, $InventoryItem, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -1054,7 +1054,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static public function addNonInventoryItem($method, $action, $ID, &$err, $qbxml, $NonInventoryItem, $qbres)
+    public static function addNonInventoryItem($method, $action, $ID, &$err, $qbxml, $NonInventoryItem, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -1068,7 +1068,7 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static public function addInvoice($method, $action, $ID, &$err, $qbxml, $Invoice, $qbres)
+    public static function addInvoice($method, $action, $ID, &$err, $qbxml, $Invoice, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -1082,31 +1082,31 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static public function addEstimate()
+    public static function addEstimate()
     {
     }
 
-    static public function addSalesReceipt()
+    public static function addSalesReceipt()
     {
     }
 
-    static public function addAccount()
+    public static function addAccount()
     {
     }
 
-    static public function addClass()
+    public static function addClass()
     {
     }
 
-    static public function addExtra()
+    public static function addExtra()
     {
     }
 
-    static public function modExtra()
+    public static function modExtra()
     {
     }
 
-    static public function addCustomer($method, $action, $ID, &$err, $qbxml, $Customer, $qbres)
+    public static function addCustomer($method, $action, $ID, &$err, $qbxml, $Customer, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 
@@ -1120,11 +1120,11 @@ class QuickBooks_Callbacks_Integrator_Callbacks
         }
     }
 
-    static public function modCustomer()
+    public static function modCustomer()
     {
     }
 
-    static public function addReceivePayment($method, $action, $ID, &$err, $qbxml, $ReceivePayment, $qbres)
+    public static function addReceivePayment($method, $action, $ID, &$err, $qbxml, $ReceivePayment, $qbres)
     {
         $API = QuickBooks_API_Singleton::getInstance();
 

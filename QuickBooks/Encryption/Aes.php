@@ -18,7 +18,7 @@ QuickBooks_Loader::load('/QuickBooks/Encryption.php');
 
 class QuickBooks_Encryption_AES extends QuickBooks_Encryption
 {
-    static function encrypt($key, $plain, $salt = null)
+    public static function encrypt($key, $plain, $salt = null)
     {
         if (is_null($salt)) {
             $salt = QuickBooks_Encryption::salt();
@@ -39,7 +39,7 @@ class QuickBooks_Encryption_AES extends QuickBooks_Encryption
         return $encrypted;
     }
 
-    static function decrypt($key, $encrypted)
+    public static function decrypt($key, $encrypted)
     {
         $crypt   = mcrypt_module_open('rijndael-256', '', 'ofb', '');
         $iv_size = mcrypt_enc_get_iv_size($crypt);

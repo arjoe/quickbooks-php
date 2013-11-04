@@ -10,7 +10,6 @@
  * @subpackage Object
  */
 
-
 /**
  * QuickBooks object base class
  */
@@ -207,7 +206,6 @@ class QuickBooks_QBXML_Object_Bill extends QuickBooks_QBXML_Object
         return $this->addListItem('ItemLine', $obj);
     }
 
-
     public function asList($request)
     {
         switch ($request) {
@@ -223,7 +221,6 @@ class QuickBooks_QBXML_Object_Bill extends QuickBooks_QBXML_Object
 
                 break;
             case 'BillModRq':
-
 
                 break;
         }
@@ -283,4 +280,3 @@ class QuickBooks_QBXML_Object_Bill extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_BILL;
     }
 }
-

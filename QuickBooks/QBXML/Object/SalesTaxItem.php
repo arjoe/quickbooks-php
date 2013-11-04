@@ -153,7 +153,6 @@ class QuickBooks_QBXML_Object_SalesTaxItem extends QuickBooks_QBXML_Object
     protected function _cleanup()
     {
 
-
         return true;
     }
 

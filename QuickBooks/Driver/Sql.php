@@ -430,12 +430,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
             return $cache[$ticket];
         } else {
             if ($arr = $this->_fetch($this->_query("
-			SELECT
-				quickbooks_ticket_id
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
-			WHERE
-				ticket = '" . $this->_escape($ticket) . "' ", $errnum, $errmsg, 0, 1))
+            SELECT
+                quickbooks_ticket_id
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+            WHERE
+                ticket = '" . $this->_escape($ticket) . "' ", $errnum, $errmsg, 0, 1))
             ) {
                 $cache[$ticket] = $arr['quickbooks_ticket_id'];
 
@@ -464,46 +464,46 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         if ($arr = $this->_fetch($this->_query("
-			SELECT 
-				quickbooks_config_id 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . " 
-			WHERE 
-				qb_username = '" . $this->_escape($user) . "' AND 
-				module = '" . $this->_escape($module) . "' AND 
-				cfgkey = '" . $this->_escape($key) . "' ", $errnum, $errmsg, 0, 1))
+            SELECT
+                quickbooks_config_id
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' AND
+                module = '" . $this->_escape($module) . "' AND
+                cfgkey = '" . $this->_escape($key) . "' ", $errnum, $errmsg, 0, 1))
         ) {
             $this->_query("
-				UPDATE
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . "
-				SET
-					cfgval = '" . $this->_escape($value) . "', 
-					mod_datetime = '" . date('Y-m-d H:i:s') . "'
-				WHERE
-					quickbooks_config_id = " . $arr['quickbooks_config_id'], $errnum, $errmsg);
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . "
+                SET
+                    cfgval = '" . $this->_escape($value) . "',
+                    mod_datetime = '" . date('Y-m-d H:i:s') . "'
+                WHERE
+                    quickbooks_config_id = " . $arr['quickbooks_config_id'], $errnum, $errmsg);
         } else {
             return $this->_query("
-				INSERT INTO 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . "
-				(
-					qb_username, 
-					module, 
-					cfgkey, 
-					cfgval, 
-					cfgtype, 
-					cfgopts, 
-					write_datetime, 
-					mod_datetime
-				) VALUES ( 
-					'" . $this->_escape($user) . "', 
-					'" . $this->_escape($module) . "', 
-					'" . $this->_escape($key) . "', 
-					'" . $this->_escape($value) . "', 
-					'" . $this->_escape($type) . "', 
-					'" . $this->_escape(serialize($opts)) . "', 
-					'" . date('Y-m-d H:i:s') . "', 
-					'" . date('Y-m-d H:i:s') . "'
-				) ", $errnum, $errmsg);
+                INSERT INTO
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . "
+                (
+                    qb_username,
+                    module,
+                    cfgkey,
+                    cfgval,
+                    cfgtype,
+                    cfgopts,
+                    write_datetime,
+                    mod_datetime
+                ) VALUES (
+                    '" . $this->_escape($user) . "',
+                    '" . $this->_escape($module) . "',
+                    '" . $this->_escape($key) . "',
+                    '" . $this->_escape($value) . "',
+                    '" . $this->_escape($type) . "',
+                    '" . $this->_escape(serialize($opts)) . "',
+                    '" . date('Y-m-d H:i:s') . "',
+                    '" . date('Y-m-d H:i:s') . "'
+                ) ", $errnum, $errmsg);
         }
     }
 
@@ -524,16 +524,16 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         $sql = "
-			SELECT 
-				cfgval, 
-				cfgtype, 
-				cfgopts
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . " 
-			WHERE 
-				qb_username = '" . $this->_escape($user) . "' AND 
-				module = '" . $this->_escape($module) . "' AND 
-				cfgkey = '" . $this->_escape($key) . "' ";
+            SELECT
+                cfgval,
+                cfgtype,
+                cfgopts
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_CONFIGTABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' AND
+                module = '" . $this->_escape($module) . "' AND
+                cfgkey = '" . $this->_escape($key) . "' ";
 
         if ($arr = $this->_fetch($this->_query($sql, $errnum, $errmsg, 0, 1))) {
             $type = $arr['cfgtype'];
@@ -571,12 +571,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
                 $errmsg = '';
 
                 if ($arr = $this->_fetch($this->_query("
-				SELECT
-					qb_username
-				FROM
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
-				WHERE
-					quickbooks_ticket_id = " . $ticket_id, $errnum, $errmsg, 0, 1))
+                SELECT
+                    qb_username
+                FROM
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+                WHERE
+                    quickbooks_ticket_id = " . $ticket_id, $errnum, $errmsg, 0, 1))
                 ) {
                     $cache[$ticket] = $arr['qb_username'];
 
@@ -587,7 +587,6 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         return '';
     }
-
 
     /**
      * Create a new user for the SOAP server
@@ -607,27 +606,27 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         if (!$this->_count($this->_query("SELECT qb_username FROM " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " WHERE qb_username = '" . $this->_escape($username) . "' ", $errnum, $errmsg, 0, 1))) {
             return $this->_query("
-				INSERT INTO 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " 
-				( 
-					qb_username, 
-					qb_password, 
-					qb_company_file, 
-					qbwc_wait_before_next_update, 
-					qbwc_min_run_every_n_seconds, 
-					status, 
-					write_datetime, 
-					touch_datetime
-				) VALUES (
-					'" . $this->_escape($username) . "', 
-					'" . $this->_escape($this->_hash($password)) . "', 
-					'" . $this->_escape($company_file) . "', 
-					" . (int)$wait_before_next_update . ",
-					" . (int)$min_run_every_n_seconds . ",
-					'" . QUICKBOOKS_USER_ENABLED . "', 
-					'" . date('Y-m-d H:i:s') . "', 
-					'" . date('Y-m-d H:i:s') . "'
-				) ", $errnum, $errmsg);
+                INSERT INTO
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . "
+                (
+                    qb_username,
+                    qb_password,
+                    qb_company_file,
+                    qbwc_wait_before_next_update,
+                    qbwc_min_run_every_n_seconds,
+                    status,
+                    write_datetime,
+                    touch_datetime
+                ) VALUES (
+                    '" . $this->_escape($username) . "',
+                    '" . $this->_escape($this->_hash($password)) . "',
+                    '" . $this->_escape($company_file) . "',
+                    " . (int)$wait_before_next_update . ",
+                    " . (int)$min_run_every_n_seconds . ",
+                    '" . QUICKBOOKS_USER_ENABLED . "',
+                    '" . date('Y-m-d H:i:s') . "',
+                    '" . date('Y-m-d H:i:s') . "'
+                ) ", $errnum, $errmsg);
         }
 
         return false;
@@ -646,13 +645,13 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         return $this->_query("
-			UPDATE 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " 
-			SET
-				status = '" . QUICKBOOKS_USER_ENABLED . "', 
-				touch_datetime = '" . date('Y-m-d H:i:s') . "'
-			WHERE
-				qb_username = '" . $this->_escape($username) . "' ",
+            UPDATE
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . "
+            SET
+                status = '" . QUICKBOOKS_USER_ENABLED . "',
+                touch_datetime = '" . date('Y-m-d H:i:s') . "'
+            WHERE
+                qb_username = '" . $this->_escape($username) . "' ",
             $errnum,
             $errmsg);
     }
@@ -670,13 +669,13 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         return $this->_query("
-			UPDATE 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " 
-			SET
-				status = '" . QUICKBOOKS_USER_DISABLED . "', 
-				touch_datetime = '" . date('Y-m-d H:i:s') . "'
-			WHERE
-				qb_username = '" . $this->_escape($username) . "' ",
+            UPDATE
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . "
+            SET
+                status = '" . QUICKBOOKS_USER_DISABLED . "',
+                touch_datetime = '" . date('Y-m-d H:i:s') . "'
+            WHERE
+                qb_username = '" . $this->_escape($username) . "' ",
             $errnum,
             $errmsg);
     }
@@ -692,12 +691,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         if ($arr = $this->_fetch($this->_query("
-			SELECT 
-				qb_username 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " 
-			WHERE
-				status = '" . QUICKBOOKS_USER_ENABLED . "' ", $errnum, $errmsg, 0, 1))
+            SELECT
+                qb_username
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . "
+            WHERE
+                status = '" . QUICKBOOKS_USER_ENABLED . "' ", $errnum, $errmsg, 0, 1))
         ) {
             return $arr['qb_username'];
         }
@@ -718,15 +717,15 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         if ($arr = $this->_fetch($this->_query("
-			SELECT	
-				write_datetime, 
-				touch_datetime
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
-			WHERE
-				qb_username = '" . $this->_escape($username) . "'
-			ORDER BY
-				quickbooks_ticket_id DESC ", $errnum, $errmsg, 0, 1))
+            SELECT
+                write_datetime,
+                touch_datetime
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($username) . "'
+            ORDER BY
+                quickbooks_ticket_id DESC ", $errnum, $errmsg, 0, 1))
         ) {
             return array(
                 $arr['write_datetime'],
@@ -776,46 +775,46 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         if ($override or
             $arr = $this->_fetch($this->_query("
-				SELECT 
-					* 
-				FROM 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " 
-				WHERE 
-					qb_username = '" . $this->_escape($username) . "' AND 
-					(
-						qb_password = '" . $this->_escape($this->_hash($password)) . "' OR
-						qb_password = '" . $this->_escape($plain_text) . "' OR 
-						qb_password = '" . $this->_escape($plain_md5) . "' OR 
-						qb_password = '" . $this->_escape($plain_sha1) . "' 
-					) AND 
-					status = '" . QUICKBOOKS_USER_ENABLED . "' ", $errnum, $errmsg, 0, 1))
+                SELECT
+                    *
+                FROM
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . "
+                WHERE
+                    qb_username = '" . $this->_escape($username) . "' AND
+                    (
+                        qb_password = '" . $this->_escape($this->_hash($password)) . "' OR
+                        qb_password = '" . $this->_escape($plain_text) . "' OR
+                        qb_password = '" . $this->_escape($plain_md5) . "' OR
+                        qb_password = '" . $this->_escape($plain_sha1) . "'
+                    ) AND
+                    status = '" . QUICKBOOKS_USER_ENABLED . "' ", $errnum, $errmsg, 0, 1))
         ) {
             $ticket = QuickBooks_WebConnector_QWC::GUID(false);
 
             $this->_query("
-				INSERT INTO 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
-				( 
-					qb_username, 
-					ticket, 
-					ipaddr, 
-					write_datetime, 
-					touch_datetime
-				) VALUES ( 
-					'" . $this->_escape($username) . "', 
-					'" . $this->_escape($ticket) . "',
-					'" . $_SERVER['REMOTE_ADDR'] . "',  
-					'" . date('Y-m-d H:i:s') . "', 
-					'" . date('Y-m-d H:i:s') . "'
-				) ", $errnum, $errmsg);
+                INSERT INTO
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+                (
+                    qb_username,
+                    ticket,
+                    ipaddr,
+                    write_datetime,
+                    touch_datetime
+                ) VALUES (
+                    '" . $this->_escape($username) . "',
+                    '" . $this->_escape($ticket) . "',
+                    '" . $_SERVER['REMOTE_ADDR'] . "',
+                    '" . date('Y-m-d H:i:s') . "',
+                    '" . date('Y-m-d H:i:s') . "'
+                ) ", $errnum, $errmsg);
 
             $this->_query("
-				UPDATE 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . " 
-				SET 
-					touch_datetime = '" . date('Y-m-d H:i:s') . "'
-				WHERE 
-					qb_username = '" . $this->_escape($username) . "' ", $errnum, $errmsg);
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_USERTABLE) . "
+                SET
+                    touch_datetime = '" . date('Y-m-d H:i:s') . "'
+                WHERE
+                    qb_username = '" . $this->_escape($username) . "' ", $errnum, $errmsg);
 
             if (isset($arr) and
                 is_array($arr)
@@ -845,21 +844,21 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         if ($arr = $this->_fetch($this->_query("
-			SELECT 
-				quickbooks_ticket_id 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . " 
-			WHERE 
-				ticket = '" . $this->_escape($ticket) . "' AND 
-				touch_datetime > '" . date('Y-m-d H:i:s', time() - QUICKBOOKS_TIMEOUT) . "' ", $errnum, $errmsg, 0, 1))
+            SELECT
+                quickbooks_ticket_id
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+            WHERE
+                ticket = '" . $this->_escape($ticket) . "' AND
+                touch_datetime > '" . date('Y-m-d H:i:s', time() - QUICKBOOKS_TIMEOUT) . "' ", $errnum, $errmsg, 0, 1))
         ) {
             $this->_query("
-				UPDATE 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . " 
-				SET 
-					touch_datetime = '" . date('Y-m-d H:i:s') . "' 
-				WHERE 
-					quickbooks_ticket_id = " . $arr['quickbooks_ticket_id'], $errnum, $errmsg);
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+                SET
+                    touch_datetime = '" . date('Y-m-d H:i:s') . "'
+                WHERE
+                    quickbooks_ticket_id = " . $arr['quickbooks_ticket_id'], $errnum, $errmsg);
 
             return true;
         }
@@ -895,13 +894,13 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
             $db_errmsg = '';
 
             return $this->_query("
-				UPDATE 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
-				 SET 
-					lasterror_num = '" . $this->_escape($errnum) . "', 
-					lasterror_msg = '" . $this->_escape(substr($errmsg, 0, 255)) . "' 
-				WHERE 
-					quickbooks_ticket_id = " . (int)$ticket_id, $db_errnum, $db_errmsg);
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+                 SET
+                    lasterror_num = '" . $this->_escape($errnum) . "',
+                    lasterror_msg = '" . $this->_escape(substr($errmsg, 0, 255)) . "'
+                WHERE
+                    quickbooks_ticket_id = " . (int)$ticket_id, $db_errnum, $db_errmsg);
         }
 
         return false;
@@ -956,22 +955,22 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         if ($replace) {
             if ($existing = $this->_fetch($this->_query("
-					SELECT 
-						recur_lasttime 
-					FROM 
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . " 
-					WHERE 
-						qb_username = '" . $this->_escape($user) . "' AND 
-						qb_action = '" . $this->_escape($action) . "' AND 
-						ident = '" . $this->_escape($ident) . "' ", $errnum, $errmsg))
+                    SELECT
+                        recur_lasttime
+                    FROM
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . "
+                    WHERE
+                        qb_username = '" . $this->_escape($user) . "' AND
+                        qb_action = '" . $this->_escape($action) . "' AND
+                        ident = '" . $this->_escape($ident) . "' ", $errnum, $errmsg))
             ) {
                 $this->_query("
-					DELETE FROM
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . " 
-					WHERE
-						qb_username = '" . $this->_escape($user) . "' AND 
-						qb_action = '" . $this->_escape($action) . "' AND 
-						ident = '" . $this->_escape($ident) . "' ", $errnum, $errmsg);
+                    DELETE FROM
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . "
+                    WHERE
+                        qb_username = '" . $this->_escape($user) . "' AND
+                        qb_action = '" . $this->_escape($action) . "' AND
+                        ident = '" . $this->_escape($ident) . "' ", $errnum, $errmsg);
 
                 $recur_lasttime = $existing['recur_lasttime'];
             }
@@ -982,29 +981,29 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         }
 
         return $this->_query("
-			INSERT INTO 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . "
-			(
-				qb_username, 
-				qb_action, 
-				ident, 
-				extra,	
-				qbxml, 
-				priority,
-				run_every, 
-				recur_lasttime, 
-				enqueue_datetime
-			) VALUES (
-				'" . $this->_escape($user) . "', 
-				'" . $this->_escape($action) . "', 
-				'" . $this->_escape($ident) . "',
-				'" . $this->_escape($extra) . "',
-				'" . $this->_escape($qbxml) . "', 
-				" . (int)$priority . ",
-				" . (int)$run_every . ",
-				" . $recur_lasttime . ", 
-				'" . date('Y-m-d H:i:s') . "' 
-			) ", $errnum, $errmsg);
+            INSERT INTO
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . "
+            (
+                qb_username,
+                qb_action,
+                ident,
+                extra,
+                qbxml,
+                priority,
+                run_every,
+                recur_lasttime,
+                enqueue_datetime
+            ) VALUES (
+                '" . $this->_escape($user) . "',
+                '" . $this->_escape($action) . "',
+                '" . $this->_escape($ident) . "',
+                '" . $this->_escape($extra) . "',
+                '" . $this->_escape($qbxml) . "',
+                " . (int)$priority . ",
+                " . (int)$run_every . ",
+                " . $recur_lasttime . ",
+                '" . date('Y-m-d H:i:s') . "'
+            ) ", $errnum, $errmsg);
     }
 
     /**
@@ -1021,13 +1020,13 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         $sql = "
-			SELECT 
-				* 
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . " 
-			WHERE
-				qb_username = '" . $this->_escape($user) . "' AND 	
-				recur_lasttime + run_every <= " . time();
+            SELECT
+                *
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_RECURTABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' AND
+                recur_lasttime + run_every <= " . time();
 
         if ($by_priority) {
             $sql .= ' ORDER BY priority DESC ';
@@ -1060,15 +1059,15 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         return $this->_query("
-			UPDATE
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-			SET
-				qb_status = '" . QUICKBOOKS_STATUS_REMOVED . "' 
-			WHERE
-				qb_username = '" . $this->_escape($user) . "' AND 
-				qb_action = '" . $this->_escape($action) . "' AND 
-				ident = '" . $this->_escape($ident) . "' AND 
-				qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ", $errnum, $errmsg);
+            UPDATE
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            SET
+                qb_status = '" . QUICKBOOKS_STATUS_REMOVED . "'
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' AND
+                qb_action = '" . $this->_escape($action) . "' AND
+                ident = '" . $this->_escape($ident) . "' AND
+                qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ", $errnum, $errmsg);
     }
 
     /**
@@ -1091,13 +1090,13 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         if ($replace) {
             $this->_query("
-				DELETE FROM 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . " 
-				WHERE 
-					qb_username = '" . $this->_escape($user) . "' AND 
-					qb_action = '" . $this->_escape($action) . "' AND 
-					ident = '" . $this->_escape($ident) . "' AND
-					qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ", $errnum, $errmsg);
+                DELETE FROM
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+                WHERE
+                    qb_username = '" . $this->_escape($user) . "' AND
+                    qb_action = '" . $this->_escape($action) . "' AND
+                    ident = '" . $this->_escape($ident) . "' AND
+                    qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ", $errnum, $errmsg);
         }
 
         if ($extra) {
@@ -1105,27 +1104,27 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         }
 
         return $this->_query("
-			INSERT INTO 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-			(
-				qb_username, 
-				qb_action, 
-				ident, 
-				extra,	
-				qbxml, 			
-				priority, 
-				qb_status, 
-				enqueue_datetime
-			) VALUES (
-				'" . $this->_escape($user) . "', 
-				'" . $this->_escape($action) . "', 
-				'" . $this->_escape($ident) . "',
-				'" . $this->_escape($extra) . "',
-				'" . $this->_escape($qbxml) . "', 
-				" . (int)$priority . ",
-				'" . QUICKBOOKS_STATUS_QUEUED . "', 
-				'" . date('Y-m-d H:i:s') . "' 
-			) ", $errnum, $errmsg);
+            INSERT INTO
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            (
+                qb_username,
+                qb_action,
+                ident,
+                extra,
+                qbxml,
+                priority,
+                qb_status,
+                enqueue_datetime
+            ) VALUES (
+                '" . $this->_escape($user) . "',
+                '" . $this->_escape($action) . "',
+                '" . $this->_escape($ident) . "',
+                '" . $this->_escape($extra) . "',
+                '" . $this->_escape($qbxml) . "',
+                " . (int)$priority . ",
+                '" . QUICKBOOKS_STATUS_QUEUED . "',
+                '" . date('Y-m-d H:i:s') . "'
+            ) ", $errnum, $errmsg);
     }
 
     protected function _queueGet($user, $requestID, $status = QUICKBOOKS_STATUS_QUEUED)
@@ -1142,23 +1141,23 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
             $vars[] = $status;
 
             $sql = "
-				SELECT 
-					* 
-				FROM
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-				WHERE
-					quickbooks_queue_id = " . (int)$requestID . " AND
-					qb_username = '" . $this->_escape($user) . "' AND 
-					qb_status = '" . $this->_escape($status) . "'  ";
+                SELECT
+                    *
+                FROM
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+                WHERE
+                    quickbooks_queue_id = " . (int)$requestID . " AND
+                    qb_username = '" . $this->_escape($user) . "' AND
+                    qb_status = '" . $this->_escape($status) . "'  ";
         } else {
             $sql = "
-				SELECT 
-					* 
-				FROM
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-				WHERE
-					quickbooks_queue_id = " . (int)$requestID . " AND
-					qb_username = '" . $this->_escape($user) . "' ";
+                SELECT
+                    *
+                FROM
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+                WHERE
+                    quickbooks_queue_id = " . (int)$requestID . " AND
+                    qb_username = '" . $this->_escape($user) . "' ";
         }
 
         return $this->_fetch($this->_query($sql, $errnum, $errmsg, 0, 1));
@@ -1178,18 +1177,18 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         // Fetch the latest record to be dequeued for this user, and check that it's set with a status of in processing
         $sql = "
-			SELECT
-				quickbooks_queue_id, 
-				qb_action, 
-				ident, 
-				qb_status, 
-				dequeue_datetime
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-			WHERE
-				dequeue_datetime IS NOT NULL 
-			ORDER BY
-				dequeue_datetime DESC ";
+            SELECT
+                quickbooks_queue_id,
+                qb_action,
+                ident,
+                qb_status,
+                dequeue_datetime
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            WHERE
+                dequeue_datetime IS NOT NULL
+            ORDER BY
+                dequeue_datetime DESC ";
 
         $res = $this->_query($sql, $errnum, $errmsg, 0, 1);
         if ($arr = $this->_fetch($res) and
@@ -1217,13 +1216,13 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         $sql = "
-			SELECT 
-				* 
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . " 
-			WHERE
-				qb_username = '" . $this->_escape($user) . "' AND 
-				qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ";
+            SELECT
+                *
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' AND
+                qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ";
 
         if ($by_priority) {
             $sql .= ' ORDER BY priority DESC, ident ASC ';
@@ -1246,12 +1245,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         $sql = "
-			SELECT 
-				COUNT(*) AS num_left 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . " 
-			WHERE 
-				qb_username = '" . $this->_escape($user) . "' ";
+            SELECT
+                COUNT(*) AS num_left
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' ";
 
         if ($queued) {
             $sql .= " AND qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ";
@@ -1268,34 +1267,34 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         if ($date_from or $date_to) {
             if ($date_from and $date_to) {
                 $where = "
-					AND
-						enqueue_datetime >= '" . date('Y-m-d H:i:s', strtotime($date_from)) . "' AND 
-						enqueue_datetime <= '" . date('Y-m-d H:i:s', strtotime($date_to)) . "' ";
+                    AND
+                        enqueue_datetime >= '" . date('Y-m-d H:i:s', strtotime($date_from)) . "' AND
+                        enqueue_datetime <= '" . date('Y-m-d H:i:s', strtotime($date_to)) . "' ";
             } else {
                 if ($date_from) {
                     $where = "
-					AND
-						enqueue_datetime >= '" . date('Y-m-d H:i:s', strtotime($date_from)) . "' ";
+                    AND
+                        enqueue_datetime >= '" . date('Y-m-d H:i:s', strtotime($date_from)) . "' ";
                 } else {
                     if ($date_to) {
                         $where = "
-					AND
-						enqueue_datetime <= '" . date('Y-m-d H:i:s', strtotime($date_to)) . "' ";
+                    AND
+                        enqueue_datetime <= '" . date('Y-m-d H:i:s', strtotime($date_to)) . "' ";
                     }
                 }
             }
         }
 
         $sql = "
-			SELECT 
-				* 
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-			WHERE
-				qb_username = '" . $this->_escape($user) . "'  
-				" . $where . " 
-			ORDER BY 
-				enqueue_datetime DESC ";
+            SELECT
+                *
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "'
+                " . $where . "
+            ORDER BY
+                enqueue_datetime DESC ";
 
         $res = $this->_query($sql, $errnum, $errmsg, $offset, $limit);
 
@@ -1327,56 +1326,56 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
             if ($new_status == QUICKBOOKS_STATUS_SUCCESS) {
                 $this->_query("
-					UPDATE 
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . " 
-					SET 
-						processed = processed + 1, 
-						lasterror_num = NULL, 
-						lasterror_msg = NULL 
-					WHERE 					
-						quickbooks_ticket_id = " . (int)$ticket_id . " ", $errnum, $errmsg);
+                    UPDATE
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+                    SET
+                        processed = processed + 1,
+                        lasterror_num = NULL,
+                        lasterror_msg = NULL
+                    WHERE
+                        quickbooks_ticket_id = " . (int)$ticket_id . " ", $errnum, $errmsg);
             }
 
             if ($new_status == QUICKBOOKS_STATUS_PROCESSING) {
                 $this->_query("
-					UPDATE 
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-					SET
-						qb_status = '" . $this->_escape($new_status) . "', 
-						msg = '" . $this->_escape($msg) . "',
-						quickbooks_ticket_id = " . (int)$ticket_id . ",
-						dequeue_datetime = '" . date('Y-m-d H:i:s') . "' 
-					WHERE 
-						quickbooks_queue_id = " . (int)$requestID . " AND
-						qb_username = '" . $this->_escape($user) . "' AND 
-						qb_status = '" . $this->_escape(QUICKBOOKS_STATUS_QUEUED) . "' ", $errnum, $errmsg, 0, 1);
+                    UPDATE
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+                    SET
+                        qb_status = '" . $this->_escape($new_status) . "',
+                        msg = '" . $this->_escape($msg) . "',
+                        quickbooks_ticket_id = " . (int)$ticket_id . ",
+                        dequeue_datetime = '" . date('Y-m-d H:i:s') . "'
+                    WHERE
+                        quickbooks_queue_id = " . (int)$requestID . " AND
+                        qb_username = '" . $this->_escape($user) . "' AND
+                        qb_status = '" . $this->_escape(QUICKBOOKS_STATUS_QUEUED) . "' ", $errnum, $errmsg, 0, 1);
 
                 // If we're currently processing, then no error is occuring...
                 $errnum = null;
                 $errmsg = null;
                 $this->_query("
-					UPDATE 
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . " 
-					SET 
-						lasterror_num = NULL, 
-						lasterror_msg = NULL
-					WHERE 					
-						quickbooks_ticket_id = " . (int)$ticket_id, $errnum, $errmsg, 0, 1);
+                    UPDATE
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+                    SET
+                        lasterror_num = NULL,
+                        lasterror_msg = NULL
+                    WHERE
+                        quickbooks_ticket_id = " . (int)$ticket_id, $errnum, $errmsg, 0, 1);
             } else {
                 if ($new_status == QUICKBOOKS_STATUS_SUCCESS) {
                     // You can only update to a SUCCESS status if you're currently
                     //	in a PROCESSING status
                     $sql = "
-					UPDATE
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-					SET
-						qb_status = '" . $this->_escape($new_status) . "',
-						msg = '" . $this->_escape($msg) . "'
-					WHERE
-						quickbooks_ticket_id = " . (int)$ticket_id . " AND
-						qb_username = '" . $this->_escape($user) . "' AND
-						quickbooks_queue_id = " . (int)$requestID . " AND
-						qb_status = '" . QUICKBOOKS_STATUS_PROCESSING . "' ";
+                    UPDATE
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+                    SET
+                        qb_status = '" . $this->_escape($new_status) . "',
+                        msg = '" . $this->_escape($msg) . "'
+                    WHERE
+                        quickbooks_ticket_id = " . (int)$ticket_id . " AND
+                        qb_username = '" . $this->_escape($user) . "' AND
+                        quickbooks_queue_id = " . (int)$requestID . " AND
+                        qb_status = '" . QUICKBOOKS_STATUS_PROCESSING . "' ";
 
                     $this->_query($sql, $errnum, $errmsg, 0, 1);
                 } else {
@@ -1384,20 +1383,20 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
                     //	they're already removed from the queue. These are listed in
                     //	the NOT IN section
                     $sql = "
-					UPDATE
-						" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
-					SET
-						qb_status = '" . $this->_escape($new_status) . "',
-						msg = '" . $this->_escape($msg) . "'
-					WHERE
-						quickbooks_ticket_id = " . (int)$ticket_id . " AND
-						qb_username = '" . $this->_escape($user) . "' AND
-						quickbooks_queue_id = " . (int)$requestID . " AND
-						qb_status NOT IN (
-							'" . QUICKBOOKS_STATUS_SUCCESS . "',
-							'" . QUICKBOOKS_STATUS_HANDLED . "',
-							'" . QUICKBOOKS_STATUS_CANCELLED . "',
-							'" . QUICKBOOKS_STATUS_REMOVED . "' ) ";
+                    UPDATE
+                        " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+                    SET
+                        qb_status = '" . $this->_escape($new_status) . "',
+                        msg = '" . $this->_escape($msg) . "'
+                    WHERE
+                        quickbooks_ticket_id = " . (int)$ticket_id . " AND
+                        qb_username = '" . $this->_escape($user) . "' AND
+                        quickbooks_queue_id = " . (int)$requestID . " AND
+                        qb_status NOT IN (
+                            '" . QUICKBOOKS_STATUS_SUCCESS . "',
+                            '" . QUICKBOOKS_STATUS_HANDLED . "',
+                            '" . QUICKBOOKS_STATUS_CANCELLED . "',
+                            '" . QUICKBOOKS_STATUS_REMOVED . "' ) ";
 
                     $this->_query($sql, $errnum, $errmsg, 0, 1);
                 }
@@ -1422,12 +1421,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         if ($arr = $this->_fetch($this->_query("
-			SELECT 
-				processed 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . " 
-			WHERE 
-				ticket = '" . $this->_escape($ticket) . "' ", $errnum, $errmsg, 0, 1))
+            SELECT
+                processed
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_TICKETTABLE) . "
+            WHERE
+                ticket = '" . $this->_escape($ticket) . "' ", $errnum, $errmsg, 0, 1))
         ) {
             return $arr['processed'];
         }
@@ -1450,15 +1449,15 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         return $this->_count($this->_query("
-			SELECT 
-				quickbooks_queue_id
-			FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . " 
-			WHERE
-				qb_username = '" . $this->_escape($user) . "' AND 
-				qb_action = '" . $this->escape($action) . "' AND 
-				ident = '" . $this->escape($ident) . "' AND 
-				qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ", $errnum, $errmsg)) > 0;
+            SELECT
+                quickbooks_queue_id
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_QUEUETABLE) . "
+            WHERE
+                qb_username = '" . $this->_escape($user) . "' AND
+                qb_action = '" . $this->escape($action) . "' AND
+                ident = '" . $this->escape($ident) . "' AND
+                qb_status = '" . QUICKBOOKS_STATUS_QUEUED . "' ", $errnum, $errmsg)) > 0;
     }
 
     /**
@@ -1495,18 +1494,18 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
                 break;
             case QUICKBOOKS_DRIVER_SQL_QUEUETABLE:
                 $sql   = "
-					SELECT
-						quickbooks_queue_id 
-					FROM
-						" . $this->_mapTableName($table) . " 
-					WHERE
-						qb_status IN ( 
-							'" . QUICKBOOKS_STATUS_SUCCESS . "', 
-							'" . QUICKBOOKS_STATUS_HANDLED . "', 
-							'" . QUICKBOOKS_STATUS_CANCELLED . "', 
-							'" . QUICKBOOKS_STATUS_NOOP . "' ) 
-					ORDER BY
-						quickbooks_queue_id ASC LIMIT ";
+                    SELECT
+                        quickbooks_queue_id
+                    FROM
+                        " . $this->_mapTableName($table) . "
+                    WHERE
+                        qb_status IN (
+                            '" . QUICKBOOKS_STATUS_SUCCESS . "',
+                            '" . QUICKBOOKS_STATUS_HANDLED . "',
+                            '" . QUICKBOOKS_STATUS_CANCELLED . "',
+                            '" . QUICKBOOKS_STATUS_NOOP . "' )
+                    ORDER BY
+                        quickbooks_queue_id ASC LIMIT ";
                 $field = 'quickbooks_queue_id';
                 break;
             case QUICKBOOKS_DRIVER_SQL_TICKETTABLE:
@@ -1553,12 +1552,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         return $this->fetch($this->query("
-			SELECT
-				* 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . " 
-			WHERE
-				oauth_request_token = '%s' ", $errnum, $errmsg, null, null, array($request_token)));
+            SELECT
+                *
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+            WHERE
+                oauth_request_token = '%s' ", $errnum, $errmsg, null, null, array($request_token)));
     }
 
     protected function _oauthLoad($app_username, $app_tenant)
@@ -1567,20 +1566,20 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         $errmsg = '';
 
         if ($arr = $this->fetch($this->query("
-			SELECT
-				* 
-			FROM 
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . " 
-			WHERE
-				app_username = '%s' AND app_tenant = '%s' ", $errnum, $errmsg, null, null, array($app_username, $app_tenant)))
+            SELECT
+                *
+            FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+            WHERE
+                app_username = '%s' AND app_tenant = '%s' ", $errnum, $errmsg, null, null, array($app_username, $app_tenant)))
         ) {
             $this->query("
-				UPDATE 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
-				SET
-					touch_datetime = '%s' 
-				WHERE
-					app_username = '%s' AND app_tenant = '%s' ", $errnum, $errmsg, 0, 1, array(date('Y-m-d H:i:s'), $app_username, $app_tenant));
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+                SET
+                    touch_datetime = '%s'
+                WHERE
+                    app_username = '%s' AND app_tenant = '%s' ", $errnum, $errmsg, 0, 1, array(date('Y-m-d H:i:s'), $app_username, $app_tenant));
 
             return $arr;
         }
@@ -1597,32 +1596,32 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         if ($arr = $this->_oauthLoad($app_username, $app_tenant)) {
             // Exists... UPDATE!
             return $this->query("
-				UPDATE
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
-				SET 
-					oauth_request_token = '%s', 
-					oauth_request_token_secret = '%s', 
-					request_datetime = '%s'
-				WHERE
-					app_username = '%s' AND app_tenant = '%s' ", $errnum, $errmsg, null, null, array($token, $token_secret, date('Y-m-d H:i:s'), $app_username, $app_tenant));
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+                SET
+                    oauth_request_token = '%s',
+                    oauth_request_token_secret = '%s',
+                    request_datetime = '%s'
+                WHERE
+                    app_username = '%s' AND app_tenant = '%s' ", $errnum, $errmsg, null, null, array($token, $token_secret, date('Y-m-d H:i:s'), $app_username, $app_tenant));
         } else {
             // Insert it
             return $this->query("
-				INSERT INTO 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
-				(
-					app_username, 
-					app_tenant, 
-					oauth_request_token,
-					oauth_request_token_secret,
-					request_datetime
-				) VALUES (
-					'%s',
-					'%s',  
-					'%s',
-					'%s',
-					'%s'
-				)", $errnum, $errmsg, null, null, array($app_username, $app_tenant, $token, $token_secret, date('Y-m-d H:i:s')));
+                INSERT INTO
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+                (
+                    app_username,
+                    app_tenant,
+                    oauth_request_token,
+                    oauth_request_token_secret,
+                    request_datetime
+                ) VALUES (
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s'
+                )", $errnum, $errmsg, null, null, array($app_username, $app_tenant, $token, $token_secret, date('Y-m-d H:i:s')));
         }
     }
 
@@ -1651,15 +1650,15 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
             // Exists... UPDATE!
             return $this->query("
-				UPDATE
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
-				SET 
-					oauth_access_token = '%s', 
-					oauth_access_token_secret = '%s', 
-					access_datetime = '%s' 
-					" . $more . "
-				WHERE
-					oauth_request_token = '%s' ", $errnum, $errmsg, null, null, $vars);
+                UPDATE
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+                SET
+                    oauth_access_token = '%s',
+                    oauth_access_token_secret = '%s',
+                    access_datetime = '%s'
+                    " . $more . "
+                WHERE
+                    oauth_request_token = '%s' ", $errnum, $errmsg, null, null, $vars);
         }
 
         return false;
@@ -1672,11 +1671,11 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
 
         // Exists... DELETE!
         $this->query("
-			DELETE FROM
-				" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
-			WHERE
-			app_username = '%s' AND 
-			app_tenant = '%s' ", $errnum, $errmsg, null, null, array($app_username, $app_tenant));
+            DELETE FROM
+                " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_OAUTHTABLE) . "
+            WHERE
+            app_username = '%s' AND
+            app_tenant = '%s' ", $errnum, $errmsg, null, null, array($app_username, $app_tenant));
 
         return $this->affected() > 0;
     }
@@ -1710,30 +1709,30 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         // Log level handling is handled by the QuickBooks_Driver base class (see public method {@link QuickBooks_Driver::log()})
         if ($ticket_id = $this->_ticketResolve($ticket)) {
             return $this->_query("
-				INSERT INTO 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_LOGTABLE) . " 
-				( 
-					quickbooks_ticket_id,
-					batch, 
-					msg, 
-					log_datetime 
-				) VALUES ( 
-					" . $ticket_id . ",
-					" . $batch . ", 
-					'" . $this->_escape($msg) . "', 
-					'" . date('Y-m-d H:i:s') . "' ) ", $errnum, $errmsg);
+                INSERT INTO
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_LOGTABLE) . "
+                (
+                    quickbooks_ticket_id,
+                    batch,
+                    msg,
+                    log_datetime
+                ) VALUES (
+                    " . $ticket_id . ",
+                    " . $batch . ",
+                    '" . $this->_escape($msg) . "',
+                    '" . date('Y-m-d H:i:s') . "' ) ", $errnum, $errmsg);
         } else {
             return $this->_query("
-				INSERT INTO 
-					" . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_LOGTABLE) . " 
-				(
-					batch,
-					msg, 
-					log_datetime
-				) VALUES (
-					" . $batch . ", 
-					'" . $this->_escape($msg) . "',
-					'" . date('Y-m-d H:i:s') . "' ) ", $errnum, $errmsg);
+                INSERT INTO
+                    " . $this->_mapTableName(QUICKBOOKS_DRIVER_SQL_LOGTABLE) . "
+                (
+                    batch,
+                    msg,
+                    log_datetime
+                ) VALUES (
+                    " . $batch . ",
+                    '" . $this->_escape($msg) . "',
+                    '" . date('Y-m-d H:i:s') . "' ) ", $errnum, $errmsg);
         }
     }
 
@@ -1780,9 +1779,9 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
     /**
      * @see QuickBooks_Driver_Sql::query()
      */
-    protected abstract function _query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null);
+    abstract protected function _query($sql, &$errnum, &$errmsg, $offset = 0, $limit = null);
 
-    protected abstract function _fetch($res);
+    abstract protected function _fetch($res);
 
     /**
      * Escape a string
@@ -1791,7 +1790,7 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
      *
      * @return string
      */
-    public abstract function escape($str);
+    abstract public function escape($str);
 
     /**
      * Fetch a row from a result set
@@ -1800,21 +1799,21 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
      *
      * @return array
      */
-    public abstract function fetch($res);
+    abstract public function fetch($res);
 
     /**
      * Get the number of rows the last query affected
      *
      * @return integer
      */
-    public abstract function affected();
+    abstract public function affected();
 
     /**
      * Get the last sequence value from the last SQL insert
      *
      * @return integer
      */
-    public abstract function last();
+    abstract public function last();
 
     /**
      * Get a count of the number of results in an SQL result set
@@ -1823,7 +1822,7 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
      *
      * @return integer
      */
-    public abstract function count($res);
+    abstract public function count($res);
 
     /**
      * Rewind the result set
@@ -1832,7 +1831,7 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
      *
      * @return boolean
      */
-    public abstract function rewind($res);
+    abstract public function rewind($res);
 
     /**
      * Get a list of the fields within an SQL table
@@ -1868,7 +1867,7 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
      *
      * @return array
      */
-    protected abstract function _fields($table);
+    abstract protected function _fields($table);
 
     /**
      * Map a default table name to a database-specific table name
@@ -2552,12 +2551,12 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
             $wheres[] = QUICKBOOKS_DRIVER_SQL_FIELD_DISCOVER . " IS NULL ";
 
             $this->_query("
-				UPDATE 
-					" . $this->_escape($table) . "
-				SET 
-					" . QUICKBOOKS_DRIVER_SQL_FIELD_DISCOVER . " = " . QUICKBOOKS_DRIVER_SQL_FIELD_RESYNC . "
-				WHERE
-					" . implode(' AND ', $wheres), $errnum, $errmsg);
+                UPDATE
+                    " . $this->_escape($table) . "
+                SET
+                    " . QUICKBOOKS_DRIVER_SQL_FIELD_DISCOVER . " = " . QUICKBOOKS_DRIVER_SQL_FIELD_RESYNC . "
+                WHERE
+                    " . implode(' AND ', $wheres), $errnum, $errmsg);
         }
 
         return $return;
@@ -2675,4 +2674,3 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
         return false;
     }
 }
-

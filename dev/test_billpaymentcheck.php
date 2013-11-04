@@ -2,7 +2,6 @@
 
 require_once '../QuickBooks.php';
 
-
 $BillPaymentCheck = new QuickBooks_Object_BillPaymentCheck();
 
 $BillPaymentCheck->setRefNumber(1234);

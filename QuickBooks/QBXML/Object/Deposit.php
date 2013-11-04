@@ -186,7 +186,6 @@ class QuickBooks_QBXML_Object_Deposit extends QuickBooks_QBXML_Object
                 break;
             case 'DepositModRq':
 
-
                 break;
         }
 
@@ -262,4 +261,3 @@ class QuickBooks_QBXML_Object_Deposit extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_DEPOSIT;
     }
 }
-

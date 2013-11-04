@@ -70,7 +70,6 @@ class QuickBooks_QBXML_Object_Estimate_EstimateLine extends QuickBooks_QBXML_Obj
         return $this->extractApplicationID($this->get('ItemRef ' . QUICKBOOKS_API_APPLICATIONID));
     }
 
-
     public function setDescription($descrip)
     {
         return $this->set('Desc', $descrip);
@@ -346,4 +345,3 @@ class QuickBooks_QBXML_Object_Estimate_EstimateLine extends QuickBooks_QBXML_Obj
         return 'EstimateLine';
     }
 }
-

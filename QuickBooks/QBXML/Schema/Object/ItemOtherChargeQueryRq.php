@@ -162,4 +162,3 @@ class QuickBooks_QBXML_Schema_Object_ItemOtherChargeQueryRq extends QuickBooks_Q
         return $paths;
     }
 }
-

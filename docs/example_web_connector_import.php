@@ -19,7 +19,7 @@
  * @subpackage Documentation
  */
 
-// I always program in E_STRICT error mode... 
+// I always program in E_STRICT error mode...
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', 1);
 
@@ -39,16 +39,16 @@ if (function_exists('date_default_timezone_set')) {
 // Require the framework
 require_once '../QuickBooks.php';
 
-// A username and password you'll use in: 
+// A username and password you'll use in:
 //	a) Your .QWC file
 //	b) The Web Connector
 //	c) The QuickBooks framework
 //
-// 	NOTE: This has *no relationship* with QuickBooks usernames, Windows usernames, etc. 
-// 		It is *only* used for the Web Connector and SOAP server! 
-// 
-// If you wanted to allow others to log in, you'd create a .QWC file for each 
-//	individual user, and add each individual user to the auth database with the 
+// 	NOTE: This has *no relationship* with QuickBooks usernames, Windows usernames, etc.
+// 		It is *only* used for the Web Connector and SOAP server!
+//
+// If you wanted to allow others to log in, you'd create a .QWC file for each
+//	individual user, and add each individual user to the auth database with the
 //	QuickBooks_Utilities::createUser($dsn, $username, $password); static method.
 $user = 'quickbooks';
 $pass = 'password';
@@ -98,8 +98,8 @@ define('QB_PRIORITY_INVOICE', 0);
  */
 define('QB_QUICKBOOKS_MAILTO', 'keith@consolibyte.com');
 
-// The next three parameters, $map, $errmap, and $hooks, are callbacks which 
-//	will be called when certain actions/events/requests/responses occur within 
+// The next three parameters, $map, $errmap, and $hooks, are callbacks which
+//	will be called when certain actions/events/requests/responses occur within
 //	the framework.
 
 // Map QuickBooks actions to handler functions
@@ -130,7 +130,7 @@ $hooks = array(
 //$log_level = QUICKBOOKS_LOG_DEBUG;				// Use this level until you're sure everything works!!!
 $log_level = QUICKBOOKS_LOG_DEVELOP;
 
-// What SOAP server you're using 
+// What SOAP server you're using
 //$soapserver = QUICKBOOKS_SOAPSERVER_PHP;			// The PHP SOAP extension, see: www.php.net/soap
 $soapserver = QUICKBOOKS_SOAPSERVER_BUILTIN; // A pure-PHP SOAP server (no PHP ext/soap extension required, also makes debugging easier)
 
@@ -147,12 +147,12 @@ $driver_options = array( // See the comments in the QuickBooks/Driver/<YOUR DRIV
 $callback_options = array();
 
 // * MAKE SURE YOU CHANGE THE DATABASE CONNECTION STRING BELOW TO A VALID MYSQL USERNAME/PASSWORD/HOSTNAME *
-// 
+//
 // This assumes that:
 //	- You are connecting to MySQL with the username 'root'
 //	- You are connecting to MySQL with an empty password
 //	- Your MySQL server is located on the same machine as the script ( i.e.: 'localhost', if it were on another machine, you might use 'other-machines-hostname.com', or '192.168.1.5', or ... etc. )
-//	- Your MySQL database name containing the QuickBooks tables is named 'quickbooks' (if the tables don't exist, they'll be created for you) 
+//	- Your MySQL database name containing the QuickBooks tables is named 'quickbooks' (if the tables don't exist, they'll be created for you)
 $dsn = 'mysql://root:root@localhost/quickbooks_import';
 //$dsn = 'mysql://testuser:testpassword@localhost/testdatabase';
 
@@ -328,19 +328,19 @@ function _quickbooks_invoice_import_request($requestID, $user, $action, $ID, $ex
 
     // Build the request
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="' . $version . '"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<InvoiceQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
-					<MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
-					<ModifiedDateRangeFilter>
-						<FromModifiedDate>' . $last . '</FromModifiedDate>
-					</ModifiedDateRangeFilter>
-					<IncludeLineItems>true</IncludeLineItems>
-					<OwnerID>0</OwnerID>
-				</InvoiceQueryRq>	
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="' . $version . '"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <InvoiceQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
+                    <MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
+                    <ModifiedDateRangeFilter>
+                        <FromModifiedDate>' . $last . '</FromModifiedDate>
+                    </ModifiedDateRangeFilter>
+                    <IncludeLineItems>true</IncludeLineItems>
+                    <OwnerID>0</OwnerID>
+                </InvoiceQueryRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }
@@ -397,13 +397,13 @@ function _quickbooks_invoice_import_response($requestID, $user, $action, $ID, $e
 
             // Store the invoices in MySQL
             mysql_query("
-				REPLACE INTO
-					qb_example_invoice
-				(
-					" . implode(", ", array_keys($arr)) . "
-				) VALUES (
-					'" . implode("', '", array_values($arr)) . "'
-				)") or die(trigger_error(mysql_error()));
+                REPLACE INTO
+                    qb_example_invoice
+                (
+                    " . implode(", ", array_keys($arr)) . "
+                ) VALUES (
+                    '" . implode("', '", array_values($arr)) . "'
+                )") or die(trigger_error(mysql_error()));
 
             // Remove any old line items
             mysql_query("DELETE FROM qb_example_invoice_lineitem WHERE TxnID = '" . mysql_real_escape_string($arr['TxnID']) . "' ") or die(trigger_error(mysql_error()));
@@ -429,13 +429,13 @@ function _quickbooks_invoice_import_response($requestID, $user, $action, $ID, $e
 
                     // Store the lineitems in MySQL
                     mysql_query("
-						INSERT INTO
-							qb_example_invoice_lineitem
-						(
-							" . implode(", ", array_keys($lineitem)) . "
-						) VALUES (
-							'" . implode("', '", array_values($lineitem)) . "'
-						) ") or die(trigger_error(mysql_error()));
+                        INSERT INTO
+                            qb_example_invoice_lineitem
+                        (
+                            " . implode(", ", array_keys($lineitem)) . "
+                        ) VALUES (
+                            '" . implode("', '", array_values($lineitem)) . "'
+                        ) ") or die(trigger_error(mysql_error()));
                 }
             }
         }
@@ -469,16 +469,16 @@ function _quickbooks_customer_import_request($requestID, $user, $action, $ID, $e
 
     // Build the request
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="' . $version . '"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<CustomerQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
-					<MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
-					<FromModifiedDate>' . $last . '</FromModifiedDate>
-					<OwnerID>0</OwnerID>
-				</CustomerQueryRq>	
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="' . $version . '"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <CustomerQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
+                    <MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
+                    <FromModifiedDate>' . $last . '</FromModifiedDate>
+                    <OwnerID>0</OwnerID>
+                </CustomerQueryRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }
@@ -537,13 +537,13 @@ function _quickbooks_customer_import_response($requestID, $user, $action, $ID, $
 
             // Store the invoices in MySQL
             mysql_query("
-				REPLACE INTO
-					qb_example_customer
-				(
-					" . implode(", ", array_keys($arr)) . "
-				) VALUES (
-					'" . implode("', '", array_values($arr)) . "'
-				)") or die(trigger_error(mysql_error()));
+                REPLACE INTO
+                    qb_example_customer
+                (
+                    " . implode(", ", array_keys($arr)) . "
+                ) VALUES (
+                    '" . implode("', '", array_values($arr)) . "'
+                )") or die(trigger_error(mysql_error()));
         }
     }
 
@@ -575,19 +575,19 @@ function _quickbooks_salesorder_import_request($requestID, $user, $action, $ID, 
 
     // Build the request
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="' . $version . '"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<SalesOrderQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
-					<MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
-					<ModifiedDateRangeFilter>
-						<FromModifiedDate>' . $last . '</FromModifiedDate>
-					</ModifiedDateRangeFilter>
-					<IncludeLineItems>true</IncludeLineItems>
-					<OwnerID>0</OwnerID>
-				</SalesOrderQueryRq>	
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="' . $version . '"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <SalesOrderQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
+                    <MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
+                    <ModifiedDateRangeFilter>
+                        <FromModifiedDate>' . $last . '</FromModifiedDate>
+                    </ModifiedDateRangeFilter>
+                    <IncludeLineItems>true</IncludeLineItems>
+                    <OwnerID>0</OwnerID>
+                </SalesOrderQueryRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }
@@ -644,13 +644,13 @@ function _quickbooks_salesorder_import_response($requestID, $user, $action, $ID,
 
             // Store the invoices in MySQL
             mysql_query("
-				REPLACE INTO
-					qb_example_salesorder
-				(
-					" . implode(", ", array_keys($arr)) . "
-				) VALUES (
-					'" . implode("', '", array_values($arr)) . "'
-				)") or die(trigger_error(mysql_error()));
+                REPLACE INTO
+                    qb_example_salesorder
+                (
+                    " . implode(", ", array_keys($arr)) . "
+                ) VALUES (
+                    '" . implode("', '", array_values($arr)) . "'
+                )") or die(trigger_error(mysql_error()));
 
             // Remove any old line items
             mysql_query("DELETE FROM qb_example_salesorder_lineitem WHERE TxnID = '" . mysql_real_escape_string($arr['TxnID']) . "' ") or die(trigger_error(mysql_error()));
@@ -676,13 +676,13 @@ function _quickbooks_salesorder_import_response($requestID, $user, $action, $ID,
 
                     // Store the lineitems in MySQL
                     mysql_query("
-						INSERT INTO
-							qb_example_salesorder_lineitem
-						(
-							" . implode(", ", array_keys($lineitem)) . "
-						) VALUES (
-							'" . implode("', '", array_values($lineitem)) . "'
-						) ") or die(trigger_error(mysql_error()));
+                        INSERT INTO
+                            qb_example_salesorder_lineitem
+                        (
+                            " . implode(", ", array_keys($lineitem)) . "
+                        ) VALUES (
+                            '" . implode("', '", array_values($lineitem)) . "'
+                        ) ") or die(trigger_error(mysql_error()));
                 }
             }
         }
@@ -716,16 +716,16 @@ function _quickbooks_item_import_request($requestID, $user, $action, $ID, $extra
 
     // Build the request
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="' . $version . '"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<ItemQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
-					<MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
-					<FromModifiedDate>' . $last . '</FromModifiedDate>
-					<OwnerID>0</OwnerID>
-				</ItemQueryRq>	
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="' . $version . '"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <ItemQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
+                    <MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
+                    <FromModifiedDate>' . $last . '</FromModifiedDate>
+                    <OwnerID>0</OwnerID>
+                </ItemQueryRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }
@@ -805,13 +805,13 @@ function _quickbooks_item_import_response($requestID, $user, $action, $ID, $extr
 
             // Store the customers in MySQL
             mysql_query("
-				REPLACE INTO
-					qb_example_item
-				(
-					" . implode(", ", array_keys($arr)) . "
-				) VALUES (
-					'" . implode("', '", array_values($arr)) . "'
-				)") or die(trigger_error(mysql_error()));
+                REPLACE INTO
+                    qb_example_item
+                (
+                    " . implode(", ", array_keys($arr)) . "
+                ) VALUES (
+                    '" . implode("', '", array_values($arr)) . "'
+                )") or die(trigger_error(mysql_error()));
         }
     }
 
@@ -843,19 +843,19 @@ function _quickbooks_purchaseorder_import_request($requestID, $user, $action, $I
 
     // Build the request
     $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="' . $version . '"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<PurchaseOrderQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
-					<MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
-					<!--<ModifiedDateRangeFilter>
-						<FromModifiedDate>' . $last . '</FromModifiedDate>
-					</ModifiedDateRangeFilter>-->
-					<IncludeLineItems>true</IncludeLineItems>
-					<OwnerID>0</OwnerID>
-				</PurchaseOrderQueryRq>	
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="' . $version . '"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <PurchaseOrderQueryRq ' . $attr_iterator . ' ' . $attr_iteratorID . ' requestID="' . $requestID . '">
+                    <MaxReturned>' . QB_QUICKBOOKS_MAX_RETURNED . '</MaxReturned>
+                    <!--<ModifiedDateRangeFilter>
+                        <FromModifiedDate>' . $last . '</FromModifiedDate>
+                    </ModifiedDateRangeFilter>-->
+                    <IncludeLineItems>true</IncludeLineItems>
+                    <OwnerID>0</OwnerID>
+                </PurchaseOrderQueryRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
     return $xml;
 }

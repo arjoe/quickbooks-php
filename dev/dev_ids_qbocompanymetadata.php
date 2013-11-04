@@ -3,7 +3,7 @@
 ini_set('display_errors', true);
 error_reporting(E_ALL | E_STRICT);
 
-require '/Users/kpalmer/Projects/QuickBooks/QuickBooks.php';
+require __DIR__ . '/../QuickBooks.php';
 
 $Parser = new QuickBooks_IPP_Parser();
 
@@ -15,7 +15,11 @@ $err_code   = null;
 $err_desc   = null;
 $err_db     = null;
 
-$parsed = $Parser->parseIDS($response, QuickBooks_IPP_IDS::OPTYPE_FINDBYID, $xml_errnum, $xml_errmsg, $err_code, $err_desc, $err_db);
+$parsed = $Parser->parseIDS(
+    $response,
+    QuickBooks_IPP_IDS::OPTYPE_FINDBYID,
+    QuickBooks_IPP_IDS::FLAVOR_ONLINE,
+    QuickBooks_IPP_IDS::VERSION_2,
+    $xml_errnum, $xml_errmsg, $err_code, $err_desc, $err_db);
 
 print_r($parsed);
-

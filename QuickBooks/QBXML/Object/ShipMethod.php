@@ -181,4 +181,3 @@ class QuickBooks_QBXML_Object_ShipMethod extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_SHIPMETHOD;
     }
 }
-

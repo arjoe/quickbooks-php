@@ -18,14 +18,13 @@
  */
 class QuickBooks_Cast
 {
-    static public function datatype($type_or_action, $field)
+    public static function datatype($type_or_action, $field)
     {
     }
 
-    static public function maxlength($type_or_action, $field)
+    public static function maxlength($type_or_action, $field)
     {
     }
-
 
     /**
      * Convert certain strings to their abbreviations
@@ -38,7 +37,7 @@ class QuickBooks_Cast
      *
      * @return string
      */
-    static protected function _castAbbreviations($value)
+    protected static function _castAbbreviations($value)
     {
         $abbrevs = array(
             'Administration' => 'Admin.',
@@ -102,7 +101,7 @@ class QuickBooks_Cast
      *
      * @return string                    The shortened string
      */
-    static protected function _castTruncate($value, $length, $with_abbrevs = true)
+    protected static function _castTruncate($value, $length, $with_abbrevs = true)
     {
         //$value = QuickBooks_Cast::_castCharset($value);
 
@@ -128,7 +127,7 @@ class QuickBooks_Cast
      *
      *
      */
-    static protected function _fnmatch($pattern, $str)
+    protected static function _fnmatch($pattern, $str)
     {
         $arr = array(
             '\*' => '.*',
@@ -154,7 +153,7 @@ class QuickBooks_Cast
      *
      * @return string
      */
-    static public function cast($type_or_action, $field, $value, $use_abbrevs = true, $htmlspecialchars = true)
+    public static function cast($type_or_action, $field, $value, $use_abbrevs = true, $htmlspecialchars = true)
     {
         $type_or_action = strtolower($type_or_action);
 
@@ -306,7 +305,7 @@ class QuickBooks_Cast
      *
      * @return bool
      */
-    static protected function _is8Bit($string, $charset = '')
+    protected static function _is8Bit($string, $charset = '')
     {
         if (preg_match("/^iso-8859/i", $charset)) {
             $needle = '/\240|[\241-\377]/';
@@ -324,7 +323,7 @@ class QuickBooks_Cast
      *
      * @return string                UTF-8 text
      */
-    static protected function _encodeUTF8($string)
+    protected static function _encodeUTF8($string)
     {
         // Don't run encoding function, if there is no encoded characters
         if (!preg_match("'&#[0-9]+;'", $string)) {
@@ -343,7 +342,7 @@ class QuickBooks_Cast
      *
      * @return string            Decoded string
      */
-    static protected function _decodeUTF8($string)
+    protected static function _decodeUTF8($string)
     {
         // don't do decoding when there are no 8bit symbols
         if (!QuickBooks_Cast::_is8Bit($string, 'utf-8')) {
@@ -466,4 +465,3 @@ function QuickBooks_Cast_unicodetoutf8($var)
 
     return $ret;
 }
-

@@ -127,4 +127,3 @@ class QuickBooks_QBXML_Schema_Object_ItemSalesTaxGroupAddRq extends QuickBooks_Q
         return $paths;
     }
 }
-

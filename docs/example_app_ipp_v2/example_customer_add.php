@@ -64,7 +64,6 @@ if ($Context = $IPP->context()) {
     die('Unable to load a context...?');
 }
 
-
 ?>
 
 </pre>
@@ -72,4 +71,3 @@ if ($Context = $IPP->context()) {
 <?php
 
 require_once dirname(__FILE__) . '/views/footer.tpl.php';
-

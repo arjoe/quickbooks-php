@@ -85,4 +85,3 @@ class QuickBooks_Adapter_Client_Php extends \SoapClient implements QuickBooks_Ad
         return parent::__getLastResponse();
     }
 }
-

@@ -158,32 +158,32 @@ class QuickBooks extends CI_Controller
 
         // Build the qbXML request from $data
         $xml = '<?xml version="1.0" encoding="utf-8"?>
-		<?qbxml version="2.0"?>
-		<QBXML>
-			<QBXMLMsgsRq onError="stopOnError">
-				<CustomerAddRq requestID="' . $requestID . '">
-					<CustomerAdd>
-						<Name>ConsoliBYTE, LLC (' . mt_rand() . ')</Name>
-						<CompanyName>ConsoliBYTE, LLC</CompanyName>
-						<FirstName>Keith</FirstName>
-						<LastName>Palmer</LastName>
-						<BillAddress>
-							<Addr1>ConsoliBYTE, LLC</Addr1>
-							<Addr2>134 Stonemill Road</Addr2>
-							<City>Mansfield</City>
-							<State>CT</State>
-							<PostalCode>06268</PostalCode>
-							<Country>United States</Country>
-						</BillAddress>
-						<Phone>860-634-1602</Phone>
-						<AltPhone>860-429-0021</AltPhone>
-						<Fax>860-429-5183</Fax>
-						<Email>Keith@ConsoliBYTE.com</Email>
-						<Contact>Keith Palmer</Contact>
-					</CustomerAdd>
-				</CustomerAddRq>
-			</QBXMLMsgsRq>
-		</QBXML>';
+        <?qbxml version="2.0"?>
+        <QBXML>
+            <QBXMLMsgsRq onError="stopOnError">
+                <CustomerAddRq requestID="' . $requestID . '">
+                    <CustomerAdd>
+                        <Name>ConsoliBYTE, LLC (' . mt_rand() . ')</Name>
+                        <CompanyName>ConsoliBYTE, LLC</CompanyName>
+                        <FirstName>Keith</FirstName>
+                        <LastName>Palmer</LastName>
+                        <BillAddress>
+                            <Addr1>ConsoliBYTE, LLC</Addr1>
+                            <Addr2>134 Stonemill Road</Addr2>
+                            <City>Mansfield</City>
+                            <State>CT</State>
+                            <PostalCode>06268</PostalCode>
+                            <Country>United States</Country>
+                        </BillAddress>
+                        <Phone>860-634-1602</Phone>
+                        <AltPhone>860-429-0021</AltPhone>
+                        <Fax>860-429-5183</Fax>
+                        <Email>Keith@ConsoliBYTE.com</Email>
+                        <Contact>Keith Palmer</Contact>
+                    </CustomerAdd>
+                </CustomerAddRq>
+            </QBXMLMsgsRq>
+        </QBXML>';
 
         return $xml;
     }
@@ -214,4 +214,3 @@ class QuickBooks extends CI_Controller
         return true;
     }
 }
-	

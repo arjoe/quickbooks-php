@@ -21,17 +21,17 @@ require_once dirname(__FILE__) . '/config.php';
 if (isset($_POST['submitted'])) {
     // Save the record
     mysql_query("
-		INSERT INTO
-			my_customer_table
-		(
-			name, 
-			fname, 
-			lname
-		) VALUES (
-			'" . mysql_escape_string($_POST['name']) . "', 
-			'" . mysql_escape_string($_POST['fname']) . "', 
-			'" . mysql_escape_string($_POST['lname']) . "'
-		)");
+        INSERT INTO
+            my_customer_table
+        (
+            name,
+            fname,
+            lname
+        ) VALUES (
+            '" . mysql_escape_string($_POST['name']) . "',
+            '" . mysql_escape_string($_POST['fname']) . "',
+            '" . mysql_escape_string($_POST['lname']) . "'
+        )");
 
     // Get the primary key of the new record
     $id = mysql_insert_id();

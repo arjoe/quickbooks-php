@@ -393,4 +393,3 @@ class QuickBooks_QBXML_Object_InventoryItem extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_INVENTORYITEM;
     }
 }
-

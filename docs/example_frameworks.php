@@ -1,7 +1,5 @@
 <?php
 
-
-
 header('Content-Type: text/plain');
 
 error_reporting(E_ALL | E_STRICT);

@@ -375,4 +375,3 @@ class QuickBooks_QBXML_Object_JournalEntry_JournalCreditLine extends QuickBooks_
         return 'JournalCreditLine';
     }
 }
-

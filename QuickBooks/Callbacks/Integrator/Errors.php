@@ -28,7 +28,7 @@ class QuickBooks_Callbacks_Integrator_Errors
      * Solution:
      *    Send the request again, it usually goes through the second time.
      */
-    static public function e3170_errorsaving($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e3170_errorsaving($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         switch ($action) {
             case QUICKBOOKS_MOD_DATAEXT:
@@ -40,7 +40,7 @@ class QuickBooks_Callbacks_Integrator_Errors
         }
     }
 
-    static public function e3180_errorsaving($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e3180_errorsaving($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         switch ($action) {
             case QUICKBOOKS_ADD_DATAEXT:
@@ -51,7 +51,7 @@ class QuickBooks_Callbacks_Integrator_Errors
         }
     }
 
-    static public function e3200_editsequence($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e3200_editsequence($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         switch ($action) {
             case QUICKBOOKS_MOD_CUSTOMER:
@@ -62,7 +62,7 @@ class QuickBooks_Callbacks_Integrator_Errors
         }
     }
 
-    static public function e3100_alreadyexists($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e3100_alreadyexists($requestID, $user, $action, $ID, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         // These are special-case handlers, handle these by querying
         switch ($ID) {
@@ -106,7 +106,6 @@ class QuickBooks_Callbacks_Integrator_Errors
                 break;
             case QUICKBOOKS_ADD_SERVICEITEM:
 
-
                 return true;
             case QUICKBOOKS_ADD_CUSTOMER:
 
@@ -121,7 +120,7 @@ class QuickBooks_Callbacks_Integrator_Errors
     /**
      * This error occurs when we send a request to QuickBooks that has an error, or that QuickBooks doesn't understand (old version of QuickBooks)
      */
-    static public function e0x80040400_foundanerror($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e0x80040400_foundanerror($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         if ($action == QUICKBOOKS_QUERY_UNITOFMEASURESET) {
             // Some versions don't support this query, so ignore this error
@@ -131,7 +130,7 @@ class QuickBooks_Callbacks_Integrator_Errors
         return false;
     }
 
-    static public function e3250_featurenotenabled($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e3250_featurenotenabled($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         if ($action == QUICKBOOKS_QUERY_UNITOFMEASURESET) {
             // Some versions don't support UnitOfMeasureSetQuery
@@ -141,7 +140,7 @@ class QuickBooks_Callbacks_Integrator_Errors
         return false;
     }
 
-    static public function e_catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e_catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         if (!empty($config['_error_email'])) {
             $msg = '';

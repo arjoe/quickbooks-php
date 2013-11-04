@@ -4,7 +4,6 @@ require_once '../QuickBooks.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
-
 print('null date: ' . QuickBooks_Cast::cast(QUICKBOOKS_ADD_SALESORDER, 'ShipDate', null));
 print("\n");
 print('empty date: ' . QuickBooks_Cast::cast(QUICKBOOKS_ADD_SALESORDER, 'ShipDate', ''));
@@ -13,7 +12,6 @@ print('real date: ' . QuickBooks_Cast::cast(QUICKBOOKS_ADD_SALESORDER, 'ShipDate
 print("\n");
 
 print("\n\n\n");
-
 
 $arr = array(
     'Keith Palmer, Shannon Daniels, Kurtis & Karli',
@@ -63,7 +61,6 @@ foreach ($fields as $field) {
 }
 print("\n");
 
-
 exit;
 
 $invoice = array(
@@ -77,5 +74,3 @@ $invoice = array(
 foreach ($invoice as $key => $value) {
     print($key . ' => ' . QuickBooks_Cast::cast(QUICKBOOKS_ADD_INVOICE, $field, $value) . "\n");
 }
-
-

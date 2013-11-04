@@ -186,4 +186,3 @@ class QuickBooks_QBXML_Schema_Generator
         return '';
     }
 }
-

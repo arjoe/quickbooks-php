@@ -38,4 +38,3 @@ class QuickBooks_WebConnector_Request_CloseConnection extends QuickBooks_WebConn
         return $this->ticket;
     }
 }
-

@@ -43,7 +43,6 @@ if (!defined('QUICKBOOKS_SERVER_SQL_ITERATOR_PRIORITY')) {
     define('QUICKBOOKS_SERVER_SQL_ITERATOR_PRIORITY', 1000);
 }
 
-
 if (!defined('QUICKBOOKS_SERVER_SQL_CONFLICT_QUEUE_PRIORITY')) {
     /**
      * The priority value to use when issuing requests from an Error Handler for Add/Mods
@@ -281,4 +280,3 @@ class QuickBooks_WebConnector_Server_SQL extends QuickBooks_WebConnector_Server
         return array_merge($defaults, $config);
     }
 }
-

@@ -88,4 +88,3 @@ class QuickBooks_QBXML_Object_Check_ApplyCheckToTxn extends QuickBooks_QBXML_Obj
         return 'ApplyCheckToTxn';
     }
 }
-

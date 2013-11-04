@@ -247,12 +247,12 @@ class QuickBooks_Driver_Sql_Mssql extends QuickBooks_Driver_Sql
         $errnum = 0;
         $errmsg = '';
         $res    = $this->_query("
-			SELECT 
-				table_name AS name 
-			FROM
-				INFORMATION_SCHEMA.Tables 
-			WHERE 
-				TABLE_TYPE = 'BASE TABLE' ", $errnum, $errmsg);
+            SELECT
+                table_name AS name
+            FROM
+                INFORMATION_SCHEMA.Tables
+            WHERE
+                TABLE_TYPE = 'BASE TABLE' ", $errnum, $errmsg);
         while ($arr = $this->_fetch($res)) {
             $table = current($arr);
 

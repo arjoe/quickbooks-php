@@ -11,55 +11,55 @@ $xml = '<?xml version="1.0" ?>
             <NumRows>6</NumRows>
             <NumColumns>9</NumColumns>
             <NumColTitleRows>1</NumColTitleRows>
-            
+
             <ColDesc colID="1" dataType="STRTYPE">
                <ColTitle titleRow="1" />
                <ColType>Blank</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="2" dataType="STRTYPE">
                <ColTitle titleRow="1" value="Item Description" />
                <ColType>ItemDesc</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="3" dataType="STRTYPE">
                <ColTitle titleRow="1" value="Pref Vendor" />
                <ColType>ItemVendor</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="4" dataType="QUANTYPE">
                <ColTitle titleRow="1" value="Reorder Pt" />
                <ColType>ReorderPoint</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="5" dataType="QUANTYPE">
                <ColTitle titleRow="1" value="On Hand" />
                <ColType>QuantityOnHand</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="6" dataType="BOOLTYPE">
                <ColTitle titleRow="1" value="Order" />
                <ColType>SuggestedReorder</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="7" dataType="QUANTYPE">
                <ColTitle titleRow="1" value="On PO" />
                <ColType>QuantityOnOrder</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="8" dataType="DATETYPE">
                <ColTitle titleRow="1" value="Next Deliv" />
                <ColType>EarliestReceiptDate</ColType>
             </ColDesc>
-            
+
             <ColDesc colID="9" dataType="QUANTYPE">
                <ColTitle titleRow="1" value="Sales/Week" />
                <ColType>SalesPerWeek</ColType>
             </ColDesc>
-            
+
             <ReportData>
                <TextRow rowNumber="1" value="Inventory" />
-               
+
                <DataRow rowNumber="2">
                   <RowData rowType="item" value="another inventory" />
                   <ColData colID="1" value="another inventory" />
@@ -69,9 +69,9 @@ $xml = '<?xml version="1.0" ?>
                   <ColData colID="7" value="0" />
                   <ColData colID="9" value="0" />
                </DataRow>
-               
+
                <TextRow rowNumber="3" value="test inventory part" />
-               
+
                <DataRow rowNumber="4">
                   <RowData rowType="item" value="test inventory part:test sub product" />
                   <ColData colID="1" value="test sub product" />
@@ -80,7 +80,7 @@ $xml = '<?xml version="1.0" ?>
                   <ColData colID="7" value="0" />
                   <ColData colID="9" value="0" />
                </DataRow>
-               
+
                <DataRow rowNumber="5">
                   <RowData rowType="item" value="test inventory part" />
                   <ColData colID="1" value="test inventory part - Other" />
@@ -91,7 +91,7 @@ $xml = '<?xml version="1.0" ?>
                   <ColData colID="8" value="2010-09-27" />
                   <ColData colID="9" value="0" />
                </DataRow>
-               
+
                <SubtotalRow rowNumber="6">
                   <RowData rowType="item" value="test inventory part" />
                   <ColData colID="1" value="Total test inventory part" />
@@ -191,7 +191,7 @@ class Testme
         // 	UPDATE item SET QuantityOnHand = x WHERE FullName = y 		// this was a modified item, so it needs to stay modified
     }
 
-    static protected function _reportExtractColID($xml)
+    protected static function _reportExtractColID($xml)
     {
         $find = 'colID="';
         if (false !== ($sta = strpos($xml, $find))) {
@@ -203,7 +203,7 @@ class Testme
         return null;
     }
 
-    static protected function _reportExtractColType($xml)
+    protected static function _reportExtractColType($xml)
     {
         $find = '<ColType>';
         if (false !== ($sta = strpos($xml, $find))) {
@@ -215,7 +215,7 @@ class Testme
         return null;
     }
 
-    static protected function _reportExtractColValue($xml)
+    protected static function _reportExtractColValue($xml)
     {
         $find = 'value="';
         if (false !== ($sta = strpos($xml, $find))) {
@@ -227,7 +227,7 @@ class Testme
         return null;
     }
 
-    static protected function _reportNextTag(&$xml, $find)
+    protected static function _reportNextTag(&$xml, $find)
     {
         if (false !== ($sta = strpos($xml, $find))) {
             $end = strpos($xml, ' />', $sta);
@@ -248,7 +248,7 @@ class Testme
         return false;
     }
 
-    static protected function _reportNextXML(&$xml, $find)
+    protected static function _reportNextXML(&$xml, $find)
     {
         if (false !== ($sta = strpos($xml, $find))) {
             $end = strpos($xml, '/' . $find);

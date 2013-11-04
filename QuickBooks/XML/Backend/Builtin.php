@@ -25,7 +25,6 @@ class QuickBooks_XML_Backend_BuiltIn implements QuickBooks_XML_Backend
         $stack = array();
         $xml   = $this->_xml;
 
-
         // Remove comments
         while (false !== strpos($xml, '<!--')) {
             $start = strpos($xml, '<!--');

@@ -22,104 +22,104 @@ header('Content-Type: text/plain');
 // Include the QuickBooks files
 require_once '../QuickBooks.php';
 
-// If you want to log requests/responses to a database, you can provide a 
+// If you want to log requests/responses to a database, you can provide a
 //	database DSN-style connection string here
 $dsn = null;
 // $dsn = 'mysql://root:@localhost/quickbooks_merchantservice';
 
-// There are two methods of attaching an application to QuickBooks Merchant 
-//	Services. Intuit provides a 'Hosted' model, and a 'Desktop' model. The 
-//	'Hosted' model provides additional security benefits and is designed for 
-//	web applications, while the 'Desktop' model is easier to set up and 
-//	designed for desktop applications. 
-// 
-// Either the 'Hosted' or the 'Desktop' model can be used if you're developing 
-//	a web application. 
-// 
-// If you're using the 'Hosted' model, you'll need to provide the full path to 
-//	the key/certificate you/Intuit generates here. Otherwise, you can pass a 
-//	null. This file should have the private key you generated concatenated to 
-//	the beginning of the file. So the file contents should look something like: 
-//  
+// There are two methods of attaching an application to QuickBooks Merchant
+//	Services. Intuit provides a 'Hosted' model, and a 'Desktop' model. The
+//	'Hosted' model provides additional security benefits and is designed for
+//	web applications, while the 'Desktop' model is easier to set up and
+//	designed for desktop applications.
+//
+// Either the 'Hosted' or the 'Desktop' model can be used if you're developing
+//	a web application.
+//
+// If you're using the 'Hosted' model, you'll need to provide the full path to
+//	the key/certificate you/Intuit generates here. Otherwise, you can pass a
+//	null. This file should have the private key you generated concatenated to
+//	the beginning of the file. So the file contents should look something like:
+//
 //	-----BEGIN RSA PRIVATE KEY-----
 //	... bla bla bla lots of stuff here ...
 //	-----END RSA PRIVATE KEY-----
 //	-----BEGIN CERTIFICATE-----
 //	... bla bla bla lots of stuff here ...
 //	-----END CERTIFICATE-----
-// 
-// If you're using the 'Hosted' model, you should see the additional 
-//	documentation about how to set up your certificate here: 
+//
+// If you're using the 'Hosted' model, you should see the additional
+//	documentation about how to set up your certificate here:
 //		http://wiki.consolibyte.com/wiki/doku.php/quickbooks_qbms_integration
 //$path_to_private_key_and_certificate = '/Users/keithpalmerjr/Projects/QuickBooks/QuickBooks/dev/test_qbms.pem';
 //$path_to_private_key_and_certificate = '/path/doesnt/exist.pem'; 		// This should trigger an error
 //$path_to_private_key_and_certificate = null;							// If you're using the DESKTOP model
 $path_to_private_key_and_certificate = null;
 
-// This is your login ID that Intuit assignes you during the application 
+// This is your login ID that Intuit assignes you during the application
 //	registration process.
 //$application_login = 'test.www.academickeys.com';
 $application_login = 'test.foxycart.com';
 $application_login = 'qbms.consolibyte.com';
 
-// This is the connection ticket assigned to you during the application 
-//	registration process. To conform to Intuit security practices, you are 
-//	*required* to store this key *encrypted* and not in plain-text. 
-//	
-//	The ticket below is provided as an example, you should *not* store your 
-//	connection ticket in plain text as shown below. You should store it in your 
-//	database or in a separate file, outside of the web server document root, 
+// This is the connection ticket assigned to you during the application
+//	registration process. To conform to Intuit security practices, you are
+//	*required* to store this key *encrypted* and not in plain-text.
+//
+//	The ticket below is provided as an example, you should *not* store your
+//	connection ticket in plain text as shown below. You should store it in your
+//	database or in a separate file, outside of the web server document root,
 //	encrypted with a crypto library such as {@link http://www.php.net/mcrypt}.
 //$connection_ticket = 'TGT-152-LWGj1YQUufTAlSW8DK1c6A';
 $connection_ticket = 'TGT-145-niiEL2kCFoOTYHvkwBarmg';
 $connection_ticket = 'TGT-157-p3PyZPoH3DtieLSh4ykp6Q';
 
-// Create an instance of the MerchantService object 
+// Create an instance of the MerchantService object
 $MS = new QuickBooks_MerchantService(
     $dsn,
     $path_to_private_key_and_certificate,
     $application_login,
     $connection_ticket);
 
-// If you're using a Intuit QBMS development account, you must set this to true! 
+// If you're using a Intuit QBMS development account, you must set this to true!
 $MS->useTestEnvironment(true);
 
 // If you want to see the full XML input/output, you can turn on debug mode
 $MS->useDebugMode(true);
 
 /*
-There are several methods available in the QuickBooks_MerchantService class. 
-The most common methods are described below: 
+There are several methods available in the QuickBooks_MerchantService class.
+The most common methods are described below:
 
- - authorize() 
-    This authorizes a given amount against the a credit card. It is important 
-    to note that this *does not* actually charge the credit card, it just 
-    "reserves" the amount on the credit card and guarentees that if you do a 
-    capture() on the same credit card within X days, the funds will be 
-    available. 
-    
-    Authorizations are used in situations where you want to ensure the money 
-    will be availble, but not actually charge the card yet. For instance, if 
-    you have an online shopping cart, you should authorize() the credit card 
-    when the customer checks out. However, because you might not have the item 
-    in stock, or there might be other problems with the order, you don't want 
-    to actually charge the card yet. Once the order is all ready to ship and 
-    you've made sure there's no problems with it, you should issue a capture() 
-   	using the returned transaction information from the authorize() to actually 
-   	charge the credit card. 
-    
- - capture()   
-    
+ - authorize()
+    This authorizes a given amount against the a credit card. It is important
+    to note that this *does not* actually charge the credit card, it just
+    "reserves" the amount on the credit card and guarentees that if you do a
+    capture() on the same credit card within X days, the funds will be
+    available.
+
+    Authorizations are used in situations where you want to ensure the money
+    will be availble, but not actually charge the card yet. For instance, if
+    you have an online shopping cart, you should authorize() the credit card
+    when the customer checks out. However, because you might not have the item
+    in stock, or there might be other problems with the order, you don't want
+    to actually charge the card yet. Once the order is all ready to ship and
+    you've made sure there's no problems with it, you should issue a capture()
+       using the returned transaction information from the authorize() to actually
+       charge the credit card.
+
+ - capture()
+
  - charge()
- 
+
  - void()
- 
+
  - refund()
- 
- - voidOrRefund() 
- 
+
+ - voidOrRefund()
+
  - openBatch()
- 
+
  - closeBatch()
 
 */
@@ -234,7 +234,7 @@ exit;
 
 
 // If you didn't want to do a two-part authorize + capture, you can just do a
-//	single call to ->charge() to charge the credit card right away. 
+//	single call to ->charge() to charge the credit card right away.
 if ($Transaction = $MS->charge($Card, $amount)) {
     print('Card charged!' . "\n");
     print_r($Transaction);
@@ -247,7 +247,6 @@ if ($Transaction = $MS->charge($Card, $amount)) {
     print('An error occured during charge: ' . $MS->errorNumber() . ': ' . $MS->errorMessage() . "\n");
 }
 
-
 // We can issue refunds too...
 if ($Transaction = $MS->refund($Card, $amount)) {
     print('Card refunded $' . $amount . ' dollars!' . "\n");
@@ -257,7 +256,6 @@ if ($Transaction = $MS->refund($Card, $amount)) {
 }
 
 /*
-Let's trigger an error, just so we can see how to handle it. We can trigger 
+Let's trigger an error, just so we can see how to handle it. We can trigger
 
 */
-

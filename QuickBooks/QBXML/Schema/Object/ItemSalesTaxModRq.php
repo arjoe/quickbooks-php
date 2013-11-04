@@ -156,4 +156,3 @@ class QuickBooks_QBXML_Schema_Object_ItemSalesTaxModRq extends QuickBooks_QBXML_
         return $paths;
     }
 }
-

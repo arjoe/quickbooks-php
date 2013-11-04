@@ -556,4 +556,3 @@ class QuickBooks_QBXML_Object_ServiceItem extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_SERVICEITEM;
     }
 }
-

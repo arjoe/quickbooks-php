@@ -4,7 +4,6 @@ require_once '../QuickBooks.php';
 
 header('Content-Type: text/html; charset=utf-8');
 
-
 $arr = array(
     'Keith Palmer, Shannon Daniels, Kurtis & Karli',
     'Test of some UTF8 chars- Á, Æ, Ë, ¾, Õ, ä, ß, ú, ñ',
@@ -53,7 +52,6 @@ foreach ($fields as $field) {
 }
 print("\n");
 
-
 print("\n");
 print("\n");
 print("\n");
@@ -74,5 +72,3 @@ $invoice = array(
 foreach ($invoice as $key => $value) {
     print($key . ' => ' . QuickBooks_Cast::cast(QUICKBOOKS_ADD_INVOICE, $field, $value) . "\n");
 }
-
-

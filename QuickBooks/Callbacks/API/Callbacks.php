@@ -65,7 +65,6 @@ class QuickBooks_Callbacks_API_Callbacks
         return $xml;
     }
 
-
     /**
      * Create a mapping between an application's primary key and a QuickBooks object
      *
@@ -137,7 +136,7 @@ class QuickBooks_Callbacks_API_Callbacks
      *
      * @return string                        The application record primary key
      */
-    static protected function _mapToApplicationID($func, $user, $type, $ListID_or_TxnID)
+    protected static function _mapToApplicationID($func, $user, $type, $ListID_or_TxnID)
     {
         if (strlen($func)) {
             if (false === strpos($func, '::')) {
@@ -166,7 +165,7 @@ class QuickBooks_Callbacks_API_Callbacks
      *
      * @return string            The QuickBooks EditSequence string
      */
-    static protected function _mapToEditSequence($func, $user, $type, $ID)
+    protected static function _mapToEditSequence($func, $user, $type, $ID)
     {
         if (strlen($func)) {
             if (false === strpos($func, '::')) {
@@ -607,7 +606,6 @@ class QuickBooks_Callbacks_API_Callbacks
         return QuickBooks_Callbacks_API_Callbacks::_doAddResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents);
     }
 
-
     public static function InventoryAdjustmentAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array(), $qbxml = null)
     {
         return QuickBooks_Callbacks_API_Callbacks::_doAddRequest($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $version, $locale, $config, $qbxml);
@@ -707,7 +705,6 @@ class QuickBooks_Callbacks_API_Callbacks
     {
         return QuickBooks_Callbacks_API_Callbacks::_doAddResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents);
     }
-
 
     public static function CustomerAddRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array(), $qbxml = null)
     {
@@ -863,7 +860,6 @@ class QuickBooks_Callbacks_API_Callbacks
         return QuickBooks_Callbacks_API_Callbacks::_doQueryResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents);
     }
 
-
     public static function CustomerQueryRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array(), $qbxml = null)
     {
         return QuickBooks_Callbacks_API_Callbacks::_doQueryRequest($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $version, $locale, $config, $qbxml);
@@ -913,7 +909,6 @@ class QuickBooks_Callbacks_API_Callbacks
     {
         return QuickBooks_Callbacks_API_Callbacks::_doQueryResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents);
     }
-
 
     /**
      * Pass a request to QuickBooks
@@ -1092,7 +1087,6 @@ class QuickBooks_Callbacks_API_Callbacks
     {
         return QuickBooks_Callbacks_API_Callbacks::_doQueryResponse($requestID, $user, $action, $ID, $extra, $err, $last_action_time, $last_actionident_time, $xml, $idents);
     }
-
 
     public static function UnitOfMeasureSetQueryRequest($requestID, $user, $action, $ID, $extra, &$err, $last_action_time, $last_actionident_time, $version, $locale, $config = array(), $qbxml = null)
     {

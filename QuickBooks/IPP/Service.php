@@ -101,17 +101,17 @@ abstract class QuickBooks_IPP_Service
 
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <SyncStatusRequest xmlns="http://www.intuit.com/sb/cdm/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.intuit.com/sb/cdm/xmlrequest RestDataFilter.xsd">
-	<OfferingId>ipp</OfferingId>
-	<SyncStatusParam>
-		<IdSet>';
+    <OfferingId>ipp</OfferingId>
+    <SyncStatusParam>
+        <IdSet>';
 
         $parse = QuickBooks_IPP_IDS::parseIDType($IDType);
         $xml .= '<Id idDomain="' . $parse['domain'] . '">' . $parse['ID'] . '</Id>' . QUICKBOOKS_CRLF;
 
         $xml .= '
-		<IdSet>
-		<ObjectType>' . $resource . '</ObjectType>
-	</SyncStatusParam>
+        <IdSet>
+        <ObjectType>' . $resource . '</ObjectType>
+    </SyncStatusParam>
 </SyncStatusRequest>';
 
         $return = $IPP->IDS($Context, $realmID, $resource, QuickBooks_IPP_IDS::OPTYPE_SYNCSTATUS, $xml);

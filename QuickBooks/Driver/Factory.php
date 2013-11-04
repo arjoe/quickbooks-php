@@ -34,7 +34,7 @@ class QuickBooks_Driver_Factory
      *
      * @return object                A class instance, a child class of QuickBooks_Driver
      */
-    static public function create($dsn_or_conn, $config = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
+    public static function create($dsn_or_conn, $config = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
     {
         static $instances = array();
 

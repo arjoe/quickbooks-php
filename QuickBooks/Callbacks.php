@@ -38,7 +38,7 @@ class QuickBooks_Callbacks
 
     const TYPE_HOOK_INSTANCE = 'instanceof-hook';
 
-    static public function callAuthenticate($Driver, $callback, $username, $password, &$customauth_company_file, &$customauth_wait_before_next_update, &$customauth_min_run_every_n_seconds)
+    public static function callAuthenticate($Driver, $callback, $username, $password, &$customauth_company_file, &$customauth_wait_before_next_update, &$customauth_min_run_every_n_seconds)
     {
         $type = QuickBooks_Callbacks::_type($callback, $Driver);
 
@@ -108,7 +108,7 @@ class QuickBooks_Callbacks
         return $ret;
     }
 
-    static public function callSAMLCallback($Driver, $callback, $auth_id, $ticket, $target_url, $realm_id_pseudonym, $config, &$err)
+    public static function callSAMLCallback($Driver, $callback, $auth_id, $ticket, $target_url, $realm_id_pseudonym, $config, &$err)
     {
         // Determine the type of hook
         $type = QuickBooks_Callbacks::_type($callback, $Driver, $ticket);
@@ -175,7 +175,7 @@ class QuickBooks_Callbacks
      *
      * @return mixed
      */
-    static protected function _callFunction($function, &$vars, &$err, $which = null)
+    protected static function _callFunction($function, &$vars, &$err, $which = null)
     {
         if (!function_exists($function)) {
             $err = 'Callback does not exist: [function] ' . $function . '(...)';
@@ -202,7 +202,7 @@ class QuickBooks_Callbacks
      *
      * @return mixed
      */
-    static protected function _callObjectMethod($object_and_method, &$vars, &$err, $which = null)
+    protected static function _callObjectMethod($object_and_method, &$vars, &$err, $which = null)
     {
         $object = current($object_and_method);
         $method = next($object_and_method);
@@ -232,7 +232,7 @@ class QuickBooks_Callbacks
      *
      * @return mixed
      */
-    static protected function _callStaticMethod($class_and_method, &$vars, &$err, $which = null)
+    protected static function _callStaticMethod($class_and_method, &$vars, &$err, $which = null)
     {
         $tmp    = explode('::', $class_and_method);
         $class  = current($tmp);
@@ -258,7 +258,7 @@ class QuickBooks_Callbacks
      *
      *
      */
-    static protected function _type(&$callback, $Driver = null, $ticket = null)
+    protected static function _type(&$callback, $Driver = null, $ticket = null)
     {
         // This first section turns things like this:   array( 'MyClassName', 'myStaticMethod' )    into this:   'MyClassName::myStaticMethod'
         if (is_array($callback)) {
@@ -314,7 +314,7 @@ class QuickBooks_Callbacks
         return false;
     }
 
-    static public function callAPICallback($Driver, $ticket, $callback, $method, $action, $ID, &$err, $qbxml, $qbobject, $qbres)
+    public static function callAPICallback($Driver, $ticket, $callback, $method, $action, $ID, &$err, $qbxml, $qbobject, $qbres)
     {
         // Determine the type of hook
         $type = QuickBooks_Callbacks::_type($callback, $Driver, $ticket);
@@ -369,7 +369,6 @@ class QuickBooks_Callbacks
         return $ret;
     }
 
-
     /**
      * Call a hook function / object method / static method
      *
@@ -385,7 +384,7 @@ class QuickBooks_Callbacks
      *
      * @return boolean
      */
-    static public function callHook($Driver, &$hooks, $hook, $requestID, $user, $ticket, &$err, $hook_data, $callback_config = array())
+    public static function callHook($Driver, &$hooks, $hook, $requestID, $user, $ticket, &$err, $hook_data, $callback_config = array())
     {
         // There's a bug somewhere that passes a null value to this function... ?
         if (!is_array($hooks)) {
@@ -475,12 +474,12 @@ class QuickBooks_Callbacks
         return true;
     }
 
-    static public function callRequestHandler($Driver, &$map, $requestID, $action, $user, $action, $ident, $extra, &$err, $last_action_time, $last_actionident_time, $version = '', $locale = array(), $callback_config = array(), $qbxml = null)
+    public static function callRequestHandler($Driver, &$map, $requestID, $action, $user, $action, $ident, $extra, &$err, $last_action_time, $last_actionident_time, $version = '', $locale = array(), $callback_config = array(), $qbxml = null)
     {
         return QuickBooks_Callbacks::_callRequestOrResponseHandler($Driver, $map, $requestID, $action, 0, $user, $action, $ident, $extra, $err, $last_action_time, $last_actionident_time, $version, $locale, $callback_config, $qbxml);
     }
 
-    static public function callResponseHandler($Driver, &$map, $requestID, $action, $user, $action, $ident, $extra, &$err, $last_action_time, $last_actionident_time, $xml = '', $qb_identifiers = array(), $callback_config = array(), $qbxml = null)
+    public static function callResponseHandler($Driver, &$map, $requestID, $action, $user, $action, $ident, $extra, &$err, $last_action_time, $last_actionident_time, $xml = '', $qb_identifiers = array(), $callback_config = array(), $qbxml = null)
     {
         return QuickBooks_Callbacks::_callRequestOrResponseHandler($Driver, $map, $requestID, $action, 1, $user, $action, $ident, $extra, $err, $last_action_time, $last_actionident_time, $xml, $qb_identifiers, $callback_config, $qbxml);
     }
@@ -488,7 +487,7 @@ class QuickBooks_Callbacks
     /**
      * @todo Support for object instance callbacks
      */
-    static protected function _callRequestOrResponseHandler($Driver, &$map, $requestID, $action, $which, $user, $action, $ident, $extra, &$err, $last_action_time, $last_actionident_time, $xml_or_version = '', $qb_identifier_or_locale = array(), $callback_config = array(), $qbxml = null)
+    protected static function _callRequestOrResponseHandler($Driver, &$map, $requestID, $action, $which, $user, $action, $ident, $extra, &$err, $last_action_time, $last_actionident_time, $xml_or_version = '', $qb_identifier_or_locale = array(), $callback_config = array(), $qbxml = null)
     {
         if (isset($map[$action])) {
             $tmp =& $map[$action];
@@ -553,7 +552,7 @@ class QuickBooks_Callbacks
     /**
      * @todo Support for object instance error handlers
      */
-    static public function callErrorHandler($Driver, $errmap, $errnum, $errmsg, $user, $requestID, $action, $ident, $extra, &$errerr, $xml, $callback_config)
+    public static function callErrorHandler($Driver, $errmap, $errnum, $errmsg, $user, $requestID, $action, $ident, $extra, &$errerr, $xml, $callback_config)
     {
         $callback = '';
 

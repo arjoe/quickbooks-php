@@ -51,4 +51,3 @@ class QuickBooks_WebConnector_Request_Authenticate extends QuickBooks_WebConnect
         return $this->strPassword;
     }
 }
-

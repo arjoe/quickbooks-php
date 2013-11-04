@@ -5,14 +5,14 @@ error_reporting(E_ALL | E_STRICT);
 
 require_once '../QuickBooks.php';
 
-// 
+//
 $username = 'keith@consolibyte.com';
 $password = 'password';
 $token    = 'app token here';
 $realmID  = 1234;
 $appdbid  = 'app dbid here';
 
-// 
+//
 $IPP = new QuickBooks_IPP();
 
 if ($Context = $IPP->authenticate($username, $password, $token)) {

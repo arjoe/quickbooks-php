@@ -36,7 +36,7 @@ class QuickBooks_Utilities
      *
      * @return array|string        An array or a string, depending on if you wanted the whole thing parsed or just a piece of it
      */
-    static public function parseDSN($dsn, $defaults = array(), $part = null)
+    public static function parseDSN($dsn, $defaults = array(), $part = null)
     {
         // Some DSN strings look like this:		filesystem:///path/to/file
         //	parse_url() will not parse this *unless* we provide some sort of hostname (in this case, null)
@@ -76,7 +76,7 @@ class QuickBooks_Utilities
      *
      * @returns string
      */
-    static public function mask($message)
+    public static function mask($message)
     {
         $masks = array(
             '<SessionTicket>',
@@ -104,7 +104,7 @@ class QuickBooks_Utilities
     /**
      * @deprecated        Use QuickBooks_XML::extractTagContents() instead
      */
-    static protected function _extractTagContents($tag, $data)
+    protected static function _extractTagContents($tag, $data)
     {
         $tmp = QuickBooks_XML::extractTagContents($tag, $data);
 
@@ -120,7 +120,7 @@ class QuickBooks_Utilities
      *
      * @return boolean            Whether or not the message was logged
      */
-    static public function log($dsn, $msg, $lvl = QUICKBOOKS_LOG_NORMAL)
+    public static function log($dsn, $msg, $lvl = QUICKBOOKS_LOG_NORMAL)
     {
         $Driver = QuickBooks_Utilities::driverFactory($dsn);
 
@@ -137,7 +137,7 @@ class QuickBooks_Utilities
      *
      * @return mixed        The request ID
      */
-    static public function extractRequestID($xml)
+    public static function extractRequestID($xml)
     {
         if (false !== ($start = strpos($xml, ' requestID="')) and
             false !== ($end = strpos($xml, '"', $start + 12))
@@ -156,7 +156,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function constructRequestID($action, $ident)
+    public static function constructRequestID($action, $ident)
     {
         return base64_encode($action . '|' . $ident);
     }
@@ -170,7 +170,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function parseRequestID($requestID, &$action, &$ident)
+    public static function parseRequestID($requestID, &$action, &$ident)
     {
         $tmp = explode('|', base64_decode($requestID));
 
@@ -201,7 +201,7 @@ class QuickBooks_Utilities
      *
      * @return QuickBooks_Driver                A class instance, a child class of QuickBooks_Driver
      */
-    static public function driverFactory($dsn_or_conn, $config = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
+    public static function driverFactory($dsn_or_conn, $config = array(), $hooks = array(), $log_level = QUICKBOOKS_LOG_NORMAL)
     {
         return QuickBooks_Driver_Factory::create($dsn_or_conn, $config, $hooks, $log_level);
     }
@@ -219,7 +219,7 @@ class QuickBooks_Utilities
      *
      * @return bool
      */
-    static public function configWrite($dsn, $user, $module, $key, $value, $type = null, $opts = null)
+    public static function configWrite($dsn, $user, $module, $key, $value, $type = null, $opts = null)
     {
         if ($Driver = QuickBooks_Utilities::driverFactory($dsn)) {
             return $Driver->configWrite($user, $module, $key, $value, $type, $opts);
@@ -240,7 +240,7 @@ class QuickBooks_Utilities
      *
      * @return bool
      */
-    static public function configRead($dsn, $user, $module, $key, &$type, &$opts)
+    public static function configRead($dsn, $user, $module, $key, &$type, &$opts)
     {
         if ($Driver = QuickBooks_Utilities::driverFactory($dsn)) {
             return $Driver->configRead($user, $module, $key, $type, $opts);
@@ -256,7 +256,7 @@ class QuickBooks_Utilities
      *
      * @return integer
      */
-    static public function intervalToSeconds($interval)
+    public static function intervalToSeconds($interval)
     {
         if ((string)(int)$interval === (string)$interval) {
             // It's already an integer...
@@ -304,7 +304,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static protected function _checkCIDR($remoteaddr, $CIDR)
+    protected static function _checkCIDR($remoteaddr, $CIDR)
     {
         $remoteaddr_long = ip2long($remoteaddr);
 
@@ -326,7 +326,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function checkRemoteAddress($remoteaddr, $arr_allow, $arr_deny)
+    public static function checkRemoteAddress($remoteaddr, $arr_allow, $arr_deny)
     {
         $allowed = true;
 
@@ -396,7 +396,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function createUser($dsn, $username, $password, $company_file = null, $wait_before_next_update = null, $min_run_every_n_seconds = null)
+    public static function createUser($dsn, $username, $password, $company_file = null, $wait_before_next_update = null, $min_run_every_n_seconds = null)
     {
         $driver = QuickBooks_Utilities::driverFactory($dsn);
 
@@ -411,7 +411,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function disableUser($dsn, $username)
+    public static function disableUser($dsn, $username)
     {
         $driver = QuickBooks_Utilities::driverFactory($dsn);
 
@@ -429,7 +429,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function generateUniqueHash($mixed1, $mixed2 = null, $mixed3 = null, $mixed4 = null, $mixed5 = null)
+    public static function generateUniqueHash($mixed1, $mixed2 = null, $mixed3 = null, $mixed4 = null, $mixed5 = null)
     {
         return md5(serialize($mixed1) . serialize($mixed2) . serialize($mixed3) . serialize($mixed4) . serialize($mixed5));
     }
@@ -579,7 +579,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function initialize($dsn, $driver_options = array(), $init_options = array())
+    public static function initialize($dsn, $driver_options = array(), $init_options = array())
     {
         $Driver = QuickBooks_Utilities::driverFactory($dsn, $driver_options);
 
@@ -594,14 +594,14 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function initialized($dsn, $driver_options = array())
+    public static function initialized($dsn, $driver_options = array())
     {
         $Driver = QuickBooks_Utilities::driverFactory($dsn, $driver_options);
 
         return $Driver->initialized();
     }
 
-    static public function date($date = null)
+    public static function date($date = null)
     {
         if ($date) {
             if (is_numeric($date) and
@@ -623,7 +623,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function datetime($datetime = null)
+    public static function datetime($datetime = null)
     {
         if ($datetime) {
             if (is_numeric($datetime) and
@@ -646,7 +646,7 @@ class QuickBooks_Utilities
      *
      * @return boolean
      */
-    static public function fnmatch($pattern, $str)
+    public static function fnmatch($pattern, $str)
     {
         if (function_exists('fnmatch')) {
             return fnmatch($pattern, $str, FNM_CASEFOLD);
@@ -671,7 +671,7 @@ class QuickBooks_Utilities
      *
      * @return array
      */
-    static public function listObjects($filter = null, $return_keys = false, $order_for_mapping = false)
+    public static function listObjects($filter = null, $return_keys = false, $order_for_mapping = false)
     {
         static $cache = array();
 
@@ -722,7 +722,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function actionToObject($action)
+    public static function actionToObject($action)
     {
         static $cache = array();
 
@@ -751,7 +751,7 @@ class QuickBooks_Utilities
      *
      * @return integer                A best guess at the proper priority
      */
-    static public function priorityForAction($action, $dependency = null)
+    public static function priorityForAction($action, $dependency = null)
     {
         // low priorities up here (*lots* of dependencies)
         static $priorities = array(
@@ -1082,7 +1082,7 @@ class QuickBooks_Utilities
      *
      * @return array
      */
-    static public function listActions($filter = null, $return_keys = false)
+    public static function listActions($filter = null, $return_keys = false)
     {
         $startswith = array(
             'QUICKBOOKS_IMPORT_',
@@ -1133,7 +1133,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function keyForObject($object)
+    public static function keyForObject($object)
     {
         // Make sure it's an object
         $object = QuickBooks_Utilities::actionToObject($object);
@@ -1173,7 +1173,7 @@ class QuickBooks_Utilities
     /**
      * Alias of QuickBooks_Utilities::keyForObject()
      */
-    static public function keyForAction($action)
+    public static function keyForAction($action)
     {
         return QuickBooks_Utilities::keyForObject($action);
     }
@@ -1185,7 +1185,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function actionToRequest($action)
+    public static function actionToRequest($action)
     {
         return $action . 'Rq';
     }
@@ -1197,7 +1197,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function actionToResponse($action)
+    public static function actionToResponse($action)
     {
         return $action . 'Rs';
     }
@@ -1209,7 +1209,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function requestToAction($request)
+    public static function requestToAction($request)
     {
         return substr($request, 0, -2);
     }
@@ -1222,7 +1222,7 @@ class QuickBooks_Utilities
      * @return string
      * @todo Should this be the object or string?
      */
-    static public function objectToXMLElement($object)
+    public static function objectToXMLElement($object)
     {
         return $object . 'Ret';
     }
@@ -1234,7 +1234,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function actionToXMLElement($action)
+    public static function actionToXMLElement($action)
     {
         return QuickBooks_Utilities::actionToObject($action) . 'Ret';
     }
@@ -1246,7 +1246,7 @@ class QuickBooks_Utilities
      *
      * @return string
      */
-    static public function objectToQuery($type)
+    public static function objectToQuery($type)
     {
         return QuickBooks_Utilities::actionToObject($type) . 'Query';
     }
@@ -1255,7 +1255,7 @@ class QuickBooks_Utilities
      * Converts an object type to the corresponding Mod Action
      * Ex: Customer to CustomerMod
      */
-    static public function objectToMod($type)
+    public static function objectToMod($type)
     {
         return QuickBooks_Utilities::actionToObject($type) . 'Mod';
     }
@@ -1264,17 +1264,16 @@ class QuickBooks_Utilities
      * Converts an object type to the corresponding Add Action
      * Ex: Customer to CustomerAdd
      */
-    static public function objectToAdd($type)
+    public static function objectToAdd($type)
     {
         return QuickBooks_Utilities::actionToObject($type) . 'Add';
     }
-
 
     /**
      * Converts an action to the corresponding Query Action
      * Ex: Customer to CustomerQuery
      */
-    static public function convertActionToQuery($action)
+    public static function convertActionToQuery($action)
     {
         return QuickBooks_Utilities::objectToQuery(QuickBooks_Utilities::actionToObject($action));
     }
@@ -1283,9 +1282,8 @@ class QuickBooks_Utilities
      * Converts an action to the corresponding Mod Action
      * Ex: Customer to CustomerQuery
      */
-    static public function convertActionToMod($action)
+    public static function convertActionToMod($action)
     {
         return QuickBooks_Utilities::objectToMod(QuickBooks_Utilities::actionToObject($action));
     }
 }
-

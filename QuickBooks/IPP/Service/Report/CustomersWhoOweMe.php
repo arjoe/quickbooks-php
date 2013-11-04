@@ -16,7 +16,6 @@
  * @subpackage IPP
  */
 
-
 QuickBooks_Loader::load('/QuickBooks/IPP/Service/Report.php');
 
 class QuickBooks_IPP_Service_Report_CustomersWhoOweMe extends QuickBooks_IPP_Service_Report

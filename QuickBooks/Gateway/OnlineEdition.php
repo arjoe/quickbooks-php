@@ -647,7 +647,6 @@ class QuickBooks_Gateway_OnlineEdition
         return $tmp;
     }
 
-
     /**
      *
      *
@@ -709,7 +708,6 @@ class QuickBooks_Gateway_OnlineEdition
         if (function_exists('curl_init')) {
             return $this->_requestCurl($qbxml);
         }
-
 
         return false;
     }

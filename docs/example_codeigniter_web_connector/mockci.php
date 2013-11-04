@@ -16,7 +16,6 @@
  * @subpackage Documentation
  */
 
-
 define('BASEPATH', dirname(__FILE__));
 
 class CI_Controller
@@ -32,7 +31,7 @@ class CI_Controller
         $this->db     = new Database();
     }
 
-    static public function instance()
+    public static function instance()
     {
         $CI = null;
         if (is_null($CI)) {
@@ -96,7 +95,7 @@ class Config
         $this->_data = array();
     }
 
-    static public function instance()
+    public static function instance()
     {
         static $me = null;
         if (is_null($me)) {

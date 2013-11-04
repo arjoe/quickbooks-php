@@ -32,4 +32,3 @@ abstract class QuickBooks_WebConnector_Request
         $this->$key = $value;
     }
 }
-

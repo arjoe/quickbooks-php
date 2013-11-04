@@ -653,7 +653,7 @@ class QuickBooks_IPP_Federator
         return true;
     }
 
-    static public function setCookie($value, $expire = 0, $path = '/', $domain = '', $secure = null, $httponly = true)
+    public static function setCookie($value, $expire = 0, $path = '/', $domain = '', $secure = null, $httponly = true)
     {
         if (is_null($secure)) {
             $secure = (boolean)isset($_SERVER['HTTPS']);
@@ -665,7 +665,7 @@ class QuickBooks_IPP_Federator
         return setcookie(QuickBooks_IPP::COOKIE, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
-    static public function getCookie()
+    public static function getCookie()
     {
         if (isset($_COOKIE[QuickBooks_IPP::COOKIE])) {
             return $_COOKIE[QuickBooks_IPP::COOKIE];

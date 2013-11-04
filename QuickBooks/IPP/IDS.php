@@ -77,7 +77,6 @@ class QuickBooks_IPP_IDS
 
     const RESOURCE_REPORT_TOPCUSTOMERSBYSALES = 'ReportTopCustomersBySales';
 
-
     const RESOURCE_ACCOUNT = 'Account';
 
     const RESOURCE_BILL = 'Bill';
@@ -165,7 +164,7 @@ class QuickBooks_IPP_IDS
 
     const RESOURCE_VENDORCREDIT = 'VendorCredit';
 
-    static public function resourceToKeyType($resource)
+    public static function resourceToKeyType($resource)
     {
         $txns = array(
             QuickBooks_IPP_IDS::RESOURCE_BILL,
@@ -193,7 +192,7 @@ class QuickBooks_IPP_IDS
         return 'ListId';
     }
 
-    static public function parseIDType($str)
+    public static function parseIDType($str)
     {
         $str = trim($str, '{}');
 
@@ -210,7 +209,7 @@ class QuickBooks_IPP_IDS
         return array(0 => '', 'domain' => '', 1 => $str, 'ID' => $str);
     }
 
-    static public function buildIDType($domain, $ID)
+    public static function buildIDType($domain, $ID)
     {
         if (empty($domain)) {
             return $ID;

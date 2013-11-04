@@ -5,13 +5,13 @@ error_reporting(E_ALL | E_STRICT);
 
 require_once '../QuickBooks.php';
 
-// 
+//
 $username = 'support@consolibyte.com';
 $password = '';
 $token    = 'bf8cp2mihs6vsdibgqsybinugvj12346';
 $realmID  = 18293819223456;
 
-// 
+//
 $IPP     = new QuickBooks_IPP();
 $Context = $IPP->authenticate($username, $password, $token);
 $IPP->application($Context, 'bfrccpnge');
@@ -26,7 +26,6 @@ print($Service->lastRequest() . "\n\n\n");
 print("\n\n");
 print($Service->lastResponse() . "\n\n\n");
 print("\n\n");
-
 
 /*
 $SalesReceipt = new QuickBooks_IPP_Object_SalesReceipt();
@@ -43,9 +42,7 @@ $Line->setAmount(525);
 $Line->setItemName('Test Item 1');
 $Line->setQty(5);
 
-
 $SalesReceipt->addLine($Line);
-
 
 $ID = $Service->add($Context, $realmID, $SalesReceipt);
 

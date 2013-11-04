@@ -308,11 +308,11 @@ class QuickBooks_IPP
         $action = 'API_Authenticate';
 
         $xml = '<?xml version="1.0" encoding="UTF-8" ?>
-			<qdbapi>
-				<username>' . $username . '</username>
-				<password>' . $password . '</password>
-				<apptoken>' . $token . '</apptoken>
-			</qdbapi>';
+            <qdbapi>
+                <username>' . $username . '</username>
+                <password>' . $password . '</password>
+                <apptoken>' . $token . '</apptoken>
+            </qdbapi>';
 
         $Context  = null;
         $response = $this->_request($Context, QuickBooks_IPP::REQUEST_IPP, $url, $action, $xml);
@@ -689,9 +689,9 @@ class QuickBooks_IPP
         $action = QuickBooks_IPP::API_GETISREALMQBO;
 
         $xml = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-   				<apptoken>' . $Context->token() . '</apptoken>
-			</qdbapi>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                   <apptoken>' . $Context->token() . '</apptoken>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -702,11 +702,11 @@ class QuickBooks_IPP
         $action = QuickBooks_IPP::API_ASSERTFEDERATEDIDENTITY;
 
         $xml = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-				<serviceProviderID>' . htmlspecialchars($provider) . '</serviceProviderID>
-				<targetURL>' . htmlspecialchars($target_url, ENT_QUOTES) . '</targetURL>
-			</qdbapi>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+                <serviceProviderID>' . htmlspecialchars($provider) . '</serviceProviderID>
+                <targetURL>' . htmlspecialchars($target_url, ENT_QUOTES) . '</targetURL>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -717,10 +717,10 @@ class QuickBooks_IPP
         $action = QuickBooks_IPP::API_RENAMEAPP;
 
         $xml = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-   				<apptoken>' . $Context->token() . '</apptoken>
-   				<newappname>' . htmlspecialchars($name) . '</newappname>
-			</qdbapi>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                   <apptoken>' . $Context->token() . '</apptoken>
+                   <newappname>' . htmlspecialchars($name) . '</newappname>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -731,9 +731,9 @@ class QuickBooks_IPP
         $action = QuickBooks_IPP::API_GETIDSREALM;
 
         $xml = '<qdbapi>
-   				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-			</qdbapi>';
+                   <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -760,9 +760,9 @@ class QuickBooks_IPP
         $action = QuickBooks_IPP::API_GETENTITLEMENTVALUES;
 
         $xml = '<qdbapi>
-			<ticket>' . $Context->ticket() . '</ticket>
-			<apptoken>' . $Context->token() . '</apptoken>
-			</qdbapi>';
+            <ticket>' . $Context->ticket() . '</ticket>
+            <apptoken>' . $Context->token() . '</apptoken>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -773,9 +773,9 @@ class QuickBooks_IPP
         $action = QuickBooks_IPP::API_GETENTITLEMENTVALUESANDUSERROLE;
 
         $xml = '<qdbapi>
-			<ticket>' . $Context->ticket() . '</ticket>
-			<apptoken>' . $Context->token() . '</apptoken>
-			</qdbapi>';
+            <ticket>' . $Context->ticket() . '</ticket>
+            <apptoken>' . $Context->token() . '</apptoken>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -786,24 +786,24 @@ class QuickBooks_IPP
         $action = 'API_ProvisionUser';
 
         $xml = '<qdbapi>
-					<ticket>' . $Context->ticket() . '</ticket>
-					<apptoken>' . $Context->token() . '</apptoken>';
+                    <ticket>' . $Context->ticket() . '</ticket>
+                    <apptoken>' . $Context->token() . '</apptoken>';
 
         if ($roleid) {
             $xml .= '<roleid>' . $roleid . '</roleid>';
         }
 
         $xml .= '
-				<email>' . $email . '</email>
-				<fname>' . $fname . '</fname>
-				<lname>' . $lname . '</lname>';
+                <email>' . $email . '</email>
+                <fname>' . $fname . '</fname>
+                <lname>' . $lname . '</lname>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         $response = $this->_request($Context, QuickBooks_IPP::REQUEST_IPP, $url, $action, $xml);
 
@@ -819,16 +819,16 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = QuickBooks_IPP::API_GETUSERROLE;
         $xml    = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-				<userid>' . htmlspecialchars($userid) . '</userid>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+                <userid>' . htmlspecialchars($userid) . '</userid>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -838,8 +838,8 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/main';
         $action = QuickBooks_IPP::API_GETUSERINFO;
         $xml    = '<qdbapi>
-   				<ticket>' . $Context->ticket() . '</ticket>
-   				<apptoken>' . $Context->token() . '</apptoken>';
+                   <ticket>' . $Context->ticket() . '</ticket>
+                   <apptoken>' . $Context->token() . '</apptoken>';
 
         if ($email) {
             $xml .= '<email>' . htmlspecialchars($email) . '</email>';
@@ -850,7 +850,7 @@ class QuickBooks_IPP
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -860,17 +860,17 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = 'API_SendInvitation';
         $xml    = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-				<userid>' . htmlspecialchars($userid) . '</userid>
-				<usertext>' . htmlspecialchars($usertext) . '</usertext>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+                <userid>' . htmlspecialchars($userid) . '</userid>
+                <usertext>' . htmlspecialchars($usertext) . '</usertext>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         $response = $this->_request($Context, QuickBooks_IPP::REQUEST_IPP, $url, $action, $xml);
 
@@ -886,15 +886,15 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = QuickBooks_IPP::API_GETDBINFO;
         $xml    = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -904,17 +904,17 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = QuickBooks_IPP::API_SETDBVAR;
         $xml    = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-				<varname>' . QuickBooks_XML::encode($varname) . '</varname>
-				<value>' . QuickBooks_XML::encode($value) . '</value>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+                <varname>' . QuickBooks_XML::encode($varname) . '</varname>
+                <value>' . QuickBooks_XML::encode($value) . '</value>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -924,16 +924,16 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = QuickBooks_IPP::API_GETDBVAR;
         $xml    = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-				<varname>' . QuickBooks_XML::encode($varname) . '</varname>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+                <varname>' . QuickBooks_XML::encode($varname) . '</varname>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -943,17 +943,17 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = 'API_CreateTable';
         $xml    = '<qdbapi>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-				<tname>' . $tname . '</tname>
-				<pnoun>' . $pnoun . '</pnoun>';
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+                <tname>' . $tname . '</tname>
+                <pnoun>' . $pnoun . '</pnoun>';
 
         if ($udata) {
             $xml .= '<udata>' . $udata . '</udata>';
         }
 
         $xml .= '
-			</qdbapi>';
+            </qdbapi>';
 
         $response = $this->_request($Context, QuickBooks_IPP::REQUEST_IPP, $url, $action, $xml);
 
@@ -969,10 +969,10 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = QuickBooks_IPP::API_ATTACHIDSREALM;
         $xml    = '<qdbapi>
-				<realm>' . $realm . '</realm>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-			</qdbapi>';
+                <realm>' . $realm . '</realm>
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -982,10 +982,10 @@ class QuickBooks_IPP
         $url    = 'https://workplace.intuit.com/db/' . $this->_dbid;
         $action = QuickBooks_IPP::API_DETACHIDSREALM;
         $xml    = '<qdbapi>
-				<realm>' . $realm . '</realm>
-				<ticket>' . $Context->ticket() . '</ticket>
-				<apptoken>' . $Context->token() . '</apptoken>
-			</qdbapi>';
+                <realm>' . $realm . '</realm>
+                <ticket>' . $Context->ticket() . '</ticket>
+                <apptoken>' . $Context->token() . '</apptoken>
+            </qdbapi>';
 
         return $this->_IPP($Context, $url, $action, $xml);
     }
@@ -1441,7 +1441,6 @@ class QuickBooks_IPP
         $this->_debug = (boolean)$yes_or_no;
     }
 
-
     /**
      * Logs the specified message at the indicated level.
      *
@@ -1656,7 +1655,6 @@ class QuickBooks_IPP
     {
         return $this->_last_request;
     }
-
 
     /**
      * Returns the last debug message.

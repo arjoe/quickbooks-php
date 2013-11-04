@@ -97,7 +97,6 @@ class QuickBooks_QBXML_Object_ReceivePayment extends QuickBooks_QBXML_Object
         return $this->set('CustomerRef ' . QUICKBOOKS_API_APPLICATIONID, $this->encodeApplicationID(QUICKBOOKS_OBJECT_CUSTOMER, QUICKBOOKS_LISTID, $value));
     }
 
-
     public function getCustomerApplicationID()
     {
         return $this->get('CustomerRef ' . QUICKBOOKS_API_APPLICATIONID);
@@ -168,7 +167,6 @@ class QuickBooks_QBXML_Object_ReceivePayment extends QuickBooks_QBXML_Object
     {
         return $this->getDateType('TxnDate');
     }
-
 
     /**
      * Set the reference number
@@ -367,7 +365,7 @@ class QuickBooks_QBXML_Object_ReceivePayment extends QuickBooks_QBXML_Object
         return $this->set('DepositToAccountRef FullName', $name);
     }
 
-    public function setDepositToAccountFullName()
+    public function setDepositToAccountFullName($name)
     {
         return $this->set('DepositToAccountRef FullName', $name);
     }

@@ -232,12 +232,12 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
         $errnum = 0;
         $errmsg = '';
         $res    = $this->_query("
-			SELECT 
-				table_name
-			FROM
-				information_schema.tables
-			WHERE
-				table_schema = '" . $this->_escape($this->_schema) . "' AND table_type = 'BASE TABLE' ", $errnum, $errmsg);
+            SELECT
+                table_name
+            FROM
+                information_schema.tables
+            WHERE
+                table_schema = '" . $this->_escape($this->_schema) . "' AND table_type = 'BASE TABLE' ", $errnum, $errmsg);
         while ($arr = $this->_fetch($res)) {
             $table = current($arr);
 
@@ -327,12 +327,12 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
         $list = array();
 
         $sql = "
-			SELECT 
-				column_name 
-			FROM 
-				information_schema.columns
-			WHERE
-				table_name = '" . $this->_escape($table) . "' ";
+            SELECT
+                column_name
+            FROM
+                information_schema.columns
+            WHERE
+                table_name = '" . $this->_escape($table) . "' ";
 
         $errnum = 0;
         $errmsg = "";
@@ -469,14 +469,14 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
         $errmsg = '';
 
         // get the current table's primary key
-        $sql = "SELECT               
-                pg_attribute.attname, 
-                format_type(pg_attribute.atttypid, pg_attribute.atttypmod) 
-            FROM pg_index, pg_class, pg_attribute 
-            WHERE 
+        $sql = "SELECT
+                pg_attribute.attname,
+                format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+            FROM pg_index, pg_class, pg_attribute
+            WHERE
                 pg_class.oid = '" . $this->last_insert_table . "'::regclass AND
                 indrelid = pg_class.oid AND
-                pg_attribute.attrelid = pg_class.oid AND 
+                pg_attribute.attrelid = pg_class.oid AND
                 pg_attribute.attnum = any(pg_index.indkey)
                 AND indisprimary";
 
@@ -812,7 +812,7 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
         } else {
             if ($primary) {
                 $arr_sql[] = 'ALTER TABLE ONLY "' . $name . '"
-				ADD CONSTRAINT "' . $name . '_pkey" PRIMARY KEY ("' . $primary . '");';
+                ADD CONSTRAINT "' . $name . '_pkey" PRIMARY KEY ("' . $primary . '");';
             }
         }
 
@@ -832,7 +832,6 @@ class QuickBooks_Driver_Sql_Pgsql extends QuickBooks_Driver_Sql
     {
         return true;
     }
-
 
     /**
      * Insert a new record into an SQL table

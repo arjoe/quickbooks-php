@@ -38,7 +38,7 @@ class QuickBooks_WebConnector_Queue_Singleton
      *
      * @return \QuickBooks_Queue|bool
      */
-    static public function initialize($dsn = null, $user = null, $config = array(), $return_boolean = true)
+    public static function initialize($dsn = null, $user = null, $config = array(), $return_boolean = true)
     {
         static $instance;
         if (empty($instance)) {
@@ -59,7 +59,7 @@ class QuickBooks_WebConnector_Queue_Singleton
     /**
      * ???
      */
-    static protected function _hash($dsn, $config)
+    protected static function _hash($dsn, $config)
     {
         return md5(serialize($dsn) . serialize($config));
     }
@@ -69,7 +69,7 @@ class QuickBooks_WebConnector_Queue_Singleton
      *
      * @return QuickBooks_Queue
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         return QuickBooks_WebConnector_Queue_Singleton::initialize(null, null, null, false);
     }

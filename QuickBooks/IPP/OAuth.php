@@ -114,17 +114,17 @@ class QuickBooks_IPP_OAuth
     protected function _generateHeader($params, $normalized)
     {
         $str = 'OAuth realm="",
-			oauth_signature_method="' . $params['oauth_signature_method'] . '", 
-			oauth_signature="' . $this->_escape($params['oauth_signature']) . '", 			
-			oauth_nonce="' . $params['oauth_nonce'] . '", 
-			oauth_timestamp="' . $params['oauth_timestamp'] . '", ';
+            oauth_signature_method="' . $params['oauth_signature_method'] . '",
+            oauth_signature="' . $this->_escape($params['oauth_signature']) . '",
+            oauth_nonce="' . $params['oauth_nonce'] . '",
+            oauth_timestamp="' . $params['oauth_timestamp'] . '", ';
 
         if (isset($params['oauth_token'])) {
             $str .= ' oauth_token="' . $params['oauth_token'] . '", ';
         }
 
         $str .= ' oauth_consumer_key="' . $params['oauth_consumer_key'] . '",
-			oauth_version="' . $params['oauth_version'] . '"';
+            oauth_version="' . $params['oauth_version'] . '"';
 
         return str_replace(array('  ', '   '), ' ', str_replace(array("\r", "\n", "\t"), ' ', $str));
     }

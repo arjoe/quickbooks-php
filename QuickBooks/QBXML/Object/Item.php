@@ -52,7 +52,6 @@ class QuickBooks_QBXML_Object_Item extends QuickBooks_QBXML_Object
         return $this->get('ListID');
     }
 
-
     /**
      * Set the name of this customer
      *
@@ -180,7 +179,6 @@ class QuickBooks_QBXML_Object_Item extends QuickBooks_QBXML_Object
         return $this->get('LastName');
     }
 
-
     public function getFromModifiedDate()
     {
     }
@@ -249,4 +247,3 @@ class QuickBooks_QBXML_Object_Item extends QuickBooks_QBXML_Object
         return QUICKBOOKS_OBJECT_ITEM;
     }
 }
-

@@ -39,4 +39,3 @@ class QuickBooks_IPP_Object_TimeActivity extends QuickBooks_IPP_Object
         );
     }
 }
-

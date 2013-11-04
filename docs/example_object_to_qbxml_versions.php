@@ -57,7 +57,6 @@ print("\r\n\r\n");
 print('qbXML SalesReceipt for QuickBooks qbXML Online Edition: ' . "\r\n");
 print($SalesReceipt->asQBXML(QUICKBOOKS_ADD_SALESRECEIPT, null, QUICKBOOKS_LOCALE_ONLINE_EDITION));
 
-
 exit;
 */
 

@@ -2,7 +2,6 @@
 
 require_once '../QuickBooks.php';
 
-
 $Deposit = new QuickBooks_Object_Deposit();
 
 $Deposit->setTxnDate(time());

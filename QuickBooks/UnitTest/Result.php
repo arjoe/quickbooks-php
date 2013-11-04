@@ -53,4 +53,3 @@ class QuickBooks_UnitTest_Result
         return $this->_actual;
     }
 }
-

@@ -217,7 +217,7 @@ class QuickBooks_XML
      *
      * @return string            The contents of the tag
      */
-    static public function extractTagContents($tag, $data)
+    public static function extractTagContents($tag, $data)
     {
         $tag = trim($tag, '<> ');
 
@@ -234,7 +234,7 @@ class QuickBooks_XML
     }
 
     // @todo Documentation
-    static public function extractTagAttribute($attribute, $tag_w_attrs, $which = 0)
+    public static function extractTagAttribute($attribute, $tag_w_attrs, $which = 0)
     {
         $attr = $attribute;
         $data = $tag_w_attrs;
@@ -263,7 +263,7 @@ class QuickBooks_XML
      *
      * @return array
      */
-    static public function extractTagAttributes($tag_w_attrs, $return_tag_first = false)
+    public static function extractTagAttributes($tag_w_attrs, $return_tag_first = false)
     {
         $tag_w_attrs = trim($tag_w_attrs);
 
@@ -342,7 +342,7 @@ class QuickBooks_XML
      *
      * @return string
      */
-    static public function encode($str, $for_qbxml = true, $double_encode = true)
+    public static function encode($str, $for_qbxml = true, $double_encode = true)
     {
         $transform = array(
             '&' => '&amp;',
@@ -375,7 +375,7 @@ class QuickBooks_XML
      *
      * @return string
      */
-    static public function decode($str, $for_qbxml = true)
+    public static function decode($str, $for_qbxml = true)
     {
         $transform = array(
             '&lt;'   => '<',
@@ -388,4 +388,3 @@ class QuickBooks_XML
         return str_replace(array_keys($transform), array_values($transform), $str);
     }
 }
-

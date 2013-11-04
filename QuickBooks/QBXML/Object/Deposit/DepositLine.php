@@ -75,7 +75,6 @@ class QuickBooks_QBXML_Object_Deposit_DepositLine extends QuickBooks_QBXML_Objec
         return $this->get('OverrideCheckNumber');
     }
 
-
     /**
      * Set the Amount for the Check
      *
@@ -112,7 +111,6 @@ class QuickBooks_QBXML_Object_Deposit_DepositLine extends QuickBooks_QBXML_Objec
     {
         return $this->get('Memo');
     }
-
 
     // Path: ClassRef ListID, datatype:
 
@@ -235,4 +233,3 @@ class QuickBooks_QBXML_Object_Deposit_DepositLine extends QuickBooks_QBXML_Objec
         return 'DepositLine';
     }
 }
-

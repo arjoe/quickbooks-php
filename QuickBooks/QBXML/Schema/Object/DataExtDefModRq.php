@@ -126,4 +126,3 @@ class QuickBooks_QBXML_Schema_Object_DataExtDefModRq extends QuickBooks_QBXML_Sc
         return $paths;
     }
 }
-

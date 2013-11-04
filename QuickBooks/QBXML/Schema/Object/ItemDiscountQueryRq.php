@@ -162,4 +162,3 @@ class QuickBooks_QBXML_Schema_Object_ItemDiscountQueryRq extends QuickBooks_QBXM
         return $paths;
     }
 }
-

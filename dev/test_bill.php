@@ -2,7 +2,6 @@
 
 require_once '../QuickBooks.php';
 
-
 $Bill = new QuickBooks_Object_Bill();
 
 $Bill->setRefNumber(1234);
@@ -22,7 +21,6 @@ $ItemLine2 = new QuickBooks_Object_Bill_ItemLine();
 $ItemLine2->setItemFullName('test');
 $ItemLine2->setQuantity(3);
 $ItemLine2->setCost(5.50);
-
 
 $Bill->addExpenseLine($ExpenseLine);
 $Bill->addItemLine($ItemLine1);

@@ -108,4 +108,3 @@ class QuickBooks_QBXML_Schema_Object_DataExtDefQueryRq extends QuickBooks_QBXML_
         return $paths;
     }
 }
-

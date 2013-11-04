@@ -21,7 +21,7 @@ class QuickBooks_Callbacks_API_Errors
     /**
      * Alias of QuickBooks_Server_API_Errors::e500_notfound    (QuickBooks sometimes returns a 1 error code, sometimes a 500 error code)
      */
-    static public function e1_notfound($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e1_notfound($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         return QuickBooks_Callbacks_API_Errors::e500_notfound($requestID, $user, $action, $ident, $extra, $err, $xml, $errnum, $errmsg, $config);
     }
@@ -49,7 +49,7 @@ class QuickBooks_Callbacks_API_Errors
      *
      * @return boolean
      */
-    static public function e500_notfound($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function e500_notfound($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         // Get the driver instance
         $Driver = QuickBooks_Driver_Singleton::getInstance();
@@ -105,7 +105,7 @@ class QuickBooks_Callbacks_API_Errors
         return true;
     }
 
-    static public function catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
+    public static function catchall($requestID, $user, $action, $ident, $extra, &$err, $xml, $errnum, $errmsg, $config)
     {
         return false;
     }

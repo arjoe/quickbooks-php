@@ -16,7 +16,6 @@
  * @subpackage IPP
  */
 
-
 class QuickBooks_IPP_Service_Factory
 {
     public function newInstance($Context, $which)

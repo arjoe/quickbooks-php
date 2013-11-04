@@ -567,4 +567,3 @@ class QuickBooks_QBXML_Schema_Object_CustomerAddRq extends QuickBooks_QBXML_Sche
         return $paths;
     }
 }
-

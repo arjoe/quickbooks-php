@@ -257,7 +257,6 @@ class QuickBooks_QBXML_Object_Account extends QuickBooks_QBXML_Object
         return $this->set('CashFlowClassification', $type);
     }
 
-
     /**
      * Perform any needed clean-up of the object data members
      *

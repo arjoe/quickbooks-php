@@ -43,4 +43,3 @@ class QuickBooks_WebConnector_Result_Debug extends QuickBooks_WebConnector_Resul
         $this->debug = $debug;
     }
 }
-

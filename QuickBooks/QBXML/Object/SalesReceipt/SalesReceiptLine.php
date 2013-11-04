@@ -232,8 +232,6 @@ class QuickBooks_QBXML_Object_SalesReceipt_SalesReceiptLine extends QuickBooks_Q
     {
         $this->_cleanup();
 
-
-
         return parent::asQBXML($request, $todo_for_empty_elements, $indent, $root);
     }*/
 

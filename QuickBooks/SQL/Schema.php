@@ -60,7 +60,7 @@ class QuickBooks_SQL_Schema
      *
      * @return boolean
      */
-    static public function mapSchemaToSQLDefinition($xml, &$tables)
+    public static function mapSchemaToSQLDefinition($xml, &$tables)
     {
         $Parser = new QuickBooks_XML_Parser($xml);
 
@@ -79,11 +79,11 @@ class QuickBooks_SQL_Schema
         }
 
         // The code below tries to guess as a good set of indexes to use for
-        //	any database tables we've generated from the schema. The code looks 
-        //	at all of the fields in the table and if any of them are *ListID or 
-        //	*TxnID it makes them indexes. 
+        //	any database tables we've generated from the schema. The code looks
+        //	at all of the fields in the table and if any of them are *ListID or
+        //	*TxnID it makes them indexes.
 
-        // This is a list of field names that will *always* be assigned 
+        // This is a list of field names that will *always* be assigned
         //	indexes, regardless of what table they are in
         $always_index_fields = array(
             'qbsql_external_id',
@@ -92,25 +92,25 @@ class QuickBooks_SQL_Schema
             'EntityType',
             'TxnType',
             'Email',
-            //'Phone', 
+            //'Phone',
             'IsActive',
             'RefNumber',
-            //'Address_City', 
-            //'Address_State', 
+            //'Address_City',
+            //'Address_State',
             'Address_Country',
-            //'Address_PostalCode', 
-            //'BillAddress_City', 
-            //'BillAddress_State', 
+            //'Address_PostalCode',
+            //'BillAddress_City',
+            //'BillAddress_State',
             'BillAddress_Country',
-            //'BillAddress_PostalCode', 
-            //'ShipAddress_City', 
-            //'ShipAddress_State', 
+            //'BillAddress_PostalCode',
+            //'ShipAddress_City',
+            //'ShipAddress_State',
             'ShipAddress_Country',
-            //'ShipAddress_PostalCode', 
+            //'ShipAddress_PostalCode',
             'CompanyName',
-            //'FirstName', 
+            //'FirstName',
             'LastName',
-            //'Contact', 
+            //'Contact',
             'TxnDate',
             'IsPaid',
             'IsPending',
@@ -119,21 +119,21 @@ class QuickBooks_SQL_Schema
             'IsToBePrinted',
             'IsToBeEmailed',
             'IsFullyInvoiced',
-            //'IsFinanceCharge', 
+            //'IsFinanceCharge',
         );
 
-        // This is a list of table.field names that will be assigned indexes 
+        // This is a list of table.field names that will be assigned indexes
         $always_index_tablefields = array( //'Account.AccountType',
         );
 
         /*
-		'*FullName', 
-		'*ListID', 
-		'*TxnID', 
-		'*EntityType', 
-		'*TxnType', 
-		'*LineID', 
-		*/
+        '*FullName',
+        '*ListID',
+        '*TxnID',
+        '*EntityType',
+        '*TxnType',
+        '*LineID',
+        */
 
         foreach ($tables as $table => $tabledef) {
             $uniques = array();
@@ -144,8 +144,8 @@ class QuickBooks_SQL_Schema
                     $field == 'TxnID' or
                     $field == 'Name'
                 ) {
-                    // We can't apply indexes to TEXT columns, so we need to 
-                    //	check and make sure the column isn't of type TEXT 
+                    // We can't apply indexes to TEXT columns, so we need to
+                    //	check and make sure the column isn't of type TEXT
                     //	before we decide to use this as an index
 
                     if ($fielddef[0] != QUICKBOOKS_DRIVER_SQL_TEXT) {
@@ -185,7 +185,7 @@ class QuickBooks_SQL_Schema
      *
      * @return bool
      */
-    static protected function _transform($curpath, $node, &$tables)
+    protected static function _transform($curpath, $node, &$tables)
     {
         print('' . $curpath . '   node: ' . $node->name() . "\n");
 
@@ -236,12 +236,12 @@ class QuickBooks_SQL_Schema
      *
      * @return boolean
      */
-    static protected function _fnmatch($pattern, $str)
+    protected static function _fnmatch($pattern, $str)
     {
         return QuickBooks_Utilities::fnmatch($pattern, $str);
     }
 
-    static public function mapIndexes($table)
+    public static function mapIndexes($table)
     {
     }
 
@@ -257,7 +257,7 @@ class QuickBooks_SQL_Schema
      *
      * @return void
      */
-    static public function mapPrimaryKey($path_or_tablefield, $mode, &$map, $options = array())
+    public static function mapPrimaryKey($path_or_tablefield, $mode, &$map, $options = array())
     {
         static $xml_to_sql = array(
             'AccountRet'                                                                 => array('Account', 'ListID'),
@@ -311,8 +311,8 @@ class QuickBooks_SQL_Schema
             'CreditMemoRet'                                                              => array('CreditMemo', 'TxnID'),
             'CreditMemoRet CreditMemoLineRet'                                            => array('CreditMemo_CreditMemoLine', array('CreditMemo_TxnID', 'TxnLineID')),
             'CreditMemoRet CreditMemoLineGroupRet'                                       => array('CreditMemo_CreditMemoLineGroup', array('CreditMemo_TxnID', 'TxnLineID')),
-            //'CreditMemoRet CreditMemoLineGroupRet ItemGroupRef' => 									array( null, null ), 
-            //'CreditMemoRet CreditMemoLineGroupRet ItemGroupRef *' => 									array( 'CreditMemo_CreditMemoLineGroup', 'ItemGroup_*' ), 
+            //'CreditMemoRet CreditMemoLineGroupRet ItemGroupRef' => 									array( null, null ),
+            //'CreditMemoRet CreditMemoLineGroupRet ItemGroupRef *' => 									array( 'CreditMemo_CreditMemoLineGroup', 'ItemGroup_*' ),
             'CreditMemoRet CreditMemoLineGroupRet CreditMemoLineRet'                     => array('CreditMemo_CreditMemoLineGroup_CreditMemoLine', array('CreditMemo_TxnID', 'CreditMemo_CreditMemoLineGroup_TxnLineID', 'TxnLineID')),
             'CreditMemoRet DataExtRet'                                                   => array('DataExt', array('EntityType', 'TxnType', 'Entity_ListID', 'Txn_TxnID')),
             'CreditMemoRet CreditMemoLineGroupRet DataExtRet'                            => array('DataExt', array('EntityType', 'TxnType', 'Entity_ListID', 'Txn_TxnID')),
@@ -480,17 +480,17 @@ class QuickBooks_SQL_Schema
      *
      * @return void
      */
-    static public function mapToSchema($path_or_tablefield, $mode, &$map, &$others, $options = array())
+    public static function mapToSchema($path_or_tablefield, $mode, &$map, &$others, $options = array())
     {
         static $xml_to_sql = array(
             'AccountRet'                                                                                               => array('Account', null),
             'AccountRet ParentRef'                                                                                     => array(null, null),
             'AccountRet ParentRef *'                                                                                   => array('Account', 'Parent_*'),
             'AccountRet TaxLineInfoRet'                                                                                => array('Account_TaxLineInfo', null),
-            //'AccountRet TaxLineInfoRet TaxLineID' => 	array( 'Account_TaxLineInfo', 'TaxLineInfo_TaxLineID' ), 
+            //'AccountRet TaxLineInfoRet TaxLineID' => 	array( 'Account_TaxLineInfo', 'TaxLineInfo_TaxLineID' ),
             'AccountRet TaxLineInfoRet *'                                                                              => array('Account_TaxLineInfo', 'TaxLineInfo_*'),
-            //'AccountRet DataExtRet' => 				array( null, null ), 
-            //'AccountRet DataExtRet *' => 				array( 'DataExt', '*' ), 
+            //'AccountRet DataExtRet' => 				array( null, null ),
+            //'AccountRet DataExtRet *' => 				array( 'DataExt', '*' ),
             'AccountRet Desc'                                                                                          => array('Account', 'Descrip'),
 
             'AccountRet DataExtRet'                                                                                    => array('DataExt', null),
@@ -715,7 +715,6 @@ class QuickBooks_SQL_Schema
             'HostRet'                                                                                                  => array('Host', null),
             'HostRet *'                                                                                                => array('Host', '*'),
 
-
             'PreferencesRet'                                                                                           => array('Preferences', null),
 
             'PreferencesRet AccountingPreferences'                                                                     => array(null, null),
@@ -771,7 +770,6 @@ class QuickBooks_SQL_Schema
 
             'PreferencesRet *'                                                                                         => array('Preferences', '*'),
 
-
             'CreditCardChargeRet'                                                                                      => array('CreditCardCharge', null),
             'CreditCardChargeRet AccountRef'                                                                           => array(null, null),
             'CreditCardChargeRet AccountRef *'                                                                         => array('CreditCardCharge', 'Account_*'),
@@ -823,7 +821,6 @@ class QuickBooks_SQL_Schema
             'CreditCardChargeRet DataExtRet'                                                                           => array(null, null),
             'CreditCardChargeRet DataExtRet *'                                                                         => array('DataExt', '*'),
             'CreditCardChargeRet *'                                                                                    => array('CreditCardCharge', '*'),
-
 
             'CreditCardCreditRet'                                                                                      => array('CreditCardCredit', null),
             'CreditCardCreditRet AccountRef'                                                                           => array(null, null),
@@ -956,7 +953,6 @@ class QuickBooks_SQL_Schema
             'CreditMemoRet CreditMemoLineGroupRet DataExtRet'                                                          => array('DataExt', null),
             'CreditMemoRet CreditMemoLineGroupRet DataExtRet *'                                                        => array('DataExt', '*'),
             'CreditMemoRet CreditMemoLineGroupRet *'                                                                   => array('CreditMemo_CreditMemoLineGroup', '*'),
-
 
             'CreditMemoRet DataExtRet'                                                                                 => array('DataExt', null),
             'CreditMemoRet DataExtRet *'                                                                               => array('DataExt', '*'),
@@ -1357,7 +1353,6 @@ class QuickBooks_SQL_Schema
             'ItemInventoryRet DataExtRet *'                                                                            => array('DataExt', '*'),
             'ItemInventoryRet *'                                                                                       => array('ItemInventory', '*'),
 
-
             'ItemInventoryAssemblyRet'                                                                                 => array('ItemInventoryAssembly', null),
             'ItemInventoryAssemblyRet ParentRef'                                                                       => array(null, null),
             'ItemInventoryAssemblyRet ParentRef *'                                                                     => array('ItemInventoryAssembly', 'Parent_*'),
@@ -1456,7 +1451,6 @@ class QuickBooks_SQL_Schema
             'ItemReceiptRet ExpenseLineRet ClassRef *'                                                                 => array('ItemReceipt_ExpenseLine', 'Class_*'),
             'ItemReceiptRet ExpenseLineRet *'                                                                          => array('ItemReceipt_ExpenseLine', '*'),
 
-
             'ItemReceiptRet ItemLineRet'                                                                               => array('ItemReceipt_ItemLine', null),
             'ItemReceiptRet ItemLineRet Desc'                                                                          => array('ItemReceipt_ItemLine', 'Descrip'),
             'ItemReceiptRet ItemLineRet ItemRef'                                                                       => array(null, null),
@@ -1507,7 +1501,6 @@ class QuickBooks_SQL_Schema
             'JournalEntryRet JournalDebitLine ClassRef'                                                                => array(null, null),
             'JournalEntryRet JournalDebitLine ClassRef *'                                                              => array('JournalEntry_JournalDebitLine', 'Class_*'),
             'JournalEntryRet JournalDebitLine *'                                                                       => array('JournalEntry_JournalDebitLine', '*'),
-
 
             'JournalEntryRet JournalCreditLine'                                                                        => array(null, null),
             'JournalEntryRet JournalCreditLine AccountRef'                                                             => array(null, null),
@@ -1965,8 +1958,8 @@ class QuickBooks_SQL_Schema
 
         // Mapping of:
         //	XPATH => array(
-        //		array( table => extra field ), 
-        //		array( another table => another extra field ), 	
+        //		array( table => extra field ),
+        //		array( another table => another extra field ),
         static $xml_to_sql_others = array(
             'AccountRet TaxLineInfoRet'                                       => array(
                 array('Account_TaxLineInfo', 'Account_ListID'),
@@ -1997,7 +1990,7 @@ class QuickBooks_SQL_Schema
             'BillRet'                                                         => array(
                 array('Bill', 'Tax1Total'),
                 array('Bill', 'Tax2Total'),
-                //array( 'Bill', 'ExchangeRate' ), 
+                //array( 'Bill', 'ExchangeRate' ),
             ),
             'BillRet LinkedTxn'                                               => array(
                 array('Bill_LinkedTxn', 'FromTxnID'),
@@ -2136,14 +2129,14 @@ class QuickBooks_SQL_Schema
                 array('InventoryAdjustment_InventoryAdjustmentLine', 'SortOrder'),
 
                 /*
-				array( 'InventoryAdjustment_InventoryAdjustmentLine', 'QuantityAdjustment_NewQuantity' ), 
-				array( 'InventoryAdjustment_InventoryAdjustmentLine', 'QuantityAdjustment_QuantityDifference' ), 
-				
-				array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_NewQuantity' ), 
-				array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_QuantityDifference' ), 
-				array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_NewValue' ), 
-				array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_ValueDifference' ), 
-				*/
+                array( 'InventoryAdjustment_InventoryAdjustmentLine', 'QuantityAdjustment_NewQuantity' ),
+                array( 'InventoryAdjustment_InventoryAdjustmentLine', 'QuantityAdjustment_QuantityDifference' ),
+
+                array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_NewQuantity' ),
+                array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_QuantityDifference' ),
+                array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_NewValue' ),
+                array( 'InventoryAdjustment_InventoryAdjustmentLine', 'ValueAdjustment_ValueDifference' ),
+                */
             ),
             'InvoiceRet InvoiceLineRet'                                       => array(
                 array('Invoice_InvoiceLine', 'Invoice_TxnID'),
@@ -2299,7 +2292,7 @@ class QuickBooks_SQL_Schema
             $spaces = substr_count($path, ' ');
             $map    = array(null, null); // default map
 
-            // @todo Can we break out of this big loop early to improve performance? 
+            // @todo Can we break out of this big loop early to improve performance?
             foreach ($xml_to_sql as $pattern => $table_and_field) {
                 if (substr_count($pattern, ' ') == $spaces and // check path depth
                     false !== strpos($pattern, '*')
@@ -2380,7 +2373,7 @@ class QuickBooks_SQL_Schema
         }
     }
 
-    static protected function _applyOptions(&$path_or_arrtablefield, $mode, $options)
+    protected static function _applyOptions(&$path_or_arrtablefield, $mode, $options)
     {
         $applied = 0;
 
@@ -2432,7 +2425,7 @@ class QuickBooks_SQL_Schema
      * @return array
      * @TODO We case the input to lowercase, and so the array has to be in lowercase. Is there a better way to do this?
      */
-    static public function mapFieldToSQLDefinition($object_type, $field, $qb_type)
+    public static function mapFieldToSQLDefinition($object_type, $field, $qb_type)
     {
         static $overrides = array(
             'billpaymentcheck'                              => array(
