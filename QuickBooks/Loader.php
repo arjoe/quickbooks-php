@@ -88,7 +88,7 @@ class QuickBooks_Loader
      */
     protected static function registerAutoloader()
     {
-        if (self::$autoLoadEnabled) {
+        if (!self::$autoLoadEnabled) {
             return false;
         }
 
