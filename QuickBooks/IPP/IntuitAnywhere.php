@@ -210,7 +210,11 @@ class QuickBooks_IPP_IntuitAnywhere
             // Extract the error code
             $code = (int)QuickBooks_XML::extractTagContents('ErrorCode', $retr);
 
-            if ($code == 0 or $force) {
+
+            if ($code == 0 or
+                $code == 270 or // Sometimes it returns "270: OAuth Token rejected" for some reason?
+                $force
+            ) {
                 return $this->_driver->oauthAccessDelete($arr['app_username'], $arr['app_tenant']);
             }
         }

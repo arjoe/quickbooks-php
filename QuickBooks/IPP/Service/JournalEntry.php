@@ -1,8 +1,6 @@
 <?php
 
 /**
- *
- *
  * Copyright (c) 2010 Keith Palmer / ConsoliBYTE, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -26,4 +24,9 @@ class QuickBooks_IPP_Service_JournalEntry extends QuickBooks_IPP_Service
 
         return parent::_findAll($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_JOURNALENTRY, $xml);
     }
+
+	public function query($Context, $realm, $query)
+	{
+		return parent::_query($Context, $realm, $query);
+	}
 }

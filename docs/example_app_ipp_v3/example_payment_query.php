@@ -34,18 +34,21 @@ if ($Context = $IPP->context())
 	// Set the IPP version to v3 
 	$IPP->version(QuickBooks_IPP_IDS::VERSION_3);
 	
-	$ItemService = new QuickBooks_IPP_Service_Term();
+	$PaymentService = new QuickBooks_IPP_Service_Payment();
 	
-	$items = $ItemService->query($Context, $realm, "SELECT * FROM Item");
-	
-	foreach ($items as $Item)
-	{
-		//print_r($Item);
+	$list = $PaymentService->query($Context, $realm, "SELECT * FROM Payment STARTPOSITION 1 MAXRESULTS 10");
 
-		print('Item Id=' . $Item->getId() . ' is named: ' . $Item->getName() . '<br>');
+	//print_r($salesreceipts);
+	
+	foreach ($list as $Payment)
+	{
+		print('Payment # ' . $Payment->getPaymentRefNum() . ' has a total of $' . $Payment->getTotalAmt() . "\n");
+		
 	}
 
 	/*
+	print($IPP->lastError($Context));
+
 	print("\n\n\n\n");
 	print('Request [' . $IPP->lastRequest() . ']');
 	print("\n\n\n\n");

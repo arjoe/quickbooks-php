@@ -34,15 +34,42 @@ if ($Context = $IPP->context())
 	// Set the IPP version to v3 
 	$IPP->version(QuickBooks_IPP_IDS::VERSION_3);
 	
-	$ItemService = new QuickBooks_IPP_Service_Term();
+	$CDCService = new QuickBooks_IPP_Service_ChangeDataCapture();
 	
-	$items = $ItemService->query($Context, $realm, "SELECT * FROM Item");
-	
-	foreach ($items as $Item)
-	{
-		//print_r($Item);
+	// What types of objects do you want to get? 
+	$objects = array( 
+		'Customer', 
+		'Invoice', 
+		);
 
-		print('Item Id=' . $Item->getId() . ' is named: ' . $Item->getName() . '<br>');
+	// The date they should have been updated after 
+	$timestamp = QuickBooks_Utilities::datetime('-6 months');
+
+	$cdc = $CDCService->cdc($Context, $realm, 
+		$objects,
+		$timestamp);
+
+	print('<h2>Here are the ' . implode(', ', $objects) . ' that have changed since ' . $timestamp . '</h2>');
+
+	foreach ($cdc as $object_type => $list)
+	{
+		print('<h3>Now showing ' . $object_type . 's</h3>');
+
+		foreach ($list as $Object)
+		{
+			switch ($object_type)
+			{
+				case 'Customer':
+					print(' &nbsp; ' . $Object->getFullyQualifiedName() . '<br>');
+					break;
+				case 'Invoice':
+					print(' &nbsp; ' . $Object->getDocNumber() . '<br>');
+					break;
+				default:
+					print(' &nbsp; ' . $Object->getId() . '<br>');
+					break;
+			}
+		}
 	}
 
 	/*
@@ -51,7 +78,7 @@ if ($Context = $IPP->context())
 	print("\n\n\n\n");
 	print('Response [' . $IPP->lastResponse() . ']');
 	print("\n\n\n\n");
-	*/
+	*/	
 }
 else
 {

@@ -31,6 +31,12 @@ QuickBooks_Loader::load('/QuickBooks/IPP/Parser.php');
 // SAML federation of applications
 QuickBooks_Loader::load('/QuickBooks/IPP/Federator.php');
 
+// OAuth
+QuickBooks_Loader::load('/QuickBooks/IPP/OAuth.php');
+
+// IntuitAnywhere widgets
+QuickBooks_Loader::load('/QuickBooks/IPP/IntuitAnywhere.php');
+
 // IDS (Intuit Data Services) base class
 QuickBooks_Loader::load('/QuickBooks/IPP/IDS.php');
 
@@ -1118,6 +1124,11 @@ class QuickBooks_IPP
             case QuickBooks_IPP_IDS::OPTYPE_FINDBYID:
                 $post = false;
                 $url  = $this->baseURL() . '/company/' . $realm . '/' . strtolower($resource) . '/' . $xml_or_query;
+                break;
+
+            case QuickBooks_IPP_IDS::OPTYPE_CDC:
+                $post = false;
+                $url = $this->baseURL() . '/company/' . $realm . '/cdc?entities=' . implode(',', $xml_or_query[0]) . '&changedSince=' . $xml_or_query[1];
                 break;
 
             default:

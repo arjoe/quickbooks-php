@@ -1,8 +1,6 @@
 <?php
 
 /**
- *
- *
  * Copyright (c) 2010 Keith Palmer / ConsoliBYTE, LLC.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -82,6 +80,33 @@ abstract class QuickBooks_IPP_Service
         $IPP = $Context->IPP();
 
         return $IPP->useIDSParser((boolean)$true_or_false);
+    }
+
+    protected function _cdc($Context, $realmID, $entities, $timestamp, $page, $size)
+    {
+        $IPP = $Context->IPP();
+
+        // Send the data to IPP 
+        //                  $Context, $realm, $resource, $optype, $xml = '', $ID = null
+        $return = $IPP->IDS($Context, $realmID, null, QuickBooks_IPP_IDS::OPTYPE_CDC, array(
+            $entities,
+            $timestamp
+        ));
+
+        $this->_setLastRequestResponse($Context->lastRequest(), $Context->lastResponse());
+        $this->_setLastDebug($Context->lastDebug());
+
+        if ($IPP->errorCode() != QuickBooks_IPP::ERROR_OK)
+        {
+            $this->_setError(
+                $IPP->errorCode(),
+                $IPP->errorText(),
+                $IPP->errorDetail());
+
+            return false;
+        }
+
+        return $return;
     }
 
     protected function _syncStatus(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType)

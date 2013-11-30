@@ -2612,6 +2612,8 @@ abstract class QuickBooks_Driver_Sql extends QuickBooks_Driver
                 if ($value != '') {
                     // String value, put it in quotes.
                     $values[] = " '" . $this->_escape($value) . "' ";
+                } else if ($value === 0) {
+                    $values[] = $value;
                 } else {
                     // Empty string value, don't insert
                     array_pop($fields);

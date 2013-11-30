@@ -34,18 +34,20 @@ if ($Context = $IPP->context())
 	// Set the IPP version to v3 
 	$IPP->version(QuickBooks_IPP_IDS::VERSION_3);
 	
-	$ItemService = new QuickBooks_IPP_Service_Term();
+	$JournalEntryService = new QuickBooks_IPP_Service_JournalEntry();
 	
-	$items = $ItemService->query($Context, $realm, "SELECT * FROM Item");
-	
-	foreach ($items as $Item)
-	{
-		//print_r($Item);
+	$list = $JournalEntryService->query($Context, $realm, "SELECT * FROM JournalEntry STARTPOSITION 1 MAXRESULTS 10");
 
-		print('Item Id=' . $Item->getId() . ' is named: ' . $Item->getName() . '<br>');
+	//print_r($salesreceipts);
+	
+	foreach ($list as $JournalEntry)
+	{
+		print_r($JournalEntry);
 	}
 
 	/*
+	print($IPP->lastError($Context));
+
 	print("\n\n\n\n");
 	print('Request [' . $IPP->lastRequest() . ']');
 	print("\n\n\n\n");

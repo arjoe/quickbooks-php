@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/views/header.tpl.php';
 
 ?>
 
-    <pre>
+<pre>
 
 <?php
 
@@ -18,9 +18,9 @@ $creds = $IntuitAnywhere->load($the_username, $the_tenant);
 
 // Tell the framework to load some data from the OAuth store
 $IPP->authMode(
-    QuickBooks_IPP::AUTHMODE_OAUTH,
-    $the_username,
-    $creds);
+	QuickBooks_IPP::AUTHMODE_OAUTH, 
+	$the_username, 
+	$creds);
 
 // Print the credentials we're using
 //print_r($creds);
@@ -29,30 +29,35 @@ $IPP->authMode(
 $realm = $creds['qb_realm'];
 
 // Load the OAuth information from the database
-if ($Context = $IPP->context()) {
-    // Set the IPP version to v3
-    $IPP->version(QuickBooks_IPP_IDS::VERSION_3);
+if ($Context = $IPP->context())
+{
+	// Set the IPP version to v3 
+	$IPP->version(QuickBooks_IPP_IDS::VERSION_3);
+	
+	$VendorService = new QuickBooks_IPP_Service_Vendor();
+	
+	$vendors = $VendorService->query($Context, $realm, "SELECT * FROM Vendor");
 
-    $VendorService = new QuickBooks_IPP_Service_Vendor();
+	//print_r($terms);
+	
+	foreach ($vendors as $Vendor)
+	{
+		//print_r($Term);
 
-    $vendors = $VendorService->query($Context, $realm, "SELECT * FROM vendor");
+		print('Vendor Id=' . $Vendor->getId() . ' is named: ' . $Vendor->getName() . '<br>');
+	}
 
-    //print_r($terms);
-
-    foreach ($vendors as $Vendor) {
-        //print_r($Term);
-
-        print('Vendor Id=' . $Vendor->getId() . ' is named: ' . $Vendor->getName() . '<br>');
-    }
-    /*
-    print("\n\n\n\n");
-    print('Request [' . $IPP->lastRequest() . ']');
-    print("\n\n\n\n");
-    print('Response [' . $IPP->lastResponse() . ']');
-    print("\n\n\n\n");
-    */
-} else {
-    die('Unable to load a context...?');
+	/*
+	print("\n\n\n\n");
+	print('Request [' . $IPP->lastRequest() . ']');
+	print("\n\n\n\n");
+	print('Response [' . $IPP->lastResponse() . ']');
+	print("\n\n\n\n");
+	*/
+}
+else
+{
+	die('Unable to load a context...?');
 }
 
 ?>
@@ -62,3 +67,5 @@ if ($Context = $IPP->context()) {
 <?php
 
 require_once dirname(__FILE__) . '/views/footer.tpl.php';
+
+?>

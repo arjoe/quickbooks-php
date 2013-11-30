@@ -13,12 +13,15 @@ while (false !== ($file = readdir($dh))) {
     }
 
     $tmp = explode('_', $file);
-    switch ($tmp[2]) {
+    switch (end($tmp)) {
         case 'add.php':
-            $examples[$file] = 'Add a ' . $tmp[1];
+            $examples[$file] = 'Add a ' . implode(' ', array_slice($tmp, 1, -1));
             break;
         case 'query.php':
-            $examples[$file] = 'Query for ' . $tmp[1];
+            $examples[$file] = 'Query for ' . implode(' ', array_slice($tmp, 1, -1));
+            break;
+        case 'cdc.php';
+            $examples[$file] = 'Get objects that have changed since a timestamp';
             break;
     }
 }
@@ -32,27 +35,26 @@ while (false !== ($file = readdir($dh))) {
 
         <p>
             QuickBooks connection status:
-        </p>
 
-        <?php if ($quickbooks_is_connected): ?>
+            <?php if ($quickbooks_is_connected): ?>
 
-            <div style="border: 2px solid green; text-align: center; padding: 8px; color: green;">
-                CONNECTED!<br>
-            </div>
+        <div style="border: 2px solid green; text-align: center; padding: 8px; color: green;">
+            CONNECTED!<br>
+        </div>
 
-            <h2>Example QuickBooks Stuff</h2>
+        <h2>Example QuickBooks Stuff</h2>
 
-            <ul>
-                <?php foreach ($examples as $file => $title): ?>
-                    <li><a href="<?php print($file); ?>"><?php print($title); ?></a></li>
-                <?php endforeach; ?>
-            </ul>
-            <ul>
-                <li><a href="disconnect.php">Disconnect from QuickBooks</a></li>
-            </ul>
-            <ul>
-                <li><a href="diagnostics.php">Diagnostics about QuickBooks connection</a></li>
-            </ul>
+        <ul>
+            <?php foreach ($examples as $file => $title): ?>
+                <li><a href="<?php print($file); ?>"><?php print($title); ?></a></li>
+            <?php endforeach; ?>
+        </ul>
+        <ul>
+            <li><a href="disconnect.php">Disconnect from QuickBooks</a></li>
+        </ul>
+        <ul>
+            <li><a href="diagnostics.php">Diagnostics about QuickBooks connection</a></li>
+        </ul>
         <?php else: ?>
             <div style="border: 2px solid red; text-align: center; padding: 8px; color: red;">
                 <b>NOT</b> CONNECTED!<br>
@@ -60,10 +62,13 @@ while (false !== ($file = readdir($dh))) {
                 <ipp:connectToIntuit></ipp:connectToIntuit>
             </div>
         <?php
-        endif;
-        ?>
+        endif; ?>
+
+        </p>
     </div>
 
 <?php
 
 require_once dirname(__FILE__) . '/views/footer.tpl.php';
+
+?>

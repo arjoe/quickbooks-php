@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/views/header.tpl.php';
 
 ?>
 
-    <pre>
+<pre>
 
 <?php
 
@@ -18,9 +18,9 @@ $creds = $IntuitAnywhere->load($the_username, $the_tenant);
 
 // Tell the framework to load some data from the OAuth store
 $IPP->authMode(
-    QuickBooks_IPP::AUTHMODE_OAUTH,
-    $the_username,
-    $creds);
+	QuickBooks_IPP::AUTHMODE_OAUTH, 
+	$the_username, 
+	$creds);
 
 // Print the credentials we're using
 //print_r($creds);
@@ -29,34 +29,39 @@ $IPP->authMode(
 $realm = $creds['qb_realm'];
 
 // Load the OAuth information from the database
-if ($Context = $IPP->context()) {
-    // Set the IPP version to v3
-    $IPP->version(QuickBooks_IPP_IDS::VERSION_3);
+if ($Context = $IPP->context())
+{
+	// Set the IPP version to v3 
+	$IPP->version(QuickBooks_IPP_IDS::VERSION_3);
+	
+	$InvoiceService = new QuickBooks_IPP_Service_Invoice();
+	
+	$invoices = $InvoiceService->query($Context, $realm, "SELECT * FROM Invoice STARTPOSITION 1 MAXRESULTS 10");
 
-    $InvoiceService = new QuickBooks_IPP_Service_Invoice();
+	//print_r($customers);
+	
+	foreach ($invoices as $Invoice)
+	{
+		print('Invoice # ' . $Invoice->getDocNumber() . ' has a total of $' . $Invoice->getTotalAmt() . "\n");
+		print('    First line item: ' . $Invoice->getLine(0)->getDescription() . "\n");
+		print("\n");
 
-    $invoices = $InvoiceService->query($Context, $realm, "SELECT * FROM invoice STARTPOSITION 1 MAXRESULTS 10");
+		print_r($Invoice);
+		//$Line = $Invoice->getLine(0);
+		//print_r($Line);
+	}
 
-    //print_r($customers);
-
-    foreach ($invoices as $Invoice) {
-        print('Invoice # ' . $Invoice->getDocNumber() . ' has a total of $' . $Invoice->getTotalAmt() . "\n");
-        print('    First line item: ' . $Invoice->getLine(0)->getDescription() . "\n");
-        print("\n");
-
-        print_r($Invoice);
-        //$Line = $Invoice->getLine(0);
-        //print_r($Line);
-    }
-    /*
-    print("\n\n\n\n");
-    print('Request [' . $IPP->lastRequest() . ']');
-    print("\n\n\n\n");
-    print('Response [' . $IPP->lastResponse() . ']');
-    print("\n\n\n\n");
-    */
-} else {
-    die('Unable to load a context...?');
+	/*
+	print("\n\n\n\n");
+	print('Request [' . $IPP->lastRequest() . ']');
+	print("\n\n\n\n");
+	print('Response [' . $IPP->lastResponse() . ']');
+	print("\n\n\n\n");
+	*/
+}
+else
+{
+	die('Unable to load a context...?');
 }
 
 ?>
@@ -66,3 +71,5 @@ if ($Context = $IPP->context()) {
 <?php
 
 require_once dirname(__FILE__) . '/views/footer.tpl.php';
+
+?>
