@@ -60,11 +60,12 @@ class QuickBooks_IPP_Service_Customer extends QuickBooks_IPP_Service
 
     /**
      * Delete a customer from IDS/QuickBooks
-     */
+     * @todo Write delete method that will perform an update to inactive
     public function delete($Context, $realm, $IDType)
     {
         return parent::_delete($Context, $realm, QuickBooks_IPP_IDS::RESOURCE_CUSTOMER, $IDType);
     }
+     */
 
     public function add($Context, $realm, $Object)
     {

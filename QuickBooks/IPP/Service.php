@@ -145,13 +145,19 @@ abstract class QuickBooks_IPP_Service
         if (!$xml) {
             $parse = QuickBooks_IPP_IDS::parseIDType($IDType);
 
-            $xml = '';
-            $xml .= '<?xml version="1.0" encoding="UTF-8"?>' . QUICKBOOKS_CRLF;
-            $xml .= '<' . $resource . 'Query xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.intuit.com/sb/cdm/' . $IPP->version() . '">' . QUICKBOOKS_CRLF;
-            $xml .= '	<TransactionIdSet>' . QUICKBOOKS_CRLF;
-            $xml .= '		<Id idDomain="' . $parse[0] . '">' . $parse[1] . '</Id>' . QUICKBOOKS_CRLF;
-            $xml .= '	</TransactionIdSet>' . QUICKBOOKS_CRLF;
-            $xml .= '</' . $resource . 'Query>';
+            if ($IPP->getVersion() == QuickBooks_IPP_IDS::VERSION_2) {
+                $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . QUICKBOOKS_CRLF;
+                $xml .= '<' . $resource . 'Query xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.intuit.com/sb/cdm/' . $IPP->getVersion() . '">' . QUICKBOOKS_CRLF;
+                $xml .= '	<TransactionIdSet>' . QUICKBOOKS_CRLF;
+                $xml .= '		<Id idDomain="' . $parse[0] . '">' . $parse[1] . '</Id>' . QUICKBOOKS_CRLF;
+                $xml .= '	</TransactionIdSet>' . QUICKBOOKS_CRLF;
+                $xml .= '</' . $resource . 'Query>';
+            } else {
+                $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . QUICKBOOKS_CRLF;
+                $xml .= '<' . $resource . ' xmlns="http://schema.intuit.com/finance/v3 domain="' . $IPP->getFlavor() . '" sparse="true">' . QUICKBOOKS_CRLF;
+                $xml .= '   <Id idDomain="' . $parse[0] . '">' . $parse[1] . '</Id>' . QUICKBOOKS_CRLF;
+                $xml .= '</' . $resource . '>';
+            }
         }
 
         $return = $IPP->IDS($Context, $realmID, $resource, QuickBooks_IPP_IDS::OPTYPE_DELETE, $xml);
@@ -601,7 +607,7 @@ abstract class QuickBooks_IPP_Service
         $IPP = $Context->IPP();
 
         // Send the data to IPP
-        $return = $IPP->IDS($Context, $realmID, null, QuickBooks_IPP_IDS::OPTYPE_QUERY, str_replace('=', '%3D', $query));
+        $return = $IPP->IDS($Context, $realmID, null, QuickBooks_IPP_IDS::OPTYPE_QUERY, $query);
         $this->_setLastRequestResponse($Context->lastRequest(), $Context->lastResponse());
         $this->_setLastDebug($Context->lastDebug());
 

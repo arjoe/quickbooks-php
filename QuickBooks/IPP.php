@@ -1097,12 +1097,17 @@ class QuickBooks_IPP
         switch ($optype) {
             case QuickBooks_IPP_IDS::OPTYPE_MOD:
             case QuickBooks_IPP_IDS::OPTYPE_ADD:
+            case QuickBooks_IPP_IDS::OPTYPE_DELETE:
                 $post = true;
                 $url  = $this->baseURL() . '/company/' . $realm . '/' . strtolower($resource);
                 $xml  = $xml_or_query;
 
-            case QuickBooks_IPP_IDS::OPTYPE_MOD:
-                $url .= '?operation=update';
+                if ($optype == QuickBooks_IPP_IDS::OPTYPE_MOD) {
+                    $url .= '?operation=update';
+                } elseif ($optype == QuickBooks_IPP_IDS::OPTYPE_DELETE) {
+                    $url .= '?operation=delete';
+                }
+
                 break;
 
             case QuickBooks_IPP_IDS::OPTYPE_QUERY:
