@@ -1493,7 +1493,7 @@ class QuickBooks_IPP
         $headers = array();
 
         if ($Context->IPP()->version() == QuickBooks_IPP_IDS::VERSION_3) {
-            if ($action == QuickBooks_IPP_IDS::OPTYPE_ADD or $action == QuickBooks_IPP_IDS::OPTYPE_MOD) {
+            if ($action == QuickBooks_IPP_IDS::OPTYPE_ADD or $action == QuickBooks_IPP_IDS::OPTYPE_MOD or $action == QuickBooks_IPP_IDS::OPTYPE_DELETE) {
                 $headers['Content-Type'] = 'application/xml';
             } else {
                 $headers['Content-Type'] = 'text/plain';

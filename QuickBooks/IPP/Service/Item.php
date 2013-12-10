@@ -27,9 +27,7 @@ class QuickBooks_IPP_Service_Item extends QuickBooks_IPP_Service
 
     public function findById($Context, $realmID, $ID)
     {
-        $xml = null;
-
-        return parent::_findById($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_ITEM, $ID, $xml);
+        return parent::_findById($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_ITEM, $ID);
     }
 
     /**
