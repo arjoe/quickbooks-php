@@ -295,6 +295,7 @@ class QuickBooks_IPP_Parser
 
                 case QuickBooks_IPP_IDS::OPTYPE_FINDBYID:
                 case QuickBooks_IPP_IDS::OPTYPE_MOD:
+                case QuickBooks_IPP_IDS::OPTYPE_DELETE:
                     $List = $Root->getChildAt('IntuitResponse');
 
                     $children = $List->children();

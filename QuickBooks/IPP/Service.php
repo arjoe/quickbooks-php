@@ -163,7 +163,7 @@ abstract class QuickBooks_IPP_Service
         return $return;
     }
 
-    protected function _delete(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType, $xml = '')
+    protected function _delete(\QuickBooks_IPP_Context $Context, $realmID, $resource, $IDType, $xml = '', $syncToken = '')
     {
         $IPP = $Context->IPP();
 
@@ -181,6 +181,10 @@ abstract class QuickBooks_IPP_Service
                 $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . QUICKBOOKS_CRLF;
                 $xml .= '<' . $resource . ' xmlns="http://schema.intuit.com/finance/v3" domain="' . $IPP->getFlavor() . '" sparse="true">' . QUICKBOOKS_CRLF;
                 $xml .= '   <Id idDomain="' . $parse[0] . '">' . $parse[1] . '</Id>' . QUICKBOOKS_CRLF;
+                if (!empty($syncToken)) {
+                    $xml .= '   <SyncToken>' . $syncToken . '</SyncToken>' . QUICKBOOKS_CRLF;
+                }
+
                 $xml .= '</' . $resource . '>';
             }
         }
@@ -189,11 +193,11 @@ abstract class QuickBooks_IPP_Service
         $this->_setLastRequestResponse($Context->lastRequest(), $Context->lastResponse());
         $this->_setLastDebug($Context->lastDebug());
 
-        if (count($return)) {
+        if (is_array($return) && count($return)) {
             return $return[0];
+        } else {
+            return $return;
         }
-
-        return null;
     }
 
     protected function _guessResource($xml, $optype)
