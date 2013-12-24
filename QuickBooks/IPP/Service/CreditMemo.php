@@ -26,4 +26,41 @@ class QuickBooks_IPP_Service_CreditMemo extends QuickBooks_IPP_Service
 
         return parent::_findAll($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_CREDITMEMO, $xml);
     }
+
+    public function findById($Context, $realmID, $ID, $domain = null)
+    {
+        $xml = null;
+
+        return parent::_findById($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_CREDITMEMO, $ID, $domain, $xml);
+    }
+
+    public function add($Context, $realmID, $Object)
+    {
+        return parent::_add($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_CREDITMEMO, $Object);
+    }
+
+    /**
+     * Delete a credit memo
+     *
+     * @param \QuickBooks_IPP_Context $Context
+     * @param string                  $realmID
+     * @param string                  $IDType
+     * @param string                  $syncToken
+     *
+     * @return null
+     */
+    public function delete($Context, $realmID, $IDType, $syncToken)
+    {
+        return parent::_delete($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_CREDITMEMO, $IDType, '', $syncToken);
+    }
+
+    public function update($Context, $realmID, $IDType, $Object)
+    {
+        return parent::_update($Context, $realmID, QuickBooks_IPP_IDS::RESOURCE_CREDITMEMO, $Object, $IDType);
+    }
+
+    public function query($Context, $realm, $query)
+    {
+        return parent::_query($Context, $realm, $query);
+    }
 }

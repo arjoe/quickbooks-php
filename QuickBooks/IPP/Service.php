@@ -181,7 +181,7 @@ abstract class QuickBooks_IPP_Service
                 $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . QUICKBOOKS_CRLF;
                 $xml .= '<' . $resource . ' xmlns="http://schema.intuit.com/finance/v3" domain="' . $IPP->getFlavor() . '" sparse="true">' . QUICKBOOKS_CRLF;
                 $xml .= '   <Id idDomain="' . $parse[0] . '">' . $parse[1] . '</Id>' . QUICKBOOKS_CRLF;
-                if (!empty($syncToken)) {
+                if ($syncToken != '') {
                     $xml .= '   <SyncToken>' . $syncToken . '</SyncToken>' . QUICKBOOKS_CRLF;
                 }
 
