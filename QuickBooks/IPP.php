@@ -736,6 +736,7 @@ class QuickBooks_IPP
 		$post = false;
 		$xml = null;
 		$query = null;
+		$url = null;
 
 		$guid = QuickBooks_Utilities::GUID();
 
